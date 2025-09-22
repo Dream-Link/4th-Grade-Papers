@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>4th Grade Check Status 🖊... MP Salodiya</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family/Noto+Sans+Devanagari:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <style>
+        :root {
+            --primary-bg: #f0f4f8; --container-bg: #ffffff; --header-color: #1a2533;
+            --text-color: #334155; --light-text: #64748b; --border-color: #e2e8f0;
+            --accent-color: #2563eb; --accent-dark: #1d4ed8; --accent-light: #eff6ff; 
+            --shadow-color: rgba(0, 0, 0, 0.08);
+            --correct-bg: #dcfce7; --correct-border: #86efac; --correct-text: #15803d;
+            --incorrect-bg: #fee2e2; --incorrect-border: #fca5a5; --incorrect-text: #b91c1c;
+            --special-bg: #dbeafe; --special-border: #93c5fd; --special-text: #1e40af;
+        }
+        * { box-sizing: border-box; }
+        body {
+            font-family: 'Noto Sans Devanagari', sans-serif; 
+            background-color: var(--primary-bg);
+            color: var(--text-color); margin: 0; line-height: 1.6;
+        }
+        
+        #shift-selector-page {
+            display: flex; justify-content: center; min-height: 100vh;
+            background: linear-gradient(135deg, #e0eafc, #cfdef3); padding: 5vh 20px;
+        }
+        .selector-container {
+            max-width: 900px; width: 100%; padding: 40px; background-color: var(--container-bg);
+            border-radius: 20px; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1); text-align: center;
+            border-top: 5px solid var(--accent-color); transition: all 0.3s ease;
+        }
+        .selector-container h1 { color: var(--header-color); margin-bottom: 10px; font-size: 2.5em; }
+        .selector-container p { color: var(--light-text); font-size: 1.1em; margin-bottom: 40px; }
+        .shift-selector { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 25px; }
+        .shift-btn { display: flex; align-items: center; text-align: left; background-color: #f8fafc; border: 1px solid var(--border-color); border-radius: 12px; text-decoration: none; transition: all 0.3s ease; cursor: pointer; overflow: hidden; }
+        .shift-btn:hover { transform: translateY(-5px); box-shadow: 0 8px 25px rgba(37, 99, 235, 0.2); border-color: var(--accent-color); }
+        .shift-btn .icon { padding: 20px; background-color: var(--accent-light); color: var(--accent-color); font-size: 1.8em; display: flex; align-items: center; justify-content: center; }
+        .shift-btn .text { padding: 20px; color: var(--header-color); font-weight: 500; font-size: 1.1em; }
+
+        #question-paper-page { display: none; flex-direction: column; }
+        .top-sticky-bar { position: sticky; top: 0; z-index: 100; background-color: var(--container-bg); box-shadow: 0 4px 12px var(--shadow-color); }
+        .header { display: flex; justify-content: space-between; align-items: center; padding: 8px 15px; border-bottom: 1px solid var(--border-color); flex-wrap: wrap; gap: 10px; }
+        .header h1 { margin: 0; font-size: 1.2em; color: var(--header-color); text-align: center; flex-grow: 1; }
+        .header-controls { display: flex; align-items: center; gap: 10px; }
+        .summary-bar { padding: 10px; display: grid; grid-template-columns: repeat(auto-fit, minmax(80px, 1fr)); gap: 8px; align-items: stretch; transition: all 0.3s ease; }
+        .summary-bar.hidden { display: none; }
+        .summary-item { text-align: center; padding: 5px; border-radius: 8px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        .summary-item .count { font-size: 1.25em; font-weight: 700; }
+        .summary-item .label { font-size: 0.65em; text-transform: uppercase; font-weight: 500; }
+        #total-item { background-color: #f3e8ff; color: #581c87; } 
+        #attempted-item { background-color: var(--accent-light); color: var(--accent-color); }
+        #correct-item { background-color: var(--correct-bg); color: var(--correct-text); } 
+        #incorrect-item { background-color: var(--incorrect-bg); color: var(--incorrect-text); }
+        #skipped-item { background-color: var(--special-bg); color: var(--special-text); }
+        #right-que-item, #raw-marks-item { background-color: #e0f2fe; color: #0c4a6e; }
+        
+        .container { max-width: 1100px; margin: 25px auto; background-color: var(--container-bg); padding: 25px 30px; border-radius: 16px; box-shadow: 0 5px 25px var(--shadow-color); }
+        
+        .controls-bar { display: flex; justify-content: space-between; align-items: center; padding: 15px 0; border-bottom: 1px solid var(--border-color); margin-bottom: 25px; flex-wrap: wrap; gap: 10px; }
+        .filter-buttons button { background: none; border: 1px solid var(--border-color); border-radius: 20px; padding: 6px 15px; cursor: pointer; transition: all 0.2s; font-family: inherit; font-size: 0.9em; }
+        .filter-buttons button.active { background-color: var(--accent-light); color: var(--accent-color); border-color: var(--accent-color); font-weight: 500; }
+        #print-btn { background-color: var(--accent-color); color: white; border: none; padding: 8px 18px; border-radius: 8px; cursor: pointer; font-weight: 500; transition: background-color 0.2s; }
+        #print-btn:hover { background-color: var(--accent-dark); }
+
+        .question-block { margin-bottom: 30px; border: 1px solid var(--border-color); border-radius: 12px; padding: 20px; }
+        .question-info-bar { font-size: 0.8em; color: var(--light-text); margin-bottom: 15px; display: block; background-color: #f8fafc; padding: 8px 12px; border-radius: 8px; border: 1px solid var(--border-color); font-weight: 500; }
+        .question-block h3 { margin: 0 0 15px 0; color: var(--header-color); font-size: 1.1em; }
+        .options-list { list-style: none; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+        .options-list li { border: 1px solid var(--border-color); padding: 10px 15px; border-radius: 8px; cursor: pointer; transition: all 0.2s; }
+        .options-list li.correct, .options-list li.incorrect, .options-list li.special { font-weight: 500; }
+        .options-list li.correct { background-color: var(--correct-bg); border-color: var(--correct-border); color: var(--correct-text); }
+        .options-list li.incorrect { background-color: var(--incorrect-bg); border-color: var(--incorrect-border); color: var(--incorrect-text); }
+        .options-list li.special { background-color: var(--special-bg); border-color: var(--special-border); color: var(--special-text); }
+        .correct-answer-display { margin-top: 15px; font-weight: 500; color: var(--correct-text); }
+        
+        #print-modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); z-index: 200; display: none; align-items: center; justify-content: center; }
+        #print-modal { background: white; padding: 30px; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.3); width: 90%; max-width: 400px; }
+        #print-modal h2, #print-modal p, #print-modal label { margin: 0 0 15px 0; }
+        #print-modal input { width: 100%; padding: 12px; border: 1px solid var(--border-color); border-radius: 8px; font-size: 1em; }
+        .modal-buttons { display: flex; justify-content: flex-end; gap: 10px; margin-top: 10px; }
+        .modal-buttons button { padding: 10px 20px; border-radius: 8px; border: none; cursor: pointer; font-weight: 500; font-size: 0.9em; }
+        #cancel-print { background-color: #f1f5f9; color: var(--text-color); }
+        #confirm-print { background-color: var(--accent-color); color: white; }
+        
+        #print-fallback-details { display: none; }
+
+        @media (max-width: 768px) {
+            #shift-selector-page { padding: 0; }
+            .selector-container { 
+                width: 100%; min-height: 100vh; border-radius: 0; 
+                border-top: none; box-shadow: none; padding: 40px 20px; 
+                display: flex; flex-direction: column; justify-content: flex-start;
+            }
+            .selector-container h1 { font-size: 2em; }
+            .container { margin: 0; padding: 15px 10px; border-radius: 0; box-shadow: none; }
+            .header { padding: 8px 10px; justify-content: center; }
+            .header h1 { font-size: 1.1em; width: 100%; order: -1; }
+            .header-controls { width: 100%; justify-content: center; }
+            .summary-bar { gap: 5px; padding: 8px; }
+            .summary-item .count { font-size: 1.1em; }
+            .summary-item .label { font-size: 0.6em; }
+            .controls-bar { padding: 10px 0; margin-bottom: 15px; }
+            .filter-buttons button { padding: 5px 12px; font-size: 0.85em; }
+            #print-btn { padding: 6px 15px; font-size: 0.85em; }
+            .question-block { padding: 15px; margin-bottom: 20px; }
+            .question-block h3 { font-size: 1em; }
+        }
+
+        @media print {
+            body { font-size: 10pt; background-color: #fff !important; }
+            .top-sticky-bar, .controls-bar, #print-modal-overlay, #shift-selector-page, #back-to-main-btn { 
+                display: none !important; 
+            }
+            .container, .question-block { 
+                box-shadow: none !important; 
+                border-color: #ccc !important; 
+                margin: 10px 0;
+                padding: 15px;
+            }
+            #question-paper-page { display: block !important; }
+            
+            #print-fallback-details { 
+                display: block !important;
+                margin: 20px;
+                padding-bottom: 15px;
+                border-bottom: 2px solid #333;
+                font-family: sans-serif;
+                text-align: center; /* SUDHAR 3: Print Details Center Align */
+            }
+            #print-fallback-details p { margin: 4px 0; }
+            .question-block { page-break-inside: avoid; }
+            .options-list li.correct, .options-list li.incorrect, .options-list li.special {
+                -webkit-print-color-adjust: exact !important;
+                color-adjust: exact !important;
+            }
+            .options-list li.correct { background-color: var(--correct-bg) !important; color: var(--correct-text) !important; }
+            .options-list li.incorrect { background-color: var(--incorrect-bg) !important; color: var(--incorrect-text) !important; }
+            .options-list li.special { background-color: var(--special-bg) !important; color: var(--special-text) !important; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="print-fallback-details">
+        <h2 id="print-title"></h2>
+        <p><strong>नाम:</strong> <span id="print-name"></span></p>
+        <p><strong>रोल नंबर:</strong> <span id="print-roll"></span></p>
+        <p>
+            <strong>कुल प्रश्न:</strong> <span id="print-total"></span> | 
+            <strong>हल किए:</strong> <span id="print-attempted"></span> | 
+            <strong>सही:</strong> <span id="print-correct"></span> | 
+            <strong>गलत:</strong> <span id="print-incorrect"></span> | 
+            <strong>छोड़े (E):</strong> <span id="print-skipped"></span>
+        </p>
+        <p><strong>अंतिम सही प्रश्न:</strong> <span id="print-final-rq"></span> | <strong>RAW Marks:</strong> <span id="print-raw-marks"></span></p>
+    </div>
+
+    <div id="shift-selector-page">
+        <div class="selector-container">
+            <h1>4th Grade प्रश्न पत्र</h1>
+            <p>अपनी स्थिति जाँचे</p>
+            <div class="shift-selector">
+                <div class="shift-btn" data-shift="shift1"><div class="icon"><i class="fas fa-file-alt"></i></div><div class="text">1st Shift 19.09.2025</div></div>
+                <div class="shift-btn" data-shift="shift2"><div class="icon"><i class="fas fa-file-alt"></i></div><div class="text">2nd Shift 19.09.2025</div></div>
+                <div class="shift-btn" data-shift="shift3"><div class="icon"><i class="fas fa-file-alt"></i></div><div class="text">3rd Shift 20.09.2025</div></div>
+                <div class="shift-btn" data-shift="shift4"><div class="icon"><i class="fas fa-file-alt"></i></div><div class="text">4th Shift 20.09.2025</div></div>
+                <div class="shift-btn" data-shift="shift5"><div class="icon"><i class="fas fa-file-alt"></i></div><div class="text">5th Shift 21.09.2025</div></div>
+                <div class="shift-btn" data-shift="shift6"><div class="icon"><i class="fas fa-file-alt"></i></div><div class="text">6th Shift 21.09.2025</div></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="question-paper-page">
+        <div class="top-sticky-bar">
+            <div class="header">
+                 <button id="back-to-main-btn" style="display: none !important;">&larr; वापस जाएं</button>
+                 <h1 id="shift-title">Shift Title</h1>
+                <div class="header-controls">
+                    <label for="series-select">PAPER Code:</label>
+                    <select id="series-select"></select>
+                    <button id="toggle-summary-btn">Show Result</button>
+                </div>
+            </div>
+            <div class="summary-bar hidden">
+                <div id="total-item" class="summary-item"><div id="total-count" class="count">0</div><div class="label">Total Que.</div></div>
+                <div id="attempted-item" class="summary-item"><div id="attempted-count" class="count">0</div><div class="label">Attempt</div></div>
+                <div id="correct-item" class="summary-item"><div id="correct-count" class="count">0</div><div class="label">Right</div></div>
+                <div id="incorrect-item" class="summary-item"><div id="incorrect-count" class="count">0</div><div class="label">Wrong</div></div>
+                <div id="skipped-item" class="summary-item"><div id="skipped-count" class="count">0</div><div class="label">Skip (E)</div></div>
+                <div id="right-que-item" class="summary-item"><div id="right-que-value" class="count">0.00</div><div class="label">Final R.Q. </div></div>
+                <div id="raw-marks-item" class="summary-item"><div id="raw-marks-value" class="count">0.00</div><div class="label">RAW Marks</div></div>
+            </div>
+        </div>
+        <div class="container">
+            <div class="controls-bar">
+                <div class="filter-buttons">
+                    <button class="active" data-filter="all">All</button> <button data-filter="correct">Right</button> <button data-filter="incorrect">Wrong</button> <button data-filter="skipped">Skip (E)</button>
+                </div>
+                <button id="print-btn">Print</button>
+            </div>
+            <div id="questions-container"></div>
+        </div>
+        <div id="print-modal-overlay">
+            <div id="print-modal">
+                <h2>Print info</h2>
+                <label for="student-name">Name:</label>
+                <input type="text" id="student-name" placeholder="Your Name">
+                <label for="student-roll">Roll No.:</label>
+                <input type="text" id="student-roll" placeholder="Your Roll No.">
+                <div class="modal-buttons">
+                    <button id="cancel-print">Cancel</button> <button id="confirm-print">Print</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="questions-data.js"></script>
+    <script>
+        let currentShiftId = null, allQuestions = [], userAnswers = {}, currentSeries = '', activeFilter = 'all', currentShiftData = {};
+        const shiftSelectorPage = document.getElementById('shift-selector-page');
+        const questionPaperPage = document.getElementById('question-paper-page');
+        const seriesSelect = document.getElementById('series-select');
+
+        function showHomePage() {
+            shiftSelectorPage.style.display = 'flex';
+            questionPaperPage.style.display = 'none';
+            currentShiftId = null;
+            history.pushState({page: 'home'}, 'Home', window.location.pathname);
+        }
+
+        window.addEventListener('popstate', (event) => {
+            if (!event.state || event.state.page === 'home') {
+                showHomePage();
+            } else if (event.state.shift) {
+                loadShift(event.state.shift);
+            }
+        });
+
+        document.querySelectorAll('.shift-btn').forEach(b => b.addEventListener('click', () => loadShift(b.dataset.shift)));
+
+        function loadShift(shiftId) {
+            shiftSelectorPage.style.display = 'none';
+            questionPaperPage.style.display = 'flex';
+            currentShiftId = shiftId;
+            currentShiftData = allShiftData[shiftId];
+            allQuestions = currentShiftData.questions;
+            
+            document.getElementById('shift-title').textContent = currentShiftData.title;
+
+            seriesSelect.innerHTML = '';
+            const availableSeries = Object.keys(currentShiftData.seriesOrder || {});
+            if (availableSeries.length > 0) {
+                availableSeries.forEach(seriesKey => {
+                    const option = document.createElement('option');
+                    option.value = seriesKey;
+                    option.textContent = seriesKey;
+                    seriesSelect.appendChild(option);
+                });
+            }
+
+            userAnswers = JSON.parse(localStorage.getItem(`userAnswers_${shiftId}`)) || {};
+            
+            const savedSeries = localStorage.getItem(`currentSeries_${shiftId}`);
+            currentSeries = (savedSeries && availableSeries.includes(savedSeries)) ? savedSeries : availableSeries[0] || '';
+            seriesSelect.value = currentSeries;
+
+            activeFilter = 'all';
+            document.getElementById('toggle-summary-btn').textContent = 'Show Result';
+            document.querySelector('.summary-bar').classList.add('hidden');
+            
+            history.pushState({ shift: shiftId }, '', `#${shiftId}`);
+            displayQuestions(currentSeries, activeFilter);
+        }
+
+        function saveData() {
+            if (!currentShiftId) return;
+            localStorage.setItem(`userAnswers_${currentShiftId}`, JSON.stringify(userAnswers));
+            localStorage.setItem(`currentSeries_${currentShiftId}`, currentSeries);
+        }
+
+        function getQuestionStatus(qId) {
+            const uAns = userAnswers[qId];
+            if (!uAns) return 'unattempted';
+            if (uAns.startsWith('E)')) return 'skipped';
+            const qData = allQuestions.find(q => q.id === qId);
+            return uAns === qData.answer ? 'correct' : 'incorrect';
+        }
+
+        function updateSummary() {
+            let c = 0, i = 0, s = 0;
+            allQuestions.forEach(q => {
+                const st = getQuestionStatus(q.id);
+                if (st === 'correct') c++;
+                else if (st === 'incorrect') i++;
+                else if (st === 'skipped') s++;
+            });
+            const a = c + i + s;
+            document.getElementById('total-count').textContent = allQuestions.length;
+            document.getElementById('attempted-count').textContent = a;
+            document.getElementById('correct-count').textContent = c;
+            document.getElementById('incorrect-count').textContent = i;
+            document.getElementById('skipped-count').textContent = s;
+            const rQ = c - (i / 3);
+            const rM = rQ * 1.6666666;
+            document.getElementById('right-que-value').textContent = rQ.toFixed(3);
+            document.getElementById('raw-marks-value').textContent = rM.toFixed(3);
+        }
+        
+        function findQuestionPositions(qId) {
+            const qIndex = allQuestions.findIndex(q => q.id === qId);
+            let positions = [];
+            if (qIndex === -1 || !currentShiftData.seriesOrder) return "";
+            for (const series in currentShiftData.seriesOrder) {
+                const pos = currentShiftData.seriesOrder[series].indexOf(qIndex + 1);
+                if (pos !== -1) {
+                    positions.push(`Series ${series}: #${pos + 1}`);
+                }
+            }
+            return positions.join(' | ');
+        }
+        
+        function displayQuestions(series, filter = 'all') {
+            const qC = document.getElementById('questions-container');
+            qC.innerHTML = '';
+            currentSeries = series;
+            updateSummary();
+            updateActiveFilterButton(filter);
+
+            const seriesOrder = currentShiftData.seriesOrder || {};
+            const qIndices = seriesOrder[series] || [];
+            
+            let displayedCount = 0;
+            qIndices.forEach((qIndex, displayNum) => {
+                const qData = allQuestions[qIndex - 1];
+                if (!qData) return;
+
+                const status = getQuestionStatus(qData.id);
+                if (filter !== 'all' && filter !== status) return;
+                
+                displayedCount++;
+                const qB = document.createElement('div');
+                qB.className = 'question-block';
+                qB.dataset.questionId = qData.id;
+
+                const iB = document.createElement('div');
+                iB.className = 'question-info-bar';
+                iB.textContent = findQuestionPositions(qData.id);
+                qB.appendChild(iB);
+
+                const qT = document.createElement('h3');
+                qT.textContent = `प्रश्न ${displayNum + 1}: ${qData.question}`;
+                qB.appendChild(qT);
+
+                const oL = document.createElement('ul');
+                oL.className = 'options-list';
+                
+                let orderedOptions;
+                const lastOption = qData.options[qData.options.length-1];
+                let firstFourOptions = qData.options.slice(0, -1);
+                const optionOrderMap = currentShiftData.seriesOptionOrder?.[qData.id]?.[series];
+
+                if(optionOrderMap){
+                    orderedOptions = optionOrderMap.map(index => firstFourOptions[index]);
+                } else {
+                    orderedOptions = firstFourOptions;
+                }
+                orderedOptions.push(lastOption);
+
+                orderedOptions.forEach(oT => {
+                    const oI = document.createElement('li');
+                    oI.textContent = oT;
+                    const uA = userAnswers[qData.id];
+                    if (uA && uA === oT) {
+                        if (status === 'correct') oI.classList.add('correct');
+                        else if (status === 'incorrect') oI.classList.add('incorrect');
+                        else if (status === 'skipped') oI.classList.add('special');
+                    }
+                    oL.appendChild(oI);
+                });
+                qB.appendChild(oL);
+
+                // SUDHAR 1: Answer ab page load par show hoga agar pehle se answered hai
+                if (status === 'correct' || status === 'incorrect' || status === 'skipped') {
+                    const aD = document.createElement('div');
+                    aD.className = 'correct-answer-display';
+                    aD.innerHTML = `Correct Ans. is - <strong>${qData.answer}</strong>`;
+                    qB.appendChild(aD);
+                }
+
+                qC.appendChild(qB);
+                
+                oL.addEventListener('click', (e) => {
+                    if (e.target.tagName === 'LI') {
+                        userAnswers[qData.id] = e.target.textContent;
+                        saveData();
+                        // Poora page refresh karke naye result dikhaye
+                        displayQuestions(currentSeries, activeFilter);
+                    }
+                });
+            });
+
+            if (displayedCount === 0) {
+                qC.innerHTML = `<p style="text-align:center; color: var(--light-text);">इस फ़िल्टर में कोई प्रश्न नहीं है।</p>`;
+            }
+        }
+        
+        function updateActiveFilterButton(filter) {
+            document.querySelectorAll('.filter-buttons button').forEach(btn => btn.classList.remove('active'));
+            document.querySelector(`.filter-buttons button[data-filter="${filter}"]`).classList.add('active');
+        }
+
+        seriesSelect.addEventListener('change', (e) => {
+            displayQuestions(e.target.value, activeFilter);
+            saveData();
+        });
+
+        document.querySelectorAll('.filter-buttons button').forEach(b => b.addEventListener('click', () => {
+            activeFilter = b.dataset.filter;
+            displayQuestions(currentSeries, activeFilter);
+        }));
+
+        document.getElementById('toggle-summary-btn').addEventListener('click', (e) => {
+            const sB = document.querySelector('.summary-bar');
+            sB.classList.toggle('hidden');
+            e.target.textContent = sB.classList.contains('hidden') ? 'Show Result' : 'Hide Result';
+        });
+
+        function triggerPrint(name, rollNo) {
+            document.getElementById('print-title').textContent = document.getElementById('shift-title').textContent;
+            document.getElementById('print-name').textContent = name;
+            document.getElementById('print-roll').textContent = rollNo;
+            document.getElementById('print-total').textContent = document.getElementById('total-count').textContent;
+            document.getElementById('print-attempted').textContent = document.getElementById('attempted-count').textContent;
+            document.getElementById('print-correct').textContent = document.getElementById('correct-count').textContent;
+            document.getElementById('print-incorrect').textContent = document.getElementById('incorrect-count').textContent;
+            document.getElementById('print-skipped').textContent = document.getElementById('skipped-count').textContent;
+            document.getElementById('print-final-rq').textContent = document.getElementById('right-que-value').textContent;
+            document.getElementById('print-raw-marks').textContent = document.getElementById('raw-marks-value').textContent;
+
+            setTimeout(() => { window.print(); }, 250);
+        }
+
+        const printBtn = document.getElementById('print-btn');
+        const pMO = document.getElementById('print-modal-overlay');
+        printBtn.addEventListener('click', () => { pMO.style.display = 'flex'; });
+        document.getElementById('cancel-print').addEventListener('click', () => { pMO.style.display = 'none'; });
+        document.getElementById('confirm-print').addEventListener('click', () => {
+            const name = document.getElementById('student-name').value;
+            const rollNo = document.getElementById('student-roll').value;
+            if (!name || !rollNo) {
+                alert("नाम और रोल नंबर दोनों आवश्यक हैं।");
+                return;
+            }
+            pMO.style.display = 'none';
+            triggerPrint(name, rollNo);
+        });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            if (window.location.hash) {
+                const shiftIdFromUrl = window.location.hash.substring(1);
+                if (shiftIdFromUrl && allShiftData[shiftIdFromUrl]) {
+                    loadShift(shiftIdFromUrl);
+                }
+            } else {
+                showHomePage();
+            }
+        });
+    </script>
+</body>
+</html>
