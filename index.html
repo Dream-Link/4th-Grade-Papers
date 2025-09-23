@@ -58,6 +58,7 @@
         #incorrect-item { background-color: var(--incorrect-bg); color: var(--incorrect-text); }
         #skipped-item { background-color: var(--special-bg); color: var(--special-text); }
         #right-que-item, #raw-marks-item { background-color: #e0f2fe; color: #0c4a6e; }
+        #deleted-item { background-color: #e5e7eb; color: #4b5563; }
         
         .container { max-width: 1100px; margin: 25px auto; background-color: var(--container-bg); padding: 25px 30px; border-radius: 16px; box-shadow: 0 5px 25px var(--shadow-color); }
         
@@ -67,7 +68,7 @@
         #print-btn { background-color: var(--accent-color); color: white; border: none; padding: 8px 18px; border-radius: 8px; cursor: pointer; font-weight: 500; transition: background-color 0.2s; }
         #print-btn:hover { background-color: var(--accent-dark); }
 
-        .question-block { margin-bottom: 30px; border: 1px solid var(--border-color); border-radius: 12px; padding: 20px; }
+        .question-block { margin-bottom: 30px; border: 1px solid var(--border-color); border-radius: 12px; padding: 20px; transition: background-color 0.3s; }
         .question-info-bar { font-size: 0.8em; color: var(--light-text); margin-bottom: 15px; display: block; background-color: #f8fafc; padding: 8px 12px; border-radius: 8px; border: 1px solid var(--border-color); font-weight: 500; }
         .question-block h3 { margin: 0 0 15px 0; color: var(--header-color); font-size: 1.1em; }
         .options-list { list-style: none; padding: 0; display: flex; flex-direction: column; gap: 8px; }
@@ -101,7 +102,7 @@
             .header { padding: 8px 10px; justify-content: center; }
             .header h1 { font-size: 1.1em; width: 100%; order: -1; }
             .header-controls { width: 100%; justify-content: center; }
-            .summary-bar { gap: 5px; padding: 8px; }
+            .summary-bar { gap: 5px; padding: 8px; grid-template-columns: repeat(4, 1fr); }
             .summary-item .count { font-size: 1.1em; }
             .summary-item .label { font-size: 0.6em; }
             .controls-bar { padding: 10px 0; margin-bottom: 15px; }
@@ -134,7 +135,6 @@
             #print-fallback-details p { margin: 4px 0; }
             #print-fallback-details h2 { text-align: center; }
 
-            /* --- ⭐ यह नया कोड है ⭐ --- */
             #print-series-box {
                 float: right;
                 border: 2px solid #000;
@@ -143,9 +143,8 @@
                 border-radius: 8px;
                 font-weight: bold;
                 font-size: 1.2em;
-                margin-top: -55px; /* रोल नंबर के बराबर लाने के लिए */
+                margin-top: -55px;
             }
-            /* --- ⭐ कोड का अंत ⭐ --- */
 
             .question-block { page-break-inside: avoid; }
             .options-list li.correct, .options-list li.incorrect, .options-list li.special {
@@ -170,9 +169,10 @@
             <strong>हल किए:</strong> <span id="print-attempted"></span> | 
             <strong>सही:</strong> <span id="print-correct"></span> | 
             <strong>गलत:</strong> <span id="print-incorrect"></span> | 
-            <strong>छोड़े (E):</strong> <span id="print-skipped"></span>
+            <strong>छोड़े (E):</strong> <span id="print-skipped"></span> |
+            <strong>हटाए गए:</strong> <span id="print-deleted"></span>
         </p>
-        <p><strong>अंतिम सही प्रश्न:</strong> <span id="print-final-rq"></span> | <strong>RAW Marks:</strong> <span id="print-raw-marks"></span></p>
+        <p><strong>अंतिम सही प्रश्न (Final R.Q.):</strong> <span id="print-final-rq"></span> | <strong>RAW Marks:</strong> <span id="print-raw-marks"></span></p>
     </div>
 
     <div id="shift-selector-page">
@@ -207,6 +207,7 @@
                 <div id="correct-item" class="summary-item"><div id="correct-count" class="count">0</div><div class="label">Right</div></div>
                 <div id="incorrect-item" class="summary-item"><div id="incorrect-count" class="count">0</div><div class="label">Wrong</div></div>
                 <div id="skipped-item" class="summary-item"><div id="skipped-count" class="count">0</div><div class="label">Skip (E)</div></div>
+                <div id="deleted-item" class="summary-item"><div id="deleted-count" class="count">0</div><div class="label">Deleted</div></div>
                 <div id="right-que-item" class="summary-item"><div id="right-que-value" class="count">0.00</div><div class="label">Final R.Q. </div></div>
                 <div id="raw-marks-item" class="summary-item"><div id="raw-marks-value" class="count">0.00</div><div class="label">RAW Marks</div></div>
             </div>
@@ -253,7 +254,7 @@
             if (!event.state || event.state.page === 'home') {
                 showHomePage();
             } else if (event.state.shift) {
-                loadShift(event.state.shift, false); // false to avoid pushing state again
+                loadShift(event.state.shift, false);
             }
         });
 
@@ -311,8 +312,12 @@
         }
 
         function updateSummary() {
-            let c = 0, i = 0, s = 0;
+            let c = 0, i = 0, s = 0, d = 0;
             allQuestions.forEach(q => {
+                if (q.deleted) {
+                    d++;
+                    return;
+                }
                 const st = getQuestionStatus(q.id);
                 if (st === 'correct') c++;
                 else if (st === 'incorrect') i++;
@@ -324,10 +329,28 @@
             document.getElementById('correct-count').textContent = c;
             document.getElementById('incorrect-count').textContent = i;
             document.getElementById('skipped-count').textContent = s;
+            document.getElementById('deleted-count').textContent = d;
+            
+            // --- ⭐ बदला हुआ कोड (गणित और फॉर्मेटिंग) ---
+
+            // Final R.Q. की गणना
             const rQ = c - (i / 3);
-            const rM = rQ * 2;
-            document.getElementById('right-que-value').textContent = rQ.toFixed(3);
-            document.getElementById('raw-marks-value').textContent = rM.toFixed(3);
+
+            // RAW Marks की नई गणना
+            const totalValidQuestions = allQuestions.length - d;
+            let rM = 0;
+            if (totalValidQuestions > 0) {
+                rM = rQ * (200 / totalValidQuestions);
+            }
+
+            // Final R.Q. को फॉर्मेट करने का नया तरीका
+            // अगर पूर्णांक है तो वैसे ही दिखाओ, नहीं तो 2 दशमलव तक
+            const formattedRQ = (rQ % 1 === 0) ? rQ : rQ.toFixed(2);
+
+            document.getElementById('right-que-value').textContent = formattedRQ;
+            document.getElementById('raw-marks-value').textContent = rM.toFixed(2); // RAW marks को 2 दशमलव तक दिखाया
+
+            // --- ⭐ बदलाव का अंत ---
         }
         
         function findQuestionPositions(qId) {
@@ -359,23 +382,38 @@
             qIndices.forEach((qIndex, displayNum) => {
                 const qData = allQuestions[qIndex - 1];
                 if (!qData) return;
+                
+                const qB = document.createElement('div');
+                qB.className = 'question-block';
+                qB.dataset.questionId = qData.id;
+                
+                const qT = document.createElement('h3');
+                qT.textContent = `प्रश्न ${displayNum + 1}: ${qData.question}`;
+                qB.appendChild(qT);
+
+                // --- ⭐ बदला हुआ कोड (डिलीट प्रश्न दिखाने के लिए) ---
+                if (qData.deleted) {
+                    qB.style.backgroundColor = '#f3f4f6';
+                    qB.style.opacity = '0.7';
+                    const deletedMsg = document.createElement('p');
+                    deletedMsg.textContent = 'यह प्रश्न हटा दिया गया है। (This question has been deleted.)';
+                    deletedMsg.style.color = '#dc2626';
+                    deletedMsg.style.fontWeight = 'bold';
+                    qB.appendChild(deletedMsg);
+                    qC.appendChild(qB);
+                    return; // अगले प्रश्न पर जाएं
+                }
+                // --- ⭐ बदलाव का अंत ---
 
                 const status = getQuestionStatus(qData.id);
                 if (filter !== 'all' && filter !== status) return;
                 
                 displayedCount++;
-                const qB = document.createElement('div');
-                qB.className = 'question-block';
-                qB.dataset.questionId = qData.id;
 
                 const iB = document.createElement('div');
                 iB.className = 'question-info-bar';
                 iB.textContent = findQuestionPositions(qData.id);
                 qB.appendChild(iB);
-
-                const qT = document.createElement('h3');
-                qT.textContent = `प्रश्न ${displayNum + 1}: ${qData.question}`;
-                qB.appendChild(qT);
 
                 const oL = document.createElement('ul');
                 oL.className = 'options-list';
@@ -388,9 +426,7 @@
                 } else {
                     shuffledOptionTexts = optionTexts;
                 }
-                const finalOptions = shuffledOptionTexts.map((text, index) => {
-                    return `${optionLabels[index]} ${text}`;
-                });
+                const finalOptions = shuffledOptionTexts.map((text, index) => `${optionLabels[index]} ${text}`);
 
                 finalOptions.forEach(oT => {
                     const oI = document.createElement('li');
@@ -431,7 +467,7 @@
                 });
             });
 
-            if (displayedCount === 0) {
+            if (displayedCount === 0 && qC.innerHTML === '') {
                 qC.innerHTML = `<p style="text-align:center; color: var(--light-text);">इस फ़िल्टर में कोई प्रश्न नहीं है।</p>`;
             }
         }
@@ -457,13 +493,10 @@
             e.target.textContent = sB.classList.contains('hidden') ? 'Show Result' : 'Hide Result';
         });
 
-        // --- ⭐ इस फंक्शन में बदलाव किया गया है ⭐ ---
         function triggerPrint(name, rollNo) {
             document.getElementById('print-title').textContent = document.getElementById('shift-title').textContent;
             document.getElementById('print-name').textContent = name;
             document.getElementById('print-roll').textContent = rollNo;
-            
-            // यह लाइन जोड़ी गई है
             document.getElementById('print-series').textContent = seriesSelect.value;
             
             document.getElementById('print-total').textContent = document.getElementById('total-count').textContent;
@@ -471,12 +504,13 @@
             document.getElementById('print-correct').textContent = document.getElementById('correct-count').textContent;
             document.getElementById('print-incorrect').textContent = document.getElementById('incorrect-count').textContent;
             document.getElementById('print-skipped').textContent = document.getElementById('skipped-count').textContent;
+            document.getElementById('print-deleted').textContent = document.getElementById('deleted-count').textContent;
+            
             document.getElementById('print-final-rq').textContent = document.getElementById('right-que-value').textContent;
             document.getElementById('print-raw-marks').textContent = document.getElementById('raw-marks-value').textContent;
 
             setTimeout(() => { window.print(); }, 250);
         }
-        // --- ⭐ बदलाव का अंत ⭐ ---
 
         const printBtn = document.getElementById('print-btn');
         const pMO = document.getElementById('print-modal-overlay');
