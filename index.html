@@ -70,7 +70,7 @@
 
         .question-block { margin-bottom: 30px; border: 1px solid var(--border-color); border-radius: 12px; padding: 20px; transition: background-color 0.3s; }
         .question-info-bar { font-size: 0.8em; color: var(--light-text); margin-bottom: 15px; display: block; background-color: #f8fafc; padding: 8px 12px; border-radius: 8px; border: 1px solid var(--border-color); font-weight: 500; }
-        .question-block h3 { margin: 0 0 15px 0; color: var(--header-color); font-size: 1.1em; }
+        .question-block h3 { margin: 10px 0 15px 0; color: var(--header-color); font-size: 1.1em; }
         .options-list { list-style: none; padding: 0; display: flex; flex-direction: column; gap: 8px; }
         .options-list li { border: 1px solid var(--border-color); padding: 10px 15px; border-radius: 8px; cursor: pointer; transition: all 0.2s; }
         .options-list li.correct, .options-list li.incorrect, .options-list li.special { font-weight: 500; }
@@ -112,6 +112,7 @@
             .question-block h3 { font-size: 1em; }
         }
 
+        /* --- ⭐ प्रिंट के स्टाइल में बदलाव --- */
         @media print {
             body { font-size: 10pt; background-color: #fff !important; }
             .top-sticky-bar, .controls-bar, #print-modal-overlay, #shift-selector-page, #back-to-main-btn { 
@@ -120,8 +121,9 @@
             .container, .question-block { 
                 box-shadow: none !important; 
                 border-color: #ccc !important; 
-                margin: 10px 0;
-                padding: 15px;
+                margin: 0;
+                padding: 0;
+                border: none;
             }
             #question-paper-page { display: block !important; }
             
@@ -131,14 +133,15 @@
                 padding-bottom: 15px;
                 border-bottom: 2px solid #333;
                 font-family: sans-serif;
+                text-align: center; /* सेंटर अलाइनमेंट */
             }
             #print-fallback-details p { margin: 4px 0; }
             #print-fallback-details h2 { text-align: center; }
 
             #print-series-box {
                 float: right;
-                border: 2px solid #000;
-                color: #000;
+                border: 2px solid red; /* लाल बॉर्डर */
+                color: red; /* लाल टेक्स्ट */
                 padding: 8px 15px;
                 border-radius: 8px;
                 font-weight: bold;
@@ -146,7 +149,31 @@
                 margin-top: -55px;
             }
 
-            .question-block { page-break-inside: avoid; }
+            .question-block { 
+                page-break-inside: avoid; 
+                padding: 8px;
+                margin-bottom: 10px !important;
+                font-size: 9pt;
+                border-bottom: 1px dotted #999 !important;
+            }
+            .question-block h3 {
+                font-size: 10pt;
+                margin-top: 5px;
+                margin-bottom: 8px;
+            }
+            .options-list li {
+                padding: 5px 8px;
+                font-size: 9pt;
+                margin-bottom: 2px;
+            }
+            .question-info-bar, .correct-answer-display {
+                font-size: 8pt;
+                padding: 4px 6px;
+                margin-bottom: 5px;
+            }
+            .question-info-bar { margin-top: 0; }
+
+
             .options-list li.correct, .options-list li.incorrect, .options-list li.special {
                 -webkit-print-color-adjust: exact !important;
                 color-adjust: exact !important;
@@ -165,7 +192,8 @@
         <p><strong>नाम:</strong> <span id="print-name"></span></p>
         <p><strong>रोल नंबर:</strong> <span id="print-roll"></span></p>
         <p>
-            <strong>कुल प्रश्न:</strong> <span id="print-total"></span> | 
+            <strong>कुल प्रश्न:</strong> <span id="print-full-total"></span> |
+            <strong>वैध प्रश्न:</strong> <span id="print-valid-total"></span> | 
             <strong>हल किए:</strong> <span id="print-attempted"></span> | 
             <strong>सही:</strong> <span id="print-correct"></span> | 
             <strong>गलत:</strong> <span id="print-incorrect"></span> | 
@@ -202,7 +230,7 @@
                 </div>
             </div>
             <div class="summary-bar hidden">
-                <div id="total-item" class="summary-item"><div id="total-count" class="count">0</div><div class="label">Total Que.</div></div>
+                <div id="total-item" class="summary-item"><div id="total-count" class="count">0</div><div class="label">Valid Que.</div></div>
                 <div id="attempted-item" class="summary-item"><div id="attempted-count" class="count">0</div><div class="label">Attempt</div></div>
                 <div id="correct-item" class="summary-item"><div id="correct-count" class="count">0</div><div class="label">Right</div></div>
                 <div id="incorrect-item" class="summary-item"><div id="incorrect-count" class="count">0</div><div class="label">Wrong</div></div>
@@ -324,7 +352,9 @@
                 else if (st === 'skipped') s++;
             });
             const a = c + i + s;
-            document.getElementById('total-count').textContent = allQuestions.length;
+            const totalValidQuestions = allQuestions.length - d;
+            
+            document.getElementById('total-count').textContent = totalValidQuestions; // ⭐ बदला हुआ
             document.getElementById('attempted-count').textContent = a;
             document.getElementById('correct-count').textContent = c;
             document.getElementById('incorrect-count').textContent = i;
@@ -333,7 +363,6 @@
             
             const rQ = c - (i / 3);
 
-            const totalValidQuestions = allQuestions.length - d;
             let rM = 0;
             if (totalValidQuestions > 0) {
                 rM = rQ * (200 / totalValidQuestions);
@@ -358,6 +387,7 @@
             return positions.join(' | ');
         }
         
+        // --- ⭐ इस फंक्शन में काफी बदलाव किए गए हैं ---
         function displayQuestions(series, filter = 'all') {
             const qC = document.getElementById('questions-container');
             qC.innerHTML = '';
@@ -374,44 +404,31 @@
             qIndices.forEach((qIndex, displayNum) => {
                 const qData = allQuestions[qIndex - 1];
                 if (!qData) return;
+
+                const isDeleted = qData.deleted === true;
+                const status = isDeleted ? 'deleted' : getQuestionStatus(qData.id);
+
+                if (filter !== 'all' && filter !== status && !(filter === 'skipped' && status === 'deleted')) {
+                     if(!isDeleted || (filter !== 'all' && filter !== 'skipped' && filter !== status)){
+                        if(filter !== 'all' && filter !== status) return;
+                     }
+                }
                 
                 const qB = document.createElement('div');
                 qB.className = 'question-block';
                 qB.dataset.questionId = qData.id;
                 
-                const qT = document.createElement('h3');
-                qT.textContent = `प्रश्न ${displayNum + 1}: ${qData.question}`;
-                qB.appendChild(qT);
-
                 const iB = document.createElement('div');
                 iB.className = 'question-info-bar';
                 iB.textContent = findQuestionPositions(qData.id);
                 qB.appendChild(iB);
+
+                const qT = document.createElement('h3');
+                qT.textContent = `प्रश्न ${displayNum + 1}: ${qData.question}`;
+                qB.appendChild(qT);
                 
                 const oL = document.createElement('ul');
                 oL.className = 'options-list';
-
-                // --- ⭐ बदला हुआ कोड ---
-                if (qData.deleted) {
-                    qB.style.backgroundColor = '#f3f4f6';
-                    qB.style.opacity = '0.7';
-                    qB.style.pointerEvents = 'none'; // ताकि ऑप्शन पर क्लिक न हो सके
-
-                    const deletedAnsDisplay = document.createElement('div');
-                    deletedAnsDisplay.className = 'correct-answer-display';
-                    deletedAnsDisplay.innerHTML = 'Status: <strong style="color: red;">Delete</strong>';
-                    
-                    qB.appendChild(oL); // खाली ऑप्शन लिस्ट जोड़ें ताकि लेआउट बना रहे
-                    qB.appendChild(deletedAnsDisplay);
-                    qC.appendChild(qB);
-                    return; 
-                }
-                // --- ⭐ बदलाव का अंत ---
-
-                const status = getQuestionStatus(qData.id);
-                if (filter !== 'all' && filter !== status) return;
-                
-                displayedCount++;
                 
                 const optionTexts = qData.options.map(opt => opt.substring(3));
                 let shuffledOptionTexts;
@@ -436,8 +453,19 @@
                     oL.appendChild(oI);
                 });
                 qB.appendChild(oL);
-                
-                if (status === 'correct' || status === 'incorrect' || status === 'skipped') {
+
+                if (isDeleted) {
+                    qB.style.backgroundColor = '#f3f4f6';
+                    qB.style.opacity = '0.8';
+                    oL.style.pointerEvents = 'none';
+                    oL.style.opacity = '0.6';
+
+                    const deletedAnsDisplay = document.createElement('div');
+                    deletedAnsDisplay.className = 'correct-answer-display';
+                    deletedAnsDisplay.innerHTML = 'Status: <strong style="color: red;">Delete</strong>';
+                    qB.appendChild(deletedAnsDisplay);
+                }
+                else if (status === 'correct' || status === 'incorrect' || status === 'skipped') {
                     const aD = document.createElement('div');
                     aD.className = 'correct-answer-display';
                     const correctAnswerText = qData.answer.substring(3);
@@ -462,7 +490,7 @@
                 });
             });
 
-            if (displayedCount === 0 && qC.innerHTML === '') {
+            if (qC.innerHTML === '') {
                 qC.innerHTML = `<p style="text-align:center; color: var(--light-text);">इस फ़िल्टर में कोई प्रश्न नहीं है।</p>`;
             }
         }
@@ -494,7 +522,9 @@
             document.getElementById('print-roll').textContent = rollNo;
             document.getElementById('print-series').textContent = seriesSelect.value;
             
-            document.getElementById('print-total').textContent = document.getElementById('total-count').textContent;
+            document.getElementById('print-full-total').textContent = allQuestions.length;
+            document.getElementById('print-valid-total').textContent = document.getElementById('total-count').textContent;
+
             document.getElementById('print-attempted').textContent = document.getElementById('attempted-count').textContent;
             document.getElementById('print-correct').textContent = document.getElementById('correct-count').textContent;
             document.getElementById('print-incorrect').textContent = document.getElementById('incorrect-count').textContent;
