@@ -6,7 +6,7 @@
     <title>4th Grade Check Status 🖊... MP Salodiya</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family/Noto+Sans+Devanagari:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <style>
         :root {
@@ -130,7 +130,7 @@
                 padding-bottom: 15px;
                 border-bottom: 2px solid #333;
                 font-family: sans-serif;
-                text-align: center; /* SUDHAR 3: Print Details Center Align */
+                text-align: center;
             }
             #print-fallback-details p { margin: 4px 0; }
             .question-block { page-break-inside: avoid; }
@@ -178,7 +178,7 @@
     <div id="question-paper-page">
         <div class="top-sticky-bar">
             <div class="header">
-                 <button id="back-to-main-btn" style="display: none !important;">&larr; वापस जाएं</button>
+                 <button id="back-to-main-btn" onclick="showHomePage()" style="background: none; border: none; font-size: 1.2em; cursor: pointer;">&larr; वापस जाएं</button>
                  <h1 id="shift-title">Shift Title</h1>
                 <div class="header-controls">
                     <label for="series-select">PAPER Code:</label>
@@ -231,19 +231,20 @@
             questionPaperPage.style.display = 'none';
             currentShiftId = null;
             history.pushState({page: 'home'}, 'Home', window.location.pathname);
+            window.location.hash = '';
         }
 
         window.addEventListener('popstate', (event) => {
             if (!event.state || event.state.page === 'home') {
                 showHomePage();
             } else if (event.state.shift) {
-                loadShift(event.state.shift);
+                loadShift(event.state.shift, false); // false to avoid pushing state again
             }
         });
 
-        document.querySelectorAll('.shift-btn').forEach(b => b.addEventListener('click', () => loadShift(b.dataset.shift)));
+        document.querySelectorAll('.shift-btn').forEach(b => b.addEventListener('click', () => loadShift(b.dataset.shift, true)));
 
-        function loadShift(shiftId) {
+        function loadShift(shiftId, shouldPushState = true) {
             shiftSelectorPage.style.display = 'none';
             questionPaperPage.style.display = 'flex';
             currentShiftId = shiftId;
@@ -273,7 +274,9 @@
             document.getElementById('toggle-summary-btn').textContent = 'Show Result';
             document.querySelector('.summary-bar').classList.add('hidden');
             
-            history.pushState({ shift: shiftId }, '', `#${shiftId}`);
+            if (shouldPushState) {
+               history.pushState({ shift: shiftId }, '', `#${shiftId}`);
+            }
             displayQuestions(currentSeries, activeFilter);
         }
 
@@ -284,12 +287,18 @@
         }
 
         function getQuestionStatus(qId) {
-            const uAns = userAnswers[qId];
-            if (!uAns) return 'unattempted';
-            if (uAns.startsWith('E)')) return 'skipped';
-            const qData = allQuestions.find(q => q.id === qId);
-            return uAns === qData.answer ? 'correct' : 'incorrect';
-        }
+    const uAnsText = userAnswers[qId]; // यह पहले से ही बिना A) B) के है
+    if (!uAnsText) return 'unattempted';
+
+    // अनुत्तरित प्रश्न को उसके टेक्स्ट से पहचानें
+    if (uAnsText === "अनुत्तरित प्रश्न" || uAnsText === "Question not attempted") return 'skipped';
+    
+    const qData = allQuestions.find(q => q.id === qId);
+    // सही उत्तर में से भी A), B) हटाकर तुलना करें
+    const correctAnswerText = qData.answer.substring(3);
+
+    return uAnsText === correctAnswerText ? 'correct' : 'incorrect';
+}
 
         function updateSummary() {
             let c = 0, i = 0, s = 0;
@@ -306,7 +315,7 @@
             document.getElementById('incorrect-count').textContent = i;
             document.getElementById('skipped-count').textContent = s;
             const rQ = c - (i / 3);
-            const rM = rQ * 1.6666666;
+            const rM = rQ * 2; // Assuming 2 marks per question
             document.getElementById('right-que-value').textContent = rQ.toFixed(3);
             document.getElementById('raw-marks-value').textContent = rM.toFixed(3);
         }
@@ -325,89 +334,102 @@
         }
         
         function displayQuestions(series, filter = 'all') {
-            const qC = document.getElementById('questions-container');
-            qC.innerHTML = '';
-            currentSeries = series;
-            updateSummary();
-            updateActiveFilterButton(filter);
+    const qC = document.getElementById('questions-container');
+    qC.innerHTML = '';
+    currentSeries = series;
+    updateSummary();
+    updateActiveFilterButton(filter);
 
-            const seriesOrder = currentShiftData.seriesOrder || {};
-            const qIndices = seriesOrder[series] || [];
-            
-            let displayedCount = 0;
-            qIndices.forEach((qIndex, displayNum) => {
-                const qData = allQuestions[qIndex - 1];
-                if (!qData) return;
+    const seriesOrder = currentShiftData.seriesOrder || {};
+    const qIndices = seriesOrder[series] || Array.from({length: allQuestions.length}, (_, i) => i + 1);
+    
+    const optionLabels = ['A)', 'B)', 'C)', 'D)', 'E)']; // <<< यह स्टैटिक लेबल हैं
 
-                const status = getQuestionStatus(qData.id);
-                if (filter !== 'all' && filter !== status) return;
-                
-                displayedCount++;
-                const qB = document.createElement('div');
-                qB.className = 'question-block';
-                qB.dataset.questionId = qData.id;
+    let displayedCount = 0;
+    qIndices.forEach((qIndex, displayNum) => {
+        const qData = allQuestions[qIndex - 1];
+        if (!qData) return;
 
-                const iB = document.createElement('div');
-                iB.className = 'question-info-bar';
-                iB.textContent = findQuestionPositions(qData.id);
-                qB.appendChild(iB);
+        const status = getQuestionStatus(qData.id);
+        if (filter !== 'all' && filter !== status) return;
+        
+        displayedCount++;
+        const qB = document.createElement('div');
+        qB.className = 'question-block';
+        qB.dataset.questionId = qData.id;
 
-                const qT = document.createElement('h3');
-                qT.textContent = `प्रश्न ${displayNum + 1}: ${qData.question}`;
-                qB.appendChild(qT);
+        const iB = document.createElement('div');
+        iB.className = 'question-info-bar';
+        iB.textContent = findQuestionPositions(qData.id);
+        qB.appendChild(iB);
 
-                const oL = document.createElement('ul');
-                oL.className = 'options-list';
-                
-                let orderedOptions;
-                const lastOption = qData.options[qData.options.length-1];
-                let firstFourOptions = qData.options.slice(0, -1);
-                const optionOrderMap = currentShiftData.seriesOptionOrder?.[qData.id]?.[series];
+        const qT = document.createElement('h3');
+        qT.textContent = `प्रश्न ${displayNum + 1}: ${qData.question}`;
+        qB.appendChild(qT);
 
-                if(optionOrderMap){
-                    orderedOptions = optionOrderMap.map(index => firstFourOptions[index]);
-                } else {
-                    orderedOptions = firstFourOptions;
-                }
-                orderedOptions.push(lastOption);
+        const oL = document.createElement('ul');
+        oL.className = 'options-list';
+        
+        // --- विकल्पों का क्रम बदलने का नया और सही लॉजिक ---
+        // 1. ऑप्शन से "A) " हटाकर सिर्फ टेक्स्ट निकालें
+        const optionTexts = qData.options.map(opt => opt.substring(3));
 
-                orderedOptions.forEach(oT => {
-                    const oI = document.createElement('li');
-                    oI.textContent = oT;
-                    const uA = userAnswers[qData.id];
-                    if (uA && uA === oT) {
-                        if (status === 'correct') oI.classList.add('correct');
-                        else if (status === 'incorrect') oI.classList.add('incorrect');
-                        else if (status === 'skipped') oI.classList.add('special');
-                    }
-                    oL.appendChild(oI);
-                });
-                qB.appendChild(oL);
-
-                // SUDHAR 1: Answer ab page load par show hoga agar pehle se answered hai
-                if (status === 'correct' || status === 'incorrect' || status === 'skipped') {
-                    const aD = document.createElement('div');
-                    aD.className = 'correct-answer-display';
-                    aD.innerHTML = `Correct Ans. is - <strong>${qData.answer}</strong>`;
-                    qB.appendChild(aD);
-                }
-
-                qC.appendChild(qB);
-                
-                oL.addEventListener('click', (e) => {
-                    if (e.target.tagName === 'LI') {
-                        userAnswers[qData.id] = e.target.textContent;
-                        saveData();
-                        // Poora page refresh karke naye result dikhaye
-                        displayQuestions(currentSeries, activeFilter);
-                    }
-                });
-            });
-
-            if (displayedCount === 0) {
-                qC.innerHTML = `<p style="text-align:center; color: var(--light-text);">इस फ़िल्टर में कोई प्रश्न नहीं है।</p>`;
-            }
+        // 2. सिर्फ टेक्स्ट को शफल करें
+        let shuffledOptionTexts;
+        const optionOrder = currentShiftData.seriesOptionOrder?.[series];
+        if (optionOrder) {
+            shuffledOptionTexts = optionOrder.map(index => optionTexts[index]);
+        } else {
+            shuffledOptionTexts = optionTexts;
         }
+
+        // 3. शफल किए हुए टेक्स्ट के आगे A), B) ... वापस जोड़ें
+        const finalOptions = shuffledOptionTexts.map((text, index) => {
+            return `${optionLabels[index]} ${text}`;
+        });
+        // --- लॉजिक का अंत ---
+
+        finalOptions.forEach(oT => {
+            const oI = document.createElement('li');
+            oI.textContent = oT;
+            
+            // यूजर का उत्तर भी अब बिना A), B) के चेक होगा
+            const userAnswerText = userAnswers[qData.id];
+            const currentOptionText = oT.substring(3);
+
+            if (userAnswerText && userAnswerText === currentOptionText) {
+                if (status === 'correct') oI.classList.add('correct');
+                else if (status === 'incorrect') oI.classList.add('incorrect');
+                else if (status === 'skipped') oI.classList.add('special');
+            }
+            oL.appendChild(oI);
+        });
+        qB.appendChild(oL);
+        
+        if (status === 'correct' || status === 'incorrect' || status === 'skipped') {
+            const aD = document.createElement('div');
+            aD.className = 'correct-answer-display';
+            aD.innerHTML = `Correct Ans. is - <strong>${qData.answer}</strong>`;
+            qB.appendChild(aD);
+        }
+
+        qC.appendChild(qB);
+        
+        oL.addEventListener('click', (e) => {
+            if (e.target.tagName === 'LI') {
+                // अब हम यूजर के उत्तर में से A), B) हटाकर सेव करेंगे
+                const selectedOptionText = e.target.textContent.substring(3);
+                userAnswers[qData.id] = selectedOptionText;
+                saveData();
+                displayQuestions(currentSeries, activeFilter);
+            }
+        });
+    });
+
+    if (displayedCount === 0) {
+        qC.innerHTML = `<p style="text-align:center; color: var(--light-text);">इस फ़िल्टर में कोई प्रश्न नहीं है।</p>`;
+    }
+}
         
         function updateActiveFilterButton(filter) {
             document.querySelectorAll('.filter-buttons button').forEach(btn => btn.classList.remove('active'));
