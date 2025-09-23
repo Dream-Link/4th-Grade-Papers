@@ -114,7 +114,19 @@
         @media print {
             body { font-size: 10pt; background-color: #fff !important; }
             .top-sticky-bar, .controls-bar, #print-modal-overlay, #shift-selector-page, #back-to-main-btn { 
-                display: none !important; 
+                display: none !important;
+                #print-series-box {
+  float: right; /* बॉक्स को पेज के दाईं ओर ले जाता है */
+  border: 2px solid red; /* 2px मोटा लाल रंग का बॉर्डर बनाता है */
+  color: red; /* बॉक्स के अंदर के टेक्स्ट को भी लाल करता है */
+  padding: 5px 10px; /* बॉक्स के अंदर ऊपर-नीचे 5px और दाएं-बाएं 10px की जगह देता है */
+  border-radius: 5px; /* बॉक्स के कोनों को हल्का सा गोल करता है */
+  font-weight: bold; /* टेक्स्ट को मोटा (Bold) करता है */
+  
+  /* यह बॉक्स को रोल नंबर के बराबर लाने के लिए ऊपर की ओर खिसकाता है। */
+  /* आप इस वैल्यू को अपने प्रिंट प्रीव्यू के हिसाब से कम-ज्यादा कर सकते हैं। */
+  margin-top: -45px; 
+}
             }
             .container, .question-block { 
                 box-shadow: none !important; 
@@ -148,9 +160,9 @@
 
     <div id="print-fallback-details">
         <h2 id="print-title"></h2>
-        <p><strong>नाम:</strong> <span id="print-name"></span></p>
         <p><strong>रोल नंबर:</strong> <span id="print-roll"></span></p>
-        <p>
+<div id="print-series-box"><strong>पेपर कोड:</strong> <span id="print-series"></span></div>
+        
             <strong>कुल प्रश्न:</strong> <span id="print-total"></span> | 
             <strong>हल किए:</strong> <span id="print-attempted"></span> | 
             <strong>सही:</strong> <span id="print-correct"></span> | 
