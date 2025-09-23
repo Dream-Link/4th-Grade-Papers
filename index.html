@@ -115,18 +115,6 @@
             body { font-size: 10pt; background-color: #fff !important; }
             .top-sticky-bar, .controls-bar, #print-modal-overlay, #shift-selector-page, #back-to-main-btn { 
                 display: none !important;
-                #print-series-box {
-  float: right; /* बॉक्स को पेज के दाईं ओर ले जाता है */
-  border: 2px solid red; /* 2px मोटा लाल रंग का बॉर्डर बनाता है */
-  color: red; /* बॉक्स के अंदर के टेक्स्ट को भी लाल करता है */
-  padding: 5px 10px; /* बॉक्स के अंदर ऊपर-नीचे 5px और दाएं-बाएं 10px की जगह देता है */
-  border-radius: 5px; /* बॉक्स के कोनों को हल्का सा गोल करता है */
-  font-weight: bold; /* टेक्स्ट को मोटा (Bold) करता है */
-  
-  /* यह बॉक्स को रोल नंबर के बराबर लाने के लिए ऊपर की ओर खिसकाता है। */
-  /* आप इस वैल्यू को अपने प्रिंट प्रीव्यू के हिसाब से कम-ज्यादा कर सकते हैं। */
-  margin-top: -45px; 
-}
             }
             .container, .question-block { 
                 box-shadow: none !important; 
@@ -142,9 +130,23 @@
                 padding-bottom: 15px;
                 border-bottom: 2px solid #333;
                 font-family: sans-serif;
-                text-align: center;
             }
             #print-fallback-details p { margin: 4px 0; }
+            #print-fallback-details h2 { text-align: center; }
+
+            /* --- ⭐ यह नया कोड है ⭐ --- */
+            #print-series-box {
+                float: right;
+                border: 2px solid #000;
+                color: #000;
+                padding: 8px 15px;
+                border-radius: 8px;
+                font-weight: bold;
+                font-size: 1.2em;
+                margin-top: -55px; /* रोल नंबर के बराबर लाने के लिए */
+            }
+            /* --- ⭐ कोड का अंत ⭐ --- */
+
             .question-block { page-break-inside: avoid; }
             .options-list li.correct, .options-list li.incorrect, .options-list li.special {
                 -webkit-print-color-adjust: exact !important;
@@ -160,9 +162,10 @@
 
     <div id="print-fallback-details">
         <h2 id="print-title"></h2>
+        <div id="print-series-box"><strong>पेपर कोड:</strong> <span id="print-series"></span></div>
+        <p><strong>नाम:</strong> <span id="print-name"></span></p>
         <p><strong>रोल नंबर:</strong> <span id="print-roll"></span></p>
-<div id="print-series-box"><strong>पेपर कोड:</strong> <span id="print-series"></span></div>
-        
+        <p>
             <strong>कुल प्रश्न:</strong> <span id="print-total"></span> | 
             <strong>हल किए:</strong> <span id="print-attempted"></span> | 
             <strong>सही:</strong> <span id="print-correct"></span> | 
@@ -299,18 +302,13 @@
         }
 
         function getQuestionStatus(qId) {
-    const uAnsText = userAnswers[qId]; // यह पहले से ही बिना A) B) के है
-    if (!uAnsText) return 'unattempted';
-
-    // अनुत्तरित प्रश्न को उसके टेक्स्ट से पहचानें
-    if (uAnsText === "अनुत्तरित प्रश्न" || uAnsText === "Question not attempted") return 'skipped';
-    
-    const qData = allQuestions.find(q => q.id === qId);
-    // सही उत्तर में से भी A), B) हटाकर तुलना करें
-    const correctAnswerText = qData.answer.substring(3);
-
-    return uAnsText === correctAnswerText ? 'correct' : 'incorrect';
-}
+            const uAnsText = userAnswers[qId];
+            if (!uAnsText) return 'unattempted';
+            if (uAnsText === "अनुत्तरित प्रश्न" || uAnsText === "Question not attempted") return 'skipped';
+            const qData = allQuestions.find(q => q.id === qId);
+            const correctAnswerText = qData.answer.substring(3);
+            return uAnsText === correctAnswerText ? 'correct' : 'incorrect';
+        }
 
         function updateSummary() {
             let c = 0, i = 0, s = 0;
@@ -327,7 +325,7 @@
             document.getElementById('incorrect-count').textContent = i;
             document.getElementById('skipped-count').textContent = s;
             const rQ = c - (i / 3);
-            const rM = rQ * 2; // Assuming 2 marks per question
+            const rM = rQ * 2;
             document.getElementById('right-que-value').textContent = rQ.toFixed(3);
             document.getElementById('raw-marks-value').textContent = rM.toFixed(3);
         }
@@ -344,6 +342,7 @@
             }
             return positions.join(' | ');
         }
+        
         function displayQuestions(series, filter = 'all') {
             const qC = document.getElementById('questions-container');
             qC.innerHTML = '';
@@ -381,7 +380,6 @@
                 const oL = document.createElement('ul');
                 oL.className = 'options-list';
                 
-                // --- विकल्पों का क्रम बदलने का लॉजिक (यह पहले से सही था) ---
                 const optionTexts = qData.options.map(opt => opt.substring(3));
                 let shuffledOptionTexts;
                 const optionOrder = currentShiftData.seriesOptionOrder?.[series];
@@ -393,7 +391,6 @@
                 const finalOptions = shuffledOptionTexts.map((text, index) => {
                     return `${optionLabels[index]} ${text}`;
                 });
-                // --- लॉजिक का अंत ---
 
                 finalOptions.forEach(oT => {
                     const oI = document.createElement('li');
@@ -412,24 +409,13 @@
                 if (status === 'correct' || status === 'incorrect' || status === 'skipped') {
                     const aD = document.createElement('div');
                     aD.className = 'correct-answer-display';
-
-                    // --- ⭐ यहाँ बदलाव किया गया है ⭐ ---
-                    // 1. मूल सही उत्तर का टेक्स्ट निकालें (बिना A), B) के)
                     const correctAnswerText = qData.answer.substring(3);
-                    
-                    // 2. शफल की हुई लिस्ट में उस टेक्स्ट का नया इंडेक्स (स्थान) ढूंढें
                     const newCorrectIndex = shuffledOptionTexts.indexOf(correctAnswerText);
-                    
-                    let dynamicCorrectAnswer = qData.answer; // फॉलबैक के लिए
+                    let dynamicCorrectAnswer = qData.answer;
                     if (newCorrectIndex !== -1) {
-                        // 3. नए इंडेक्स के आधार पर नया लेबल (A), B)) और टेक्स्ट जोड़कर सही उत्तर बनाएं
                         dynamicCorrectAnswer = `${optionLabels[newCorrectIndex]} ${correctAnswerText}`;
                     }
-                    
-                    // 4. अब डायनामिक (बदलने वाला) सही उत्तर दिखाएं
                     aD.innerHTML = `Correct Ans. is - <strong>${dynamicCorrectAnswer}</strong>`;
-                    // --- ⭐ बदलाव का अंत ⭐ ---
-
                     qB.appendChild(aD);
                 }
 
@@ -449,8 +435,7 @@
                 qC.innerHTML = `<p style="text-align:center; color: var(--light-text);">इस फ़िल्टर में कोई प्रश्न नहीं है।</p>`;
             }
         }
-   
-        
+           
         function updateActiveFilterButton(filter) {
             document.querySelectorAll('.filter-buttons button').forEach(btn => btn.classList.remove('active'));
             document.querySelector(`.filter-buttons button[data-filter="${filter}"]`).classList.add('active');
@@ -472,10 +457,15 @@
             e.target.textContent = sB.classList.contains('hidden') ? 'Show Result' : 'Hide Result';
         });
 
+        // --- ⭐ इस फंक्शन में बदलाव किया गया है ⭐ ---
         function triggerPrint(name, rollNo) {
             document.getElementById('print-title').textContent = document.getElementById('shift-title').textContent;
             document.getElementById('print-name').textContent = name;
             document.getElementById('print-roll').textContent = rollNo;
+            
+            // यह लाइन जोड़ी गई है
+            document.getElementById('print-series').textContent = seriesSelect.value;
+            
             document.getElementById('print-total').textContent = document.getElementById('total-count').textContent;
             document.getElementById('print-attempted').textContent = document.getElementById('attempted-count').textContent;
             document.getElementById('print-correct').textContent = document.getElementById('correct-count').textContent;
@@ -486,6 +476,7 @@
 
             setTimeout(() => { window.print(); }, 250);
         }
+        // --- ⭐ बदलाव का अंत ⭐ ---
 
         const printBtn = document.getElementById('print-btn');
         const pMO = document.getElementById('print-modal-overlay');
