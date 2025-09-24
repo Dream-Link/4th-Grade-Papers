@@ -253,9 +253,9 @@ const allShiftData = {
 {id:2318,question:"Choose the most appropriate option to convert the given Interrogative Sentence to an Assertive Sentence:\nWhy waste money on designer bags?",options:["A) Designer bags are an expensive monetary investment.","B) It is foolish to waste money on designer bags.","C) What a waste designer bags are!","D) Everybody wastes money on these designer bags.","E) अनुत्तरित प्रश्न"],answer:"B) It is foolish to waste money on designer bags."},
 {id:2319,question:"Choose the most appropriate option to convert the given Assertive Sentence to an Exclamatory Sentence:\nIt is contemptible that you are a scammer.",options:["A) Alas! What a scammer.","B) Oh to be a scammer!","C) I wish you were not a scammer.","D) Fie, what a scammer you are!","E) अनुत्तरित प्रश्न"],answer:"D) Fie, what a scammer you are!"},
 {id:2320,question:"Choose the most appropriate option in order to make the following sentence grammatically correct.\nAristotle was one of the wisest man that ever lived.",options:["A) one wise man","B) one of the wise men","C) one of the wisest men","D) no correction needed","E) अनुत्तरित प्रश्न"],answer:"C) one of the wisest men"},
+            ],
         seriesOrder:{
             'A23Z Set 1':[1, 4, 3, 2, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120],
-
             'B':[1, 3, 4, 5, 2, 3, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120]
         },
           
@@ -646,8 +646,7 @@ const allShiftData = {
   {id:5618, question:"निम्नलिखित में से कौन-सा राजस्थानी लोक नाट्य रूप भील जनजाति द्वारा प्रस्तुत किया जाता है, जिसमें भगवान शिव और देवी पार्वती की कथाओं का चित्रण होता है ?", options:["A) तमाशा", "B) स्वांग", "C) रम्मत", "D) गवरी", "E) अनुत्तरित प्रश्न"], answer:"उत्तर हाइलाइट नहीं किया गया है"},
   {id:5619, question:"राजस्थान सरकार के आपदा प्रबंधन, सहायता एवं नागरिक सुरक्षा विभाग का मुख्यालय कहाँ स्थित है ?", options:["A) जयपुर", "B) जैसलमेर", "C) अजमेर", "D) जोधपुर", "E) अनुत्तरित प्रश्न"], answer:"उत्तर हाइलाइट नहीं किया गया है"},
   {id:5620, question:"राज्य की विधान सभा का सदस्य बनने के लिए आवश्यक न्यूनतम आयु है :", options:["A) 18 वर्ष", "B) 25 वर्ष", "C) 28 वर्ष", "D) 32 वर्ष", "E) अनुत्तरित प्रश्न"], answer:"उत्तर हाइलाइट नहीं किया गया है"}
-]
-],
+        ],
         seriesOrder:{
             '56HH Set 1':[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120]
         },
@@ -776,7 +775,7 @@ const allShiftData = {
 {id:6718,question:"रमेश ने अपने भाई के द्वारा आप का खोया हुआ बैग भिजवा दिया है। आपने आभार प्रकट करते हुए रमेश को पत्र लिखा। यह पत्र किस शैली (प्रकार) के अन्तर्गत होगा?",options:["A) औपचारिक पत्र","B) परिपत्र","C) अनुस्मारक पत्र","D) अनौपचारिक पत्र","E) अनुत्तरित प्रश्न"],answer:"D) अनौपचारिक पत्र"},
 {id:6719,question:"भारत सरकार ने दिल्ली के शिक्षा विभाग को 15 दिन पहले एक पत्र भेजा था। जिसका उत्तर प्राप्त न होने पर उन्होंने Reminder भेजा। 'Reminder'- शब्द के लिए उचित हिन्दी शब्द है:",options:["A) अधिसूचना","B) अनुस्मारक","C) ज्ञापन","D) कार्यालय आदेश","E) अनुत्तरित प्रश्न"],answer:"B) अनुस्मारक"},
 {id:6720,question:"Fill in the blank in the following sentence with the most appropriate tense form:\nThe radio ______ since 10 p.m. yesterday. The neighbours were getting disturbed because of it.",options:["A) would play","B) had been playing","C) plays","D) have had played","E) Question not attempted"],answer:"B) had been playing"}
-],
+       ],
       seriesOrder:{
             'JK1 Set 1':[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120]
         },
