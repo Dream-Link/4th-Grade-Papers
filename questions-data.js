@@ -386,7 +386,7 @@ const allShiftData = {
                     },
         seriesOptionOrder:{
             '1XY2 2509M ✷ Set 1':[0, 1, 2, 3, 4],
-            '1XY2 2509M K_':[1, 2, 3, 0, 4]
+            '1XY2 2509M K_':[3, 0, 1, 2, 4]
         }
     },
     'shift4':{
