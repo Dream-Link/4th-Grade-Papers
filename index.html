@@ -135,18 +135,23 @@
                 text-align: center;
             }
             #print-fallback-details p { margin: 4px 0; }
-            #print-fallback-details h2 { text-align: center; }
+            #print-fallback-details h2 { text-align: center; margin-bottom: 15px; }
 
+            /* ⭐ CHANGE 2: Updated Print Series Box Style ⭐ */
             #print-series-box {
-                float: right;
+                display: inline-block;
                 border: 2px solid red;
                 color: red;
                 padding: 8px 15px;
                 border-radius: 8px;
                 font-weight: bold;
                 font-size: 1.2em;
-                margin-top: -55px;
+                margin: 0 auto 15px auto; /* Centered and with bottom margin */
             }
+
+            /* ⭐ CHANGE 3: Added Color to Print Summary Details ⭐ */
+            #print-correct { color: #15803d !important; font-weight: bold; }
+            #print-incorrect { color: #b91c1c !important; font-weight: bold; }
 
             .question-block { 
                 page-break-inside: avoid; 
@@ -160,7 +165,7 @@
                 margin-top: 5px;
                 margin-bottom: 8px;
             }
-            .question-block img { /* ⭐ इमेज प्रिंट स्टाइल ⭐ */
+            .question-block img {
                 max-width: 80% !important;
                 page-break-inside: avoid;
             }
@@ -385,20 +390,22 @@
             document.getElementById('raw-marks-value').textContent = rM.toFixed(2);
         }
         
+        // ⭐ CHANGE 1: Updated findQuestionPositions Function ⭐
         function findQuestionPositions(qId) {
             const qIndex = allQuestions.findIndex(q => q.id === qId);
-            if (qIndex === -1 || !currentShiftData.seriesOrder) return "";
-        
+            if (qIndex === -1 || !currentShiftData.seriesOrder) return `Q ID: ${qId}`;
+
+            const positions = [];
             for (const series in currentShiftData.seriesOrder) {
                 const pos = currentShiftData.seriesOrder[series].indexOf(qIndex + 1);
                 if (pos !== -1) {
-                    return `Series ${series}: #${pos + 1}`;
+                    positions.push(`<strong>${series}:</strong> #${pos + 1}`);
                 }
             }
-            return `Q ID: ${qId}`;
+            
+            return positions.length > 0 ? positions.join(' | ') : `Q ID: ${qId}`;
         }
 
-        // --- ⭐ इमेज और गणित के लिए अपडेटेड फंक्शन ⭐ ---
         function displayQuestions(series, filter = 'all') {
             const qC = document.getElementById('questions-container');
             qC.innerHTML = '';
@@ -426,7 +433,7 @@
                 
                 const iB = document.createElement('div');
                 iB.className = 'question-info-bar';
-                iB.textContent = findQuestionPositions(qData.id);
+                iB.innerHTML = findQuestionPositions(qData.id); // Use innerHTML for bold tags
                 qB.appendChild(iB);
 
                 const qT = document.createElement('h3');
