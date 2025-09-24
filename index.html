@@ -34,7 +34,7 @@
             border-radius: 20px; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1); text-align: center;
             border-top: 5px solid var(--accent-color); transition: all 0.3s ease;
         }
-        .selector-container h1 { color: var(--header-color); margin-bottom: 10px; font-size: 2.5em; }
+        .selector-container h2 { color: var(--header-color); margin-bottom: 10px; font-size: 2.5em; }
         .selector-container p { color: var(--light-text); font-size: 1.1em; margin-bottom: 40px; }
         .shift-selector { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 25px; }
         .shift-btn { display: flex; align-items: center; text-align: left; background-color: #f8fafc; border: 1px solid var(--border-color); border-radius: 12px; text-decoration: none; transition: all 0.3s ease; cursor: pointer; overflow: hidden; }
@@ -97,7 +97,7 @@
                 border-top: none; box-shadow: none; padding: 40px 20px; 
                 display: flex; flex-direction: column; justify-content: flex-start;
             }
-            .selector-container h1 { font-size: 2em; }
+            .selector-container h1 { font-size: 2em; } /* This was h2 before, changed to h1 */
             .container { margin: 0; padding: 15px 10px; border-radius: 0; box-shadow: none; }
             .header { padding: 8px 10px; justify-content: center; }
             .header h1 { font-size: 1.1em; width: 100%; order: -1; }
@@ -112,7 +112,6 @@
             .question-block h3 { font-size: 1em; }
         }
 
-        /* --- ⭐ प्रिंट के स्टाइल में बदलाव --- */
         @media print {
             body { font-size: 10pt; background-color: #fff !important; }
             .top-sticky-bar, .controls-bar, #print-modal-overlay, #shift-selector-page, #back-to-main-btn { 
@@ -133,15 +132,15 @@
                 padding-bottom: 15px;
                 border-bottom: 2px solid #333;
                 font-family: sans-serif;
-                text-align: center; /* सेंटर अलाइनमेंट */
+                text-align: center;
             }
             #print-fallback-details p { margin: 4px 0; }
             #print-fallback-details h2 { text-align: center; }
 
             #print-series-box {
                 float: right;
-                border: 2px solid red; /* लाल बॉर्डर */
-                color: red; /* लाल टेक्स्ट */
+                border: 2px solid red;
+                color: red;
                 padding: 8px 15px;
                 border-radius: 8px;
                 font-weight: bold;
@@ -161,6 +160,10 @@
                 margin-top: 5px;
                 margin-bottom: 8px;
             }
+            .question-block img { /* ⭐ इमेज प्रिंट स्टाइल ⭐ */
+                max-width: 80% !important;
+                page-break-inside: avoid;
+            }
             .options-list li {
                 padding: 5px 8px;
                 font-size: 9pt;
@@ -173,7 +176,6 @@
             }
             .question-info-bar { margin-top: 0; }
 
-
             .options-list li.correct, .options-list li.incorrect, .options-list li.special {
                 -webkit-print-color-adjust: exact !important;
                 color-adjust: exact !important;
@@ -183,6 +185,16 @@
             .options-list li.special { background-color: var(--special-bg) !important; color: var(--special-text) !important; }
         }
     </style>
+    
+    <script>
+        MathJax = {
+          tex: {
+            inlineMath: [['$', '$'], ['\\(', '\\)']]
+          }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
 </head>
 <body>
 
@@ -222,7 +234,6 @@
     <div id="question-paper-page">
         <div class="top-sticky-bar">
             <div class="header">
-                
                  <h1 id="shift-title">Shift Title</h1>
                 <div class="header-controls">
                     <label for="series-select">PAPER Code:</label>
@@ -355,7 +366,7 @@
             const a = c + i + s;
             const totalValidQuestions = allQuestions.length - d;
             
-            document.getElementById('total-count').textContent = totalValidQuestions; // ⭐ बदला हुआ
+            document.getElementById('total-count').textContent = totalValidQuestions;
             document.getElementById('attempted-count').textContent = a;
             document.getElementById('correct-count').textContent = c;
             document.getElementById('incorrect-count').textContent = i;
@@ -363,32 +374,30 @@
             document.getElementById('deleted-count').textContent = d;
             
             const rQ = c - (i / 3);
-
             let rM = 0;
             if (totalValidQuestions > 0) {
                 rM = rQ * (200 / totalValidQuestions);
             }
             
             const formattedRQ = (rQ % 1 === 0) ? rQ : rQ.toFixed(2);
-
             document.getElementById('right-que-value').textContent = formattedRQ;
             document.getElementById('raw-marks-value').textContent = rM.toFixed(2);
         }
         
         function findQuestionPositions(qId) {
             const qIndex = allQuestions.findIndex(q => q.id === qId);
-            let positions = [];
             if (qIndex === -1 || !currentShiftData.seriesOrder) return "";
+        
             for (const series in currentShiftData.seriesOrder) {
                 const pos = currentShiftData.seriesOrder[series].indexOf(qIndex + 1);
                 if (pos !== -1) {
-                    positions.push(`Series ${series}: #${pos + 1}`);
+                    return `Series ${series}: #${pos + 1}`;
                 }
             }
-            return positions.join(' | ');
+            return `Q ID: ${qId}`;
         }
-        
-        // --- ⭐ इस फंक्शन में काफी बदलाव किए गए हैं ---
+
+        // --- ⭐ इमेज और गणित के लिए अपडेटेड फंक्शन ⭐ ---
         function displayQuestions(series, filter = 'all') {
             const qC = document.getElementById('questions-container');
             qC.innerHTML = '';
@@ -401,7 +410,6 @@
             
             const optionLabels = ['A)', 'B)', 'C)', 'D)', 'E)'];
 
-            let displayedCount = 0;
             qIndices.forEach((qIndex, displayNum) => {
                 const qData = allQuestions[qIndex - 1];
                 if (!qData) return;
@@ -409,11 +417,7 @@
                 const isDeleted = qData.deleted === true;
                 const status = isDeleted ? 'deleted' : getQuestionStatus(qData.id);
 
-                if (filter !== 'all' && filter !== status && !(filter === 'skipped' && status === 'deleted')) {
-                     if(!isDeleted || (filter !== 'all' && filter !== 'skipped' && filter !== status)){
-                        if(filter !== 'all' && filter !== status) return;
-                     }
-                }
+                if (filter !== 'all' && filter !== status) return;
                 
                 const qB = document.createElement('div');
                 qB.className = 'question-block';
@@ -425,8 +429,16 @@
                 qB.appendChild(iB);
 
                 const qT = document.createElement('h3');
-                qT.textContent = `प्रश्न ${displayNum + 1}: ${qData.question}`;
+                qT.innerHTML = `प्रश्न ${displayNum + 1}: ${qData.question}`;
                 qB.appendChild(qT);
+                
+                if (qData.image) {
+                    const qImg = document.createElement('img');
+                    qImg.src = qData.image;
+                    qImg.alt = "प्रश्न चित्र";
+                    qImg.style.cssText = "max-width:100%; height:auto; display:block; margin:10px auto; border-radius: 8px;";
+                    qB.appendChild(qImg);
+                }
                 
                 const oL = document.createElement('ul');
                 oL.className = 'options-list';
@@ -434,18 +446,19 @@
                 const optionTexts = qData.options.map(opt => opt.substring(3));
                 let shuffledOptionTexts;
                 const optionOrder = currentShiftData.seriesOptionOrder?.[series];
+
                 if (optionOrder) {
                     shuffledOptionTexts = optionOrder.map(index => optionTexts[index]);
                 } else {
-                    shuffledOptionTexts = optionTexts;
+                    shuffledOptionTexts = [...optionTexts];
                 }
                 const finalOptions = shuffledOptionTexts.map((text, index) => `${optionLabels[index]} ${text}`);
 
                 finalOptions.forEach(oT => {
                     const oI = document.createElement('li');
-                    oI.textContent = oT;
+                    oI.innerHTML = oT; 
                     const userAnswerText = userAnswers[qData.id];
-                    const currentOptionText = oT.substring(3);
+                    const currentOptionText = oT.substring(3).trim();
                     if (userAnswerText && userAnswerText === currentOptionText) {
                         if (status === 'correct') oI.classList.add('correct');
                         else if (status === 'incorrect') oI.classList.add('incorrect');
@@ -458,15 +471,12 @@
                 if (isDeleted) {
                     qB.style.backgroundColor = '#f3f4f6';
                     qB.style.opacity = '0.8';
-                    oL.style.pointerEvents = 'none';
-                    oL.style.opacity = '0.6';
-
                     const deletedAnsDisplay = document.createElement('div');
                     deletedAnsDisplay.className = 'correct-answer-display';
                     deletedAnsDisplay.innerHTML = 'Status: <strong style="color: red;">Delete</strong>';
                     qB.appendChild(deletedAnsDisplay);
                 }
-                else if (status === 'correct' || status === 'incorrect' || status === 'skipped') {
+                else if (status !== 'unattempted') {
                     const aD = document.createElement('div');
                     aD.className = 'correct-answer-display';
                     const correctAnswerText = qData.answer.substring(3);
@@ -482,8 +492,8 @@
                 qC.appendChild(qB);
                 
                 oL.addEventListener('click', (e) => {
-                    if (e.target.tagName === 'LI') {
-                        const selectedOptionText = e.target.textContent.substring(3);
+                    if (e.target.tagName === 'LI' && !isDeleted) {
+                        const selectedOptionText = e.target.textContent.substring(3).trim();
                         userAnswers[qData.id] = selectedOptionText;
                         saveData();
                         displayQuestions(currentSeries, activeFilter);
@@ -493,6 +503,10 @@
 
             if (qC.innerHTML === '') {
                 qC.innerHTML = `<p style="text-align:center; color: var(--light-text);">इस फ़िल्टर में कोई प्रश्न नहीं है।</p>`;
+            }
+            
+            if (window.MathJax) {
+                MathJax.typesetPromise();
             }
         }
            
