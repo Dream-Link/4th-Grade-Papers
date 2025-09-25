@@ -97,7 +97,7 @@
                 border-top: none; box-shadow: none; padding: 40px 20px; 
                 display: flex; flex-direction: column; justify-content: flex-start;
             }
-            .selector-container h1 { font-size: 2em; } /* This was h2 before, changed to h1 */
+            .selector-container h1 { font-size: 2em; }
             .container { margin: 0; padding: 15px 10px; border-radius: 0; box-shadow: none; }
             .header { padding: 8px 10px; justify-content: center; }
             .header h1 { font-size: 1.1em; width: 100%; order: -1; }
@@ -128,30 +128,47 @@
             
             #print-fallback-details { 
                 display: block !important;
+                border: 2px solid #333;
+                border-radius: 10px;
+                padding: 15px;
                 margin: 20px;
-                padding-bottom: 15px;
-                border-bottom: 2px solid #333;
                 font-family: sans-serif;
+            }
+            #print-fallback-details h2 { 
+                text-align: center; 
+                margin-top: 0;
+                margin-bottom: 15px; 
+                font-size: 1.3em;
+            }
+            .print-info-grid {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 5px 15px;
+                text-align: left;
+                margin-bottom: 15px;
+            }
+            .print-info-grid p { margin: 2px 0; font-size: 1.1em; }
+            
+            /* ⭐ बदला हुआ स्टाइल: पेपर कोड के लिए लाल और बोल्ड टेक्स्ट ⭐ */
+            .print-paper-code strong, .print-paper-code span {
+                color: red !important;
+                font-weight: bold !important;
+            }
+
+            .print-summary-table {
+                width: 100%;
+                border-collapse: collapse;
                 text-align: center;
             }
-            #print-fallback-details p { margin: 4px 0; }
-            #print-fallback-details h2 { text-align: center; margin-bottom: 15px; }
-
-            /* ⭐ CHANGE 2: Updated Print Series Box Style ⭐ */
-            #print-series-box {
-                display: inline-block;
-                border: 2px solid red;
-                color: red;
-                padding: 8px 15px;
-                border-radius: 8px;
-                font-weight: bold;
-                font-size: 1.2em;
-                margin: 0 auto 15px auto; /* Centered and with bottom margin */
+            .print-summary-table th, .print-summary-table td {
+                border: 1px solid #999;
+                padding: 5px;
+                font-size: 0.9em;
             }
-
-            /* ⭐ CHANGE 3: Added Color to Print Summary Details ⭐ */
+            .print-summary-table th { background-color: #f2f2f2; }
             #print-correct { color: #15803d !important; font-weight: bold; }
             #print-incorrect { color: #b91c1c !important; font-weight: bold; }
+            #print-raw-marks-display, #print-final-rq-display { font-weight: bold; }
 
             .question-block { 
                 page-break-inside: avoid; 
@@ -202,22 +219,41 @@
 
 </head>
 <body>
-
+    
     <div id="print-fallback-details">
         <h2 id="print-title"></h2>
-        <div id="print-series-box"><strong>पेपर कोड:</strong> <span id="print-series"></span></div>
-        <p><strong>नाम:</strong> <span id="print-name"></span></p>
-        <p><strong>रोल नंबर:</strong> <span id="print-roll"></span></p>
-        <p>
-            <strong>कुल प्रश्न:</strong> <span id="print-full-total"></span> |
-            <strong>वैध प्रश्न:</strong> <span id="print-valid-total"></span> | 
-            <strong>हल किए:</strong> <span id="print-attempted"></span> | 
-            <strong>सही:</strong> <span id="print-correct"></span> | 
-            <strong>गलत:</strong> <span id="print-incorrect"></span> | 
-            <strong>छोड़े (E):</strong> <span id="print-skipped"></span> |
-            <strong>Delete:</strong> <span id="print-deleted"></span>
-        </p>
-        <p><strong>अंतिम सही प्रश्न (Final R.Q.):</strong> <span id="print-final-rq"></span> | <strong>RAW Marks:</strong> <span id="print-raw-marks"></span></p>
+        <div class="print-info-grid">
+            <p><strong>नाम:</strong> <span id="print-name"></span></p>
+            <p class="print-paper-code"><strong>पेपर कोड:</strong> <span id="print-series"></span></p>
+            <p><strong>रोल नंबर:</strong> <span id="print-roll"></span></p>
+            <p><strong>RAW Marks:</strong> <span id="print-raw-marks-display"></span></p>
+        </div>
+        <table class="print-summary-table">
+            <thead>
+                <tr>
+                    <th>कुल प्रश्न</th>
+                    <th>वैध प्रश्न</th>
+                    <th>हल किए</th>
+                    <th>सही</th>
+                    <th>गलत</th>
+                    <th>छोड़े (E)</th>
+                    <th>Delete</th>
+                    <th>अंतिम सही प्रश्न</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><span id="print-full-total"></span></td>
+                    <td><span id="print-valid-total"></span></td>
+                    <td><span id="print-attempted"></span></td>
+                    <td><span id="print-correct"></span></td>
+                    <td><span id="print-incorrect"></span></td>
+                    <td><span id="print-skipped"></span></td>
+                    <td><span id="print-deleted"></span></td>
+                    <td><span id="print-final-rq-display"></span></td>
+                </tr>
+            </tbody>
+        </table>
     </div>
 
     <div id="shift-selector-page">
@@ -261,7 +297,7 @@
         <div class="container">
             <div class="controls-bar">
                 <div class="filter-buttons">
-                    <button class="active" data-filter="all">All</button> <button data-filter="correct">Right</button> <button data-filter="incorrect">Wrong</button> <button data-filter="skipped">Skip (E)</button>
+                    <button class="active" data-filter="all">All</button> <button data-filter="correct">Right</button> <button data-filter="incorrect">Wrong</button> <button data-filter="skipped">Skip (E)</button> <button data-filter="deleted">Deleted</button>
                 </div>
                 <button id="print-btn">Print</button>
             </div>
@@ -369,7 +405,9 @@
                 else if (st === 'incorrect') i++;
                 else if (st === 'skipped') s++;
             });
-            const a = c + i + s;
+            
+            const a = c + i; 
+            
             const totalValidQuestions = allQuestions.length - d;
             
             document.getElementById('total-count').textContent = totalValidQuestions;
@@ -390,7 +428,6 @@
             document.getElementById('raw-marks-value').textContent = rM.toFixed(2);
         }
         
-        // ⭐ CHANGE 1: Updated findQuestionPositions Function ⭐
         function findQuestionPositions(qId) {
             const qIndex = allQuestions.findIndex(q => q.id === qId);
             if (qIndex === -1 || !currentShiftData.seriesOrder) return `Q ID: ${qId}`;
@@ -433,7 +470,7 @@
                 
                 const iB = document.createElement('div');
                 iB.className = 'question-info-bar';
-                iB.innerHTML = findQuestionPositions(qData.id); // Use innerHTML for bold tags
+                iB.innerHTML = findQuestionPositions(qData.id);
                 qB.appendChild(iB);
 
                 const qT = document.createElement('h3');
@@ -465,9 +502,13 @@
                 finalOptions.forEach(oT => {
                     const oI = document.createElement('li');
                     oI.innerHTML = oT; 
+                    
+                    const rawOptionText = oT.substring(3).trim();
+                    oI.dataset.rawText = rawOptionText;
+                    
                     const userAnswerText = userAnswers[qData.id];
-                    const currentOptionText = oT.substring(3).trim();
-                    if (userAnswerText && userAnswerText === currentOptionText) {
+                    
+                    if (userAnswerText && userAnswerText === rawOptionText) {
                         if (status === 'correct') oI.classList.add('correct');
                         else if (status === 'incorrect') oI.classList.add('incorrect');
                         else if (status === 'skipped') oI.classList.add('special');
@@ -500,8 +541,9 @@
                 qC.appendChild(qB);
                 
                 oL.addEventListener('click', (e) => {
-                    if (e.target.tagName === 'LI' && !isDeleted) {
-                        const selectedOptionText = e.target.textContent.substring(3).trim();
+                    const clickedLi = e.target.closest('li');
+                    if (clickedLi && !isDeleted) {
+                        const selectedOptionText = clickedLi.dataset.rawText;
                         userAnswers[qData.id] = selectedOptionText;
                         saveData();
                         displayQuestions(currentSeries, activeFilter);
@@ -554,8 +596,9 @@
             document.getElementById('print-skipped').textContent = document.getElementById('skipped-count').textContent;
             document.getElementById('print-deleted').textContent = document.getElementById('deleted-count').textContent;
             
-            document.getElementById('print-final-rq').textContent = document.getElementById('right-que-value').textContent;
-            document.getElementById('print-raw-marks').textContent = document.getElementById('raw-marks-value').textContent;
+            // ⭐ प्रिंट के लिए मानों को सही तत्वों में सेट करना ⭐
+            document.getElementById('print-final-rq-display').textContent = document.getElementById('right-que-value').textContent;
+            document.getElementById('print-raw-marks-display').textContent = document.getElementById('raw-marks-value').textContent;
 
             setTimeout(() => { window.print(); }, 250);
         }
