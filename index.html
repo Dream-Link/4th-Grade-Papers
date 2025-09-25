@@ -4,12 +4,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>4th Grade Paper</title>
+
+    <!-- PWA Manifest Link -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#0d6efd">
+    <link rel="apple-touch-icon" href="icons/icon-192x192.png">
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Noto+Sans+Devanagari:wght@400;500;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <!-- Font Change: Removed 'Poppins' and kept only 'Noto Sans Devanagari' -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" xintegrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <style>
-        /* Modern, Clean & Professional Redesign */
         :root {
             --primary-color: #0d6efd;
             --primary-dark: #0b5ed7;
@@ -28,12 +34,13 @@
             
             --success-bg: #d1e7dd;
             --danger-bg: #f8d7da;
-            --special-bg: #fff3cd; /* For skipped */
+            --special-bg: #fff3cd;
 
-            --font-family-primary: 'Poppins', 'Noto Sans Devanagari', sans-serif;
+            /* Font Change: Set Noto Sans Devanagari as the primary font */
+            --font-family-primary: 'Noto Sans Devanagari', sans-serif;
             --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
             --shadow-md: 0 4px 6px rgba(0,0,0,0.1);
-            --border-radius: 0.5rem; /* 8px */
+            --border-radius: 0.5rem;
         }
 
         * { box-sizing: border-box; }
@@ -46,7 +53,6 @@
             line-height: 1.7;
         }
         
-        /* --- Home Page: Shift Selector --- */
         #shift-selector-page {
             display: flex;
             align-items: center;
@@ -115,7 +121,6 @@
             color: var(--secondary-color);
         }
 
-        /* --- Question Paper Page --- */
         #question-paper-page { display: none; flex-direction: column; }
         
         .top-sticky-bar {
@@ -148,7 +153,7 @@
         .header-controls label { font-size: 0.875rem; font-weight: 500; }
         .header-controls select, .header-controls button {
             padding: 0.375rem 0.75rem;
-            border-radius: 0.375rem; /* 6px */
+            border-radius: 0.375rem;
             border: 1px solid var(--border-color);
             background-color: #fff;
             font-family: inherit;
@@ -271,14 +276,13 @@
             gap: 0.5rem;
         }
 
-        /* --- New 2x2 Grid Layout for short options --- */
         .options-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 0.75rem;
         }
         .options-grid li:last-child {
-            grid-column: 1 / -1; /* Make the last item (E) span full width */
+            grid-column: 1 / -1;
         }
 
         .options-list li {
@@ -317,7 +321,6 @@
             font-weight: 600;
         }
         
-        /* --- Modal --- */
         #print-modal-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background-color: rgba(0,0,0,0.6); z-index: 2000;
@@ -341,10 +344,8 @@
         #cancel-print { background-color: #e9ecef; color: var(--font-color); }
         #confirm-print { background-color: var(--primary-color); color: white; }
 
-        /* --- Fallback Details for Print --- */
         #print-fallback-details { display: none; }
 
-        /* --- Responsive Design --- */
         @media (max-width: 768px) {
             .selector-container { padding: 1.5rem; }
             .shift-selector { grid-template-columns: 1fr; }
@@ -359,19 +360,19 @@
             .summary-item .count { font-size: 1.25rem; }
             .summary-item .label { font-size: 0.6rem; }
             .question-block { padding: 1rem; }
-            .options-grid { grid-template-columns: 1fr; } /* Stack options on mobile */
+            .options-grid { grid-template-columns: 1fr; }
             .options-grid li:last-child { grid-column: auto; }
         }
 
-        /* --- Professional Print Styles --- */
+        /* --- Printing Style Changes --- */
         @media print {
-            body { font-size: 10pt; background-color: #fff !important; color: #000 !important; }
-            .top-sticky-bar, .controls-bar, #print-modal-overlay, #shift-selector-page { display: none !important; }
+            body { font-size: 10pt; background-color: #fff !important; color: #000 !important; font-family: 'Noto Sans Devanagari', sans-serif; }
+            .top-sticky-bar, .controls-bar, #print-modal-overlay, #shift-selector-page, .question-info-bar { display: none !important; }
             #question-paper-page, .container { display: block !important; margin: 0; padding: 0; box-shadow: none; border: none; }
             
             #print-fallback-details { 
                 display: block !important;
-                font-family: sans-serif;
+                font-family: 'Noto Sans Devanagari', sans-serif;
                 padding: 1cm;
             }
             #print-fallback-details h2 { 
@@ -390,25 +391,46 @@
                 width: 100%; border-collapse: collapse; text-align: center; margin-bottom: 1.5rem;
             }
             .print-summary-table th, .print-summary-table td {
-                border: 1px solid #999; padding: 6px; font-size: 0.9rem;
+                border: 1px solid #999; padding: 5px; font-size: 0.9rem;
             }
             .print-summary-table th { background-color: #f2f2f2; font-weight: bold; }
             #print-correct { color: var(--success-color) !important; font-weight: bold; }
             #print-incorrect { color: var(--danger-color) !important; font-weight: bold; }
             #print-raw-marks-display, #print-final-rq-display { font-weight: bold; }
 
+            /* Compact layout for question block */
             .question-block { 
-                page-break-inside: avoid; padding: 0.5rem 0; margin-bottom: 0.75rem !important;
+                page-break-inside: avoid;
+                padding: 0.4rem 0; /* Reduced padding */
+                margin-bottom: 0.5rem !important; /* Reduced margin */
                 border-bottom: 1px dashed #aaa !important;
             }
             .question-block:last-of-type { border-bottom: none !important; }
 
-            .question-info-bar { display: none; } /* Hide for cleaner print */
-            .question-block h3 { font-size: 11pt; margin: 0 0 0.5rem 0; }
-            .question-block img { max-width: 60% !important; page-break-inside: avoid; }
-            .options-list { margin-top: 0.5rem; }
-            .options-list li { padding: 5px 8px; font-size: 10pt; }
-            .correct-answer-display { font-size: 9pt; margin-top: 0.5rem; padding-top: 0.5rem; border-top: 1px solid #ddd; }
+            /* Compact question text */
+            .question-block h3 {
+                font-size: 10.5pt; /* Slightly smaller font */
+                margin: 0 0 0.4rem 0; /* Reduced margin */
+                font-weight: normal;
+            }
+            .question-block h3 .print-q-num {
+                font-weight: bold; /* Make the question number bold */
+            }
+
+            .question-block img { max-width: 60% !important; page-break-inside: avoid; margin: 0.5rem auto; }
+            
+            /* Compact options list */
+            .options-list { margin-top: 0.3rem; gap: 3px; }
+            .options-list li {
+                padding: 4px 8px; /* Reduced padding */
+                font-size: 10pt; /* Slightly smaller font */
+            }
+            .correct-answer-display {
+                font-size: 9pt;
+                margin-top: 0.4rem; /* Reduced margin */
+                padding-top: 0.4rem; /* Reduced padding */
+                border-top: 1px solid #ddd;
+            }
             .options-grid { grid-template-columns: 1fr 1fr; }
 
             .options-list li.correct, .options-list li.incorrect, .options-list li.special {
@@ -439,14 +461,7 @@
         <table class="print-summary-table">
             <thead>
                 <tr>
-                    <th>कुल प्रश्न</th>
-                    <th>वैध प्रश्न</th>
-                    <th>हल किए</th>
-                    <th>सही</th>
-                    <th>गलत</th>
-                    <th>छोड़े (E)</th>
-                    <th>Delete</th>
-                    <th>अंतिम सही प्रश्न</th>
+                    <th>कुल प्रश्न</th> <th>वैध प्रश्न</th> <th>हल किए</th> <th>सही</th> <th>गलत</th> <th>छोड़े (E)</th> <th>Delete</th> <th>अंतिम सही प्रश्न</th>
                 </tr>
             </thead>
             <tbody>
@@ -477,7 +492,7 @@
                 <a class="shift-btn" data-shift="shift6"><div class="icon"><i class="fas fa-file-alt"></i></div><div class="text">6th Shift 21.09.2025</div></a>
             </div>
             <div class="selector-footer">
-                <p>Last Update: 25/09/2025 12:30 PM</p>
+                <p>Last Update: 24/09/2025 02:30 PM</p>
                 <p>सभी प्रश्नों के उत्तर संभावित उत्तर कुंजी के आधार पर हैं, आधिकारिक कुंजी जारी होने पर UPDATE कर दी जाएगी।</p>
                 <p><strong>- MP Salodiya</strong></p>
             </div>
@@ -537,299 +552,319 @@
     
     <script src="questions-data.js"></script>
     <script>
+        // Global variables
         let currentShiftId = null, allQuestions = [], userAnswers = {}, currentSeries = '', activeFilter = 'all', currentShiftData = {};
-        const shiftSelectorPage = document.getElementById('shift-selector-page');
-        const questionPaperPage = document.getElementById('question-paper-page');
-        const seriesSelect = document.getElementById('series-select');
 
-        // All original JS functions are kept as they are.
-        // Only one modification is added in displayQuestions function for the 2x2 grid layout.
-        
-        function showHomePage() {
-            shiftSelectorPage.style.display = 'flex';
-            questionPaperPage.style.display = 'none';
-            currentShiftId = null;
-            history.pushState({page: 'home'}, 'Home', window.location.pathname);
-            window.location.hash = '';
-        }
-
-        window.addEventListener('popstate', (event) => {
-            if (!event.state || event.state.page === 'home') {
-                showHomePage();
-            } else if (event.state.shift) {
-                loadShift(event.state.shift, false);
-            }
-        });
-
-        document.querySelectorAll('.shift-btn').forEach(b => b.addEventListener('click', () => loadShift(b.dataset.shift, true)));
-
-        function loadShift(shiftId, shouldPushState = true) {
-            shiftSelectorPage.style.display = 'none';
-            questionPaperPage.style.display = 'flex';
-            currentShiftId = shiftId;
-            currentShiftData = allShiftData[shiftId];
-            allQuestions = currentShiftData.questions;
-            
-            document.getElementById('shift-title').textContent = currentShiftData.title;
-
-            seriesSelect.innerHTML = '';
-            const availableSeries = Object.keys(currentShiftData.seriesOrder || {});
-            if (availableSeries.length > 0) {
-                availableSeries.forEach(seriesKey => {
-                    const option = document.createElement('option');
-                    option.value = seriesKey;
-                    option.textContent = seriesKey;
-                    seriesSelect.appendChild(option);
-                });
-            }
-
-            userAnswers = JSON.parse(localStorage.getItem(`userAnswers_${shiftId}`)) || {};
-            
-            const savedSeries = localStorage.getItem(`currentSeries_${shiftId}`);
-            currentSeries = (savedSeries && availableSeries.includes(savedSeries)) ? savedSeries : availableSeries[0] || '';
-            seriesSelect.value = currentSeries;
-
-            activeFilter = 'all';
-            document.getElementById('toggle-summary-btn').textContent = 'Show Result';
-            document.querySelector('.summary-bar').classList.add('hidden');
-            
-            if (shouldPushState) {
-               history.pushState({ shift: shiftId }, '', `#${shiftId}`);
-            }
-            displayQuestions(currentSeries, activeFilter);
-        }
-
-        function saveData() {
-            if (!currentShiftId) return;
-            localStorage.setItem(`userAnswers_${currentShiftId}`, JSON.stringify(userAnswers));
-            localStorage.setItem(`currentSeries_${currentShiftId}`, currentSeries);
-        }
-
-        function getQuestionStatus(qId) {
-            const uAnsText = userAnswers[qId];
-            if (!uAnsText) return 'unattempted';
-            if (uAnsText === "अनुत्तरित प्रश्न" || uAnsText === "Question not attempted") return 'skipped';
-            const qData = allQuestions.find(q => q.id === qId);
-            const correctAnswerText = qData.answer.substring(3);
-            return uAnsText === correctAnswerText ? 'correct' : 'incorrect';
-        }
-
-        function updateSummary() {
-            let c = 0, i = 0, s = 0, d = 0;
-            allQuestions.forEach(q => {
-                if (q.deleted) { d++; return; }
-                const st = getQuestionStatus(q.id);
-                if (st === 'correct') c++;
-                else if (st === 'incorrect') i++;
-                else if (st === 'skipped') s++;
-            });
-            
-            const a = c + i; 
-            const totalValidQuestions = allQuestions.length - d;
-            
-            document.getElementById('total-count').textContent = totalValidQuestions;
-            document.getElementById('attempted-count').textContent = a;
-            document.getElementById('correct-count').textContent = c;
-            document.getElementById('incorrect-count').textContent = i;
-            document.getElementById('skipped-count').textContent = s;
-            document.getElementById('deleted-count').textContent = d;
-            
-            const rQ = c - (i / 3);
-            let rM = (totalValidQuestions > 0) ? rQ * (200 / totalValidQuestions) : 0;
-            
-            document.getElementById('right-que-value').textContent = (rQ % 1 === 0) ? rQ : rQ.toFixed(2);
-            document.getElementById('raw-marks-value').textContent = rM.toFixed(2);
-        }
-        
-        function findQuestionPositions(qId) {
-            const qIndex = allQuestions.findIndex(q => q.id === qId);
-            if (qIndex === -1 || !currentShiftData.seriesOrder) return `Q ID: ${qId}`;
-
-            const positions = [];
-            for (const series in currentShiftData.seriesOrder) {
-                const pos = currentShiftData.seriesOrder[series].indexOf(qIndex + 1);
-                if (pos !== -1) {
-                    positions.push(`<strong>${series}:</strong> #${pos + 1}`);
-                }
-            }
-            return positions.length > 0 ? positions.join(' | ') : `Q ID: ${qId}`;
-        }
-
-        function displayQuestions(series, filter = 'all') {
-            const qC = document.getElementById('questions-container');
-            qC.innerHTML = '';
-            currentSeries = series;
-            updateSummary();
-            updateActiveFilterButton(filter);
-
-            const seriesOrder = currentShiftData.seriesOrder || {};
-            const qIndices = seriesOrder[series] || Array.from({length: allQuestions.length}, (_, i) => i + 1);
-            
-            const optionLabels = ['A)', 'B)', 'C)', 'D)', 'E)'];
-            const OPTION_LENGTH_THRESHOLD = 40; // Characters to decide if options are "short"
-
-            qIndices.forEach((qIndex, displayNum) => {
-                const qData = allQuestions[qIndex - 1];
-                if (!qData) return;
-
-                const isDeleted = qData.deleted === true;
-                const status = isDeleted ? 'deleted' : getQuestionStatus(qData.id);
-
-                if (filter !== 'all' && filter !== status) return;
-                
-                const qB = document.createElement('div');
-                qB.className = 'question-block';
-                qB.dataset.questionId = qData.id;
-                
-                const iB = document.createElement('div');
-                iB.className = 'question-info-bar';
-                iB.innerHTML = findQuestionPositions(qData.id);
-                qB.appendChild(iB);
-
-                const qT = document.createElement('h3');
-                qT.innerHTML = `प्रश्न ${displayNum + 1}: ${qData.question}`;
-                qB.appendChild(qT);
-                
-                if (qData.image) {
-                    const qImg = document.createElement('img');
-                    qImg.src = qData.image;
-                    qImg.alt = "प्रश्न चित्र";
-                    qB.appendChild(qImg);
-                }
-                
-                const oL = document.createElement('ul');
-                oL.className = 'options-list';
-
-                // ⭐⭐ Smart 2x2 Grid Logic ⭐⭐
-                const optionsAreShort = qData.options.slice(0, 4).every(opt => opt.length < OPTION_LENGTH_THRESHOLD);
-                if (optionsAreShort && qData.options.length === 5) {
-                    oL.classList.add('options-grid');
-                }
-                
-                const optionTexts = qData.options.map(opt => opt.substring(3));
-                let shuffledOptionTexts;
-                const optionOrder = currentShiftData.seriesOptionOrder?.[series];
-
-                if (optionOrder) {
-                    shuffledOptionTexts = optionOrder.map(index => optionTexts[index]);
-                } else {
-                    shuffledOptionTexts = [...optionTexts];
-                }
-                const finalOptions = shuffledOptionTexts.map((text, index) => `${optionLabels[index]} ${text}`);
-
-                finalOptions.forEach(oT => {
-                    const oI = document.createElement('li');
-                    oI.innerHTML = oT;
-                    oI.dataset.rawText = oT.substring(3).trim();
-                    const userAnswerText = userAnswers[qData.id];
-                    if (userAnswerText && userAnswerText === oI.dataset.rawText) {
-                        if (status === 'correct') oI.classList.add('correct');
-                        else if (status === 'incorrect') oI.classList.add('incorrect');
-                        else if (status === 'skipped') oI.classList.add('special');
-                    }
-                    oL.appendChild(oI);
-                });
-                qB.appendChild(oL);
-
-                if (isDeleted) {
-                    const deletedAnsDisplay = document.createElement('div');
-                    deletedAnsDisplay.className = 'correct-answer-display';
-                    deletedAnsDisplay.innerHTML = 'Status: <strong style="color: var(--danger-color);">Deleted</strong>';
-                    qB.appendChild(deletedAnsDisplay);
-                }
-                else if (status !== 'unattempted') {
-                    const aD = document.createElement('div');
-                    aD.className = 'correct-answer-display';
-                    const correctAnswerText = qData.answer.substring(3);
-                    const newCorrectIndex = shuffledOptionTexts.indexOf(correctAnswerText);
-                    let dynamicCorrectAnswer = qData.answer;
-                    if (newCorrectIndex !== -1) {
-                        dynamicCorrectAnswer = `${optionLabels[newCorrectIndex]} ${correctAnswerText}`;
-                    }
-                    aD.innerHTML = `Correct Ans: <strong style="color: var(--success-color);">${dynamicCorrectAnswer}</strong>`;
-                    qB.appendChild(aD);
-                }
-
-                qC.appendChild(qB);
-                
-                oL.addEventListener('click', (e) => {
-                    const clickedLi = e.target.closest('li');
-                    if (clickedLi && !isDeleted) {
-                        userAnswers[qData.id] = clickedLi.dataset.rawText;
-                        saveData();
-                        displayQuestions(currentSeries, activeFilter);
-                    }
-                });
-            });
-
-            if (qC.innerHTML === '') {
-                qC.innerHTML = `<p style="text-align:center; color: var(--font-color-light); padding: 2rem;">इस फ़िल्टर में कोई प्रश्न नहीं है।</p>`;
-            }
-            if (window.MathJax) { MathJax.typesetPromise(); }
-        }
-           
-        function updateActiveFilterButton(filter) {
-            document.querySelectorAll('.filter-buttons button').forEach(btn => btn.classList.remove('active'));
-            document.querySelector(`.filter-buttons button[data-filter="${filter}"]`).classList.add('active');
-        }
-
-        seriesSelect.addEventListener('change', (e) => {
-            displayQuestions(e.target.value, activeFilter);
-            saveData();
-        });
-
-        document.querySelectorAll('.filter-buttons button').forEach(b => b.addEventListener('click', () => {
-            activeFilter = b.dataset.filter;
-            displayQuestions(currentSeries, activeFilter);
-        }));
-
-        document.getElementById('toggle-summary-btn').addEventListener('click', (e) => {
-            const sB = document.querySelector('.summary-bar');
-            sB.classList.toggle('hidden');
-            e.target.textContent = sB.classList.contains('hidden') ? 'Show Result' : 'Hide Result';
-        });
-
-        function triggerPrint(name, rollNo) {
-            document.getElementById('print-title').textContent = document.getElementById('shift-title').textContent;
-            document.getElementById('print-name').textContent = name;
-            document.getElementById('print-roll').textContent = rollNo;
-            document.getElementById('print-series').textContent = seriesSelect.value;
-            
-            document.getElementById('print-full-total').textContent = allQuestions.length;
-            document.getElementById('print-valid-total').textContent = document.getElementById('total-count').textContent;
-
-            document.getElementById('print-attempted').textContent = document.getElementById('attempted-count').textContent;
-            document.getElementById('print-correct').textContent = document.getElementById('correct-count').textContent;
-            document.getElementById('print-incorrect').textContent = document.getElementById('incorrect-count').textContent;
-            document.getElementById('print-skipped').textContent = document.getElementById('skipped-count').textContent;
-            document.getElementById('print-deleted').textContent = document.getElementById('deleted-count').textContent;
-            
-            document.getElementById('print-final-rq-display').textContent = document.getElementById('right-que-value').textContent;
-            document.getElementById('print-raw-marks-display').textContent = document.getElementById('raw-marks-value').textContent;
-
-            setTimeout(() => { window.print(); }, 250);
-        }
-
-        const printBtn = document.getElementById('print-btn');
-        const pMO = document.getElementById('print-modal-overlay');
-        printBtn.addEventListener('click', () => { pMO.style.display = 'flex'; });
-        document.getElementById('cancel-print').addEventListener('click', () => { pMO.style.display = 'none'; });
-        document.getElementById('confirm-print').addEventListener('click', () => {
-            const name = document.getElementById('student-name').value;
-            const rollNo = document.getElementById('student-roll').value;
-            if (!name || !rollNo) { alert("नाम और रोल नंबर दोनों आवश्यक हैं।"); return; }
-            pMO.style.display = 'none';
-            triggerPrint(name, rollNo); 
-        });
-
+        // Run the app logic after the DOM is fully loaded
         document.addEventListener('DOMContentLoaded', () => {
+            
+            if (typeof allShiftData === 'undefined') {
+                document.body.innerHTML = '<h1 style="text-align:center; padding: 2rem; color: red;">Error: Question data (questions-data.js) could not be loaded. Please check the file.</h1>';
+                return;
+            }
+
+            const shiftSelectorPage = document.getElementById('shift-selector-page');
+            const questionPaperPage = document.getElementById('question-paper-page');
+            const seriesSelect = document.getElementById('series-select');
+            const printBtn = document.getElementById('print-btn');
+            const pMO = document.getElementById('print-modal-overlay');
+
+            function showHomePage() {
+                shiftSelectorPage.style.display = 'flex';
+                questionPaperPage.style.display = 'none';
+                currentShiftId = null;
+                history.pushState({page: 'home'}, 'Home', window.location.pathname);
+                window.location.hash = '';
+            }
+
+            window.addEventListener('popstate', (event) => {
+                if (!event.state || event.state.page === 'home') {
+                    showHomePage();
+                } else if (event.state.shift) {
+                    loadShift(event.state.shift, false);
+                }
+            });
+
+            document.querySelectorAll('.shift-btn').forEach(b => b.addEventListener('click', () => loadShift(b.dataset.shift, true)));
+
+            function loadShift(shiftId, shouldPushState = true) {
+                shiftSelectorPage.style.display = 'none';
+                questionPaperPage.style.display = 'flex';
+                currentShiftId = shiftId;
+                currentShiftData = allShiftData[shiftId];
+                allQuestions = currentShiftData.questions;
+                
+                document.getElementById('shift-title').textContent = currentShiftData.title;
+
+                seriesSelect.innerHTML = '';
+                const availableSeries = Object.keys(currentShiftData.seriesOrder || {});
+                if (availableSeries.length > 0) {
+                    availableSeries.forEach(seriesKey => {
+                        const option = document.createElement('option');
+                        option.value = seriesKey;
+                        option.textContent = seriesKey;
+                        seriesSelect.appendChild(option);
+                    });
+                }
+
+                userAnswers = JSON.parse(localStorage.getItem(`userAnswers_${shiftId}`)) || {};
+                
+                const savedSeries = localStorage.getItem(`currentSeries_${shiftId}`);
+                currentSeries = (savedSeries && availableSeries.includes(savedSeries)) ? savedSeries : availableSeries[0] || '';
+                seriesSelect.value = currentSeries;
+
+                activeFilter = 'all';
+                document.getElementById('toggle-summary-btn').textContent = 'Show Result';
+                document.querySelector('.summary-bar').classList.add('hidden');
+                
+                if (shouldPushState) {
+                   history.pushState({ shift: shiftId }, '', `#${shiftId}`);
+                }
+                displayQuestions(currentSeries, activeFilter);
+            }
+
+            function saveData() {
+                if (!currentShiftId) return;
+                localStorage.setItem(`userAnswers_${currentShiftId}`, JSON.stringify(userAnswers));
+                localStorage.setItem(`currentSeries_${currentShiftId}`, currentSeries);
+            }
+
+            function getQuestionStatus(qId) {
+                const uAnsText = userAnswers[qId];
+                if (!uAnsText) return 'unattempted';
+                if (uAnsText === "अनुत्तरित प्रश्न" || uAnsText === "Question not attempted") return 'skipped';
+                const qData = allQuestions.find(q => q.id === qId);
+                const correctAnswerText = qData.answer.substring(3);
+                return uAnsText === correctAnswerText ? 'correct' : 'incorrect';
+            }
+
+            function updateSummary() {
+                let c = 0, i = 0, s = 0, d = 0;
+                allQuestions.forEach(q => {
+                    if (q.deleted) { d++; return; }
+                    const st = getQuestionStatus(q.id);
+                    if (st === 'correct') c++;
+                    else if (st === 'incorrect') i++;
+                    else if (st === 'skipped') s++;
+                });
+                
+                const a = c + i; 
+                const totalValidQuestions = allQuestions.length - d;
+                
+                document.getElementById('total-count').textContent = totalValidQuestions;
+                document.getElementById('attempted-count').textContent = a;
+                document.getElementById('correct-count').textContent = c;
+                document.getElementById('incorrect-count').textContent = i;
+                document.getElementById('skipped-count').textContent = s;
+                document.getElementById('deleted-count').textContent = d;
+                
+                const rQ = c - (i / 3);
+                let rM = (totalValidQuestions > 0) ? rQ * (200 / totalValidQuestions) : 0;
+                
+                document.getElementById('right-que-value').textContent = (rQ % 1 === 0) ? rQ : rQ.toFixed(2);
+                document.getElementById('raw-marks-value').textContent = rM.toFixed(2);
+            }
+            
+            function findQuestionPositions(qId) {
+                const qIndex = allQuestions.findIndex(q => q.id === qId);
+                if (qIndex === -1 || !currentShiftData.seriesOrder) return `Q ID: ${qId}`;
+
+                const positions = [];
+                for (const series in currentShiftData.seriesOrder) {
+                    const pos = currentShiftData.seriesOrder[series].indexOf(qIndex + 1);
+                    if (pos !== -1) {
+                        positions.push(`<strong>${series}:</strong> #${pos + 1}`);
+                    }
+                }
+                return positions.length > 0 ? positions.join(' | ') : `Q ID: ${qId}`;
+            }
+
+            function displayQuestions(series, filter = 'all') {
+                const qC = document.getElementById('questions-container');
+                qC.innerHTML = '';
+                currentSeries = series;
+                updateSummary();
+                updateActiveFilterButton(filter);
+
+                const seriesOrder = currentShiftData.seriesOrder || {};
+                const qIndices = seriesOrder[series] || Array.from({length: allQuestions.length}, (_, i) => i + 1);
+                
+                const optionLabels = ['A)', 'B)', 'C)', 'D)', 'E)'];
+                const OPTION_LENGTH_THRESHOLD = 40; 
+
+                qIndices.forEach((qIndex, displayNum) => {
+                    const qData = allQuestions[qIndex - 1];
+                    if (!qData) return;
+
+                    const isDeleted = qData.deleted === true;
+                    const status = isDeleted ? 'deleted' : getQuestionStatus(qData.id);
+
+                    if (filter !== 'all' && filter !== status) return;
+                    
+                    const qB = document.createElement('div');
+                    qB.className = 'question-block';
+                    qB.dataset.questionId = qData.id;
+                    
+                    const iB = document.createElement('div');
+                    iB.className = 'question-info-bar';
+                    iB.innerHTML = findQuestionPositions(qData.id);
+                    qB.appendChild(iB);
+
+                    const qT = document.createElement('h3');
+                    // Printing Change: The series number (displayNum + 1) is already here.
+                    // The new print CSS will style this h3 to make the number prominent.
+                    qT.innerHTML = `<span class="print-q-num">प्रश्न ${displayNum + 1}: </span> ${qData.question}`;
+                    qB.appendChild(qT);
+                    
+                    if (qData.image) {
+                        const qImg = document.createElement('img');
+                        qImg.src = qData.image;
+                        qImg.alt = "प्रश्न चित्र";
+                        qB.appendChild(qImg);
+                    }
+                    
+                    const oL = document.createElement('ul');
+                    oL.className = 'options-list';
+
+                    const optionsAreShort = qData.options.slice(0, 4).every(opt => opt.length < OPTION_LENGTH_THRESHOLD);
+                    if (optionsAreShort && qData.options.length === 5) {
+                        oL.classList.add('options-grid');
+                    }
+                    
+                    const optionTexts = qData.options.map(opt => opt.substring(3));
+                    let shuffledOptionTexts;
+                    const optionOrder = currentShiftData.seriesOptionOrder?.[series];
+
+                    if (optionOrder) {
+                        shuffledOptionTexts = optionOrder.map(index => optionTexts[index]);
+                    } else {
+                        shuffledOptionTexts = [...optionTexts];
+                    }
+                    const finalOptions = shuffledOptionTexts.map((text, index) => `${optionLabels[index]} ${text}`);
+
+                    finalOptions.forEach(oT => {
+                        const oI = document.createElement('li');
+                        oI.innerHTML = oT;
+                        oI.dataset.rawText = oT.substring(3).trim();
+                        const userAnswerText = userAnswers[qData.id];
+                        if (userAnswerText && userAnswerText === oI.dataset.rawText) {
+                            if (status === 'correct') oI.classList.add('correct');
+                            else if (status === 'incorrect') oI.classList.add('incorrect');
+                            else if (status === 'skipped') oI.classList.add('special');
+                        }
+                        oL.appendChild(oI);
+                    });
+                    qB.appendChild(oL);
+
+                    if (isDeleted) {
+                        const deletedAnsDisplay = document.createElement('div');
+                        deletedAnsDisplay.className = 'correct-answer-display';
+                        deletedAnsDisplay.innerHTML = 'Status: <strong style="color: var(--danger-color);">Deleted</strong>';
+                        qB.appendChild(deletedAnsDisplay);
+                    }
+                    else if (status !== 'unattempted') {
+                        const aD = document.createElement('div');
+                        aD.className = 'correct-answer-display';
+                        const correctAnswerText = qData.answer.substring(3);
+                        const newCorrectIndex = shuffledOptionTexts.indexOf(correctAnswerText);
+                        let dynamicCorrectAnswer = qData.answer;
+                        if (newCorrectIndex !== -1) {
+                            dynamicCorrectAnswer = `${optionLabels[newCorrectIndex]} ${correctAnswerText}`;
+                        }
+                        aD.innerHTML = `Correct Ans: <strong style="color: var(--success-color);">${dynamicCorrectAnswer}</strong>`;
+                        qB.appendChild(aD);
+                    }
+
+                    qC.appendChild(qB);
+                    
+                    oL.addEventListener('click', (e) => {
+                        const clickedLi = e.target.closest('li');
+                        if (clickedLi && !isDeleted) {
+                            userAnswers[qData.id] = clickedLi.dataset.rawText;
+                            saveData();
+                            displayQuestions(currentSeries, activeFilter);
+                        }
+                    });
+                });
+
+                if (qC.innerHTML === '') {
+                    qC.innerHTML = `<p style="text-align:center; color: var(--font-color-light); padding: 2rem;">इस फ़िल्टर में कोई प्रश्न नहीं है।</p>`;
+                }
+                if (window.MathJax) { MathJax.typesetPromise(); }
+            }
+               
+            function updateActiveFilterButton(filter) {
+                document.querySelectorAll('.filter-buttons button').forEach(btn => btn.classList.remove('active'));
+                document.querySelector(`.filter-buttons button[data-filter="${filter}"]`).classList.add('active');
+            }
+
+            seriesSelect.addEventListener('change', (e) => {
+                displayQuestions(e.target.value, activeFilter);
+                saveData();
+            });
+
+            document.querySelectorAll('.filter-buttons button').forEach(b => b.addEventListener('click', () => {
+                activeFilter = b.dataset.filter;
+                displayQuestions(currentSeries, activeFilter);
+            }));
+
+            document.getElementById('toggle-summary-btn').addEventListener('click', (e) => {
+                const sB = document.querySelector('.summary-bar');
+                sB.classList.toggle('hidden');
+                e.target.textContent = sB.classList.contains('hidden') ? 'Show Result' : 'Hide Result';
+            });
+
+            function triggerPrint(name, rollNo) {
+                document.getElementById('print-title').textContent = document.getElementById('shift-title').textContent;
+                document.getElementById('print-name').textContent = name;
+                document.getElementById('print-roll').textContent = rollNo;
+                document.getElementById('print-series').textContent = seriesSelect.value;
+                
+                document.getElementById('print-full-total').textContent = allQuestions.length;
+                document.getElementById('print-valid-total').textContent = document.getElementById('total-count').textContent;
+
+                document.getElementById('print-attempted').textContent = document.getElementById('attempted-count').textContent;
+                document.getElementById('print-correct').textContent = document.getElementById('correct-count').textContent;
+                document.getElementById('print-incorrect').textContent = document.getElementById('incorrect-count').textContent;
+                document.getElementById('print-skipped').textContent = document.getElementById('skipped-count').textContent;
+                document.getElementById('print-deleted').textContent = document.getElementById('deleted-count').textContent;
+                
+                document.getElementById('print-final-rq-display').textContent = document.getElementById('right-que-value').textContent;
+                document.getElementById('print-raw-marks-display').textContent = document.getElementById('raw-marks-value').textContent;
+
+                setTimeout(() => { window.print(); }, 250);
+            }
+
+            printBtn.addEventListener('click', () => { pMO.style.display = 'flex'; });
+            document.getElementById('cancel-print').addEventListener('click', () => { pMO.style.display = 'none'; });
+            document.getElementById('confirm-print').addEventListener('click', () => {
+                const name = document.getElementById('student-name').value;
+                const rollNo = document.getElementById('student-roll').value;
+                if (!name || !rollNo) { alert("नाम और रोल नंबर दोनों आवश्यक हैं।"); return; }
+                pMO.style.display = 'none';
+                triggerPrint(name, rollNo);
+            });
+
             const shiftIdFromUrl = window.location.hash.substring(1);
-            if (shiftIdFromUrl && typeof allShiftData !== 'undefined' && allShiftData[shiftIdFromUrl]) {
+            if (shiftIdFromUrl && allShiftData[shiftIdFromUrl]) {
                 loadShift(shiftIdFromUrl);
             } else {
                 showHomePage();
             }
         });
+
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js') 
+                    .then(registration => {
+                        console.log('ServiceWorker registration successful with scope: ', registration.scope);
+                    })
+                    .catch(error => {
+                        console.log('ServiceWorker registration failed: ', error);
+                    });
+            });
+        }
     </script>
 </body>
 </html>
+
