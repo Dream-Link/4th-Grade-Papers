@@ -1,5 +1,5 @@
 {
-    "name": "4th Grade Paper Analysis",
+    "name": "4th Grade Paper",
     "short_name": "Paper Analysis",
     "description": "An application to analyze 4th-grade exam papers and calculate marks.",
     "start_url": "./index.html",
@@ -19,3 +19,4 @@
         }
     ]
 }
+
