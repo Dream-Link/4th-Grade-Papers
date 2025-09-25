@@ -1,5 +1,5 @@
 // Define a cache name for your app's assets.
-const CACHE_NAME = 'paper-analysis-v1';
+const CACHE_NAME = '4th Grade Paper-v1';
 
 // List of files to cache for offline use.
 const URLS_TO_CACHE = [
@@ -57,3 +57,4 @@ self.addEventListener('activate', event => {
         })
     );
 });
+
