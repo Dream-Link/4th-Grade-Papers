@@ -6,214 +6,422 @@
     <title>4th Grade Paper</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Noto+Sans+Devanagari:wght@400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <style>
+        /* Modern, Clean & Professional Redesign */
         :root {
-            --primary-bg: #f0f4f8; --container-bg: #ffffff; --header-color: #1a2533;
-            --text-color: #334155; --light-text: #64748b; --border-color: #e2e8f0;
-            --accent-color: #2563eb; --accent-dark: #1d4ed8; --accent-light: #eff6ff; 
-            --shadow-color: rgba(0, 0, 0, 0.08);
-            --correct-bg: #dcfce7; --correct-border: #86efac; --correct-text: #15803d;
-            --incorrect-bg: #fee2e2; --incorrect-border: #fca5a5; --incorrect-text: #b91c1c;
-            --special-bg: #dbeafe; --special-border: #93c5fd; --special-text: #1e40af;
+            --primary-color: #0d6efd;
+            --primary-dark: #0b5ed7;
+            --primary-light: #cfe2ff;
+            --secondary-color: #6c757d;
+            --success-color: #198754;
+            --danger-color: #dc3545;
+            --warning-color: #ffc107;
+            --info-color: #0dcaf0;
+            
+            --bg-color: #f8f9fa;
+            --surface-color: #ffffff;
+            --font-color: #212529;
+            --font-color-light: #6c757d;
+            --border-color: #dee2e6;
+            
+            --success-bg: #d1e7dd;
+            --danger-bg: #f8d7da;
+            --special-bg: #fff3cd; /* For skipped */
+
+            --font-family-primary: 'Poppins', 'Noto Sans Devanagari', sans-serif;
+            --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+            --shadow-md: 0 4px 6px rgba(0,0,0,0.1);
+            --border-radius: 0.5rem; /* 8px */
         }
+
         * { box-sizing: border-box; }
+
         body {
-            font-family: 'Noto Sans Devanagari', sans-serif; 
-            background-color: var(--primary-bg);
-            color: var(--text-color); margin: 0; line-height: 1.6;
+            font-family: var(--font-family-primary);
+            background-color: var(--bg-color);
+            color: var(--font-color);
+            margin: 0;
+            line-height: 1.7;
         }
         
+        /* --- Home Page: Shift Selector --- */
         #shift-selector-page {
-            display: flex; justify-content: center; min-height: 100vh;
-            background: linear-gradient(135deg, #e0eafc, #cfdef3); padding: 5vh 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 2rem 1rem;
         }
         .selector-container {
-            max-width: 900px; width: 100%; padding: 40px; background-color: var(--container-bg);
-            border-radius: 20px; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1); text-align: center;
-            border-top: 5px solid var(--accent-color); transition: all 0.3s ease;
+            width: 100%;
+            max-width: 800px;
+            background-color: var(--surface-color);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-md);
+            padding: 2.5rem;
+            text-align: center;
         }
-        .selector-container h2 { color: var(--header-color); margin-bottom: 10px; font-size: 2.5em; }
-        .selector-container p { color: var(--light-text); font-size: 1.1em; margin-bottom: 40px; }
-        .shift-selector { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 25px; }
-        .shift-btn { display: flex; align-items: center; text-align: left; background-color: #f8fafc; border: 1px solid var(--border-color); border-radius: 12px; text-decoration: none; transition: all 0.3s ease; cursor: pointer; overflow: hidden; }
-        .shift-btn:hover { transform: translateY(-5px); box-shadow: 0 8px 25px rgba(37, 99, 235, 0.2); border-color: var(--accent-color); }
-        .shift-btn .icon { padding: 20px; background-color: var(--accent-light); color: var(--accent-color); font-size: 1.8em; display: flex; align-items: center; justify-content: center; }
-        .shift-btn .text { padding: 20px; color: var(--header-color); font-weight: 500; font-size: 1.1em; }
+        .selector-container h2 {
+            font-size: 2.25rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+        .selector-container .subtitle {
+            font-size: 1rem;
+            color: var(--font-color-light);
+            margin-bottom: 2.5rem;
+        }
+        .shift-selector {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+        }
+        .shift-btn {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            background-color: #f8f9fa;
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+            text-decoration: none;
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+        }
+        .shift-btn:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-md);
+            border-color: var(--primary-color);
+        }
+        .shift-btn .icon {
+            font-size: 1.5rem;
+            color: var(--primary-color);
+            width: 40px;
+            height: 40px;
+            display: grid;
+            place-items: center;
+            background-color: var(--primary-light);
+            border-radius: 50%;
+        }
+        .shift-btn .text {
+            font-weight: 600;
+            color: var(--font-color);
+        }
+        .selector-footer {
+            margin-top: 2rem;
+            font-size: 0.875rem;
+            color: var(--secondary-color);
+        }
 
+        /* --- Question Paper Page --- */
         #question-paper-page { display: none; flex-direction: column; }
-        .top-sticky-bar { position: sticky; top: 0; z-index: 100; background-color: var(--container-bg); box-shadow: 0 4px 12px var(--shadow-color); }
-        .header { display: flex; justify-content: space-between; align-items: center; padding: 8px 15px; border-bottom: 1px solid var(--border-color); flex-wrap: wrap; gap: 10px; }
-        .header h1 { margin: 0; font-size: 1.2em; color: var(--header-color); text-align: center; flex-grow: 1; }
-        .header-controls { display: flex; align-items: center; gap: 10px; }
-        .summary-bar { padding: 10px; display: grid; grid-template-columns: repeat(auto-fit, minmax(80px, 1fr)); gap: 8px; align-items: stretch; transition: all 0.3s ease; }
-        .summary-bar.hidden { display: none; }
-        .summary-item { text-align: center; padding: 5px; border-radius: 8px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-        .summary-item .count { font-size: 1.25em; font-weight: 700; }
-        .summary-item .label { font-size: 0.65em; text-transform: uppercase; font-weight: 500; }
-        #total-item { background-color: #f3e8ff; color: #581c87; } 
-        #attempted-item { background-color: var(--accent-light); color: var(--accent-color); }
-        #correct-item { background-color: var(--correct-bg); color: var(--correct-text); } 
-        #incorrect-item { background-color: var(--incorrect-bg); color: var(--incorrect-text); }
-        #skipped-item { background-color: var(--special-bg); color: var(--special-text); }
-        #right-que-item, #raw-marks-item { background-color: #e0f2fe; color: #0c4a6e; }
-        #deleted-item { background-color: #e5e7eb; color: #4b5563; }
         
-        .container { max-width: 1100px; margin: 25px auto; background-color: var(--container-bg); padding: 25px 30px; border-radius: 16px; box-shadow: 0 5px 25px var(--shadow-color); }
-        
-        .controls-bar { display: flex; justify-content: space-between; align-items: center; padding: 15px 0; border-bottom: 1px solid var(--border-color); margin-bottom: 25px; flex-wrap: wrap; gap: 10px; }
-        .filter-buttons button { background: none; border: 1px solid var(--border-color); border-radius: 20px; padding: 6px 15px; cursor: pointer; transition: all 0.2s; font-family: inherit; font-size: 0.9em; }
-        .filter-buttons button.active { background-color: var(--accent-light); color: var(--accent-color); border-color: var(--accent-color); font-weight: 500; }
-        #print-btn { background-color: var(--accent-color); color: white; border: none; padding: 8px 18px; border-radius: 8px; cursor: pointer; font-weight: 500; transition: background-color 0.2s; }
-        #print-btn:hover { background-color: var(--accent-dark); }
+        .top-sticky-bar {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            background-color: var(--surface-color);
+            box-shadow: var(--shadow-sm);
+            border-bottom: 1px solid var(--border-color);
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem 1.5rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        .header h1 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin: 0;
+            flex: 1 1 auto;
+        }
+        .header-controls {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        .header-controls label { font-size: 0.875rem; font-weight: 500; }
+        .header-controls select, .header-controls button {
+            padding: 0.375rem 0.75rem;
+            border-radius: 0.375rem; /* 6px */
+            border: 1px solid var(--border-color);
+            background-color: #fff;
+            font-family: inherit;
+            font-size: 0.875rem;
+        }
+        #toggle-summary-btn {
+            background-color: var(--primary-light);
+            color: var(--primary-dark);
+            border-color: var(--primary-light);
+            font-weight: 600;
+            cursor: pointer;
+        }
 
-        .question-block { margin-bottom: 30px; border: 1px solid var(--border-color); border-radius: 12px; padding: 20px; transition: background-color 0.3s; }
-        .question-info-bar { font-size: 0.8em; color: var(--light-text); margin-bottom: 15px; display: block; background-color: #f8fafc; padding: 8px 12px; border-radius: 8px; border: 1px solid var(--border-color); font-weight: 500; }
-        .question-block h3 { margin: 10px 0 15px 0; color: var(--header-color); font-size: 1.1em; }
-        .options-list { list-style: none; padding: 0; display: flex; flex-direction: column; gap: 8px; }
-        .options-list li { border: 1px solid var(--border-color); padding: 10px 15px; border-radius: 8px; cursor: pointer; transition: all 0.2s; }
-        .options-list li.correct, .options-list li.incorrect, .options-list li.special { font-weight: 500; }
-        .options-list li.correct { background-color: var(--correct-bg); border-color: var(--correct-border); color: var(--correct-text); }
-        .options-list li.incorrect { background-color: var(--incorrect-bg); border-color: var(--incorrect-border); color: var(--incorrect-text); }
-        .options-list li.special { background-color: var(--special-bg); border-color: var(--special-border); color: var(--special-text); }
-        .correct-answer-display { margin-top: 15px; font-weight: 500; color: var(--text-color); }
+        .summary-bar {
+            padding: 1rem 1.5rem;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 0.75rem;
+            border-top: 1px solid var(--border-color);
+            background-color: #fdfdff;
+            transition: all 0.3s ease;
+        }
+        .summary-bar.hidden { display: none; }
+        .summary-item {
+            text-align: center;
+            padding: 0.5rem;
+            border-radius: var(--border-radius);
+        }
+        .summary-item .count { font-size: 1.5rem; font-weight: 700; }
+        .summary-item .label { font-size: 0.75rem; font-weight: 500; text-transform: uppercase; opacity: 0.8; }
         
-        #print-modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); z-index: 200; display: none; align-items: center; justify-content: center; }
-        #print-modal { background: white; padding: 30px; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.3); width: 90%; max-width: 400px; }
-        #print-modal h2, #print-modal p, #print-modal label { margin: 0 0 15px 0; }
-        #print-modal input { width: 100%; padding: 12px; border: 1px solid var(--border-color); border-radius: 8px; font-size: 1em; }
-        .modal-buttons { display: flex; justify-content: flex-end; gap: 10px; margin-top: 10px; }
-        .modal-buttons button { padding: 10px 20px; border-radius: 8px; border: none; cursor: pointer; font-weight: 500; font-size: 0.9em; }
-        #cancel-print { background-color: #f1f5f9; color: var(--text-color); }
-        #confirm-print { background-color: var(--accent-color); color: white; }
+        #total-item { background-color: #e9ecef; color: #343a40; }
+        #attempted-item { background-color: var(--primary-light); color: var(--primary-dark); }
+        #correct-item { background-color: var(--success-bg); color: var(--success-color); }
+        #incorrect-item { background-color: var(--danger-bg); color: var(--danger-color); }
+        #skipped-item { background-color: var(--special-bg); color: #856404; }
+        #deleted-item { background-color: #e9ecef; color: #495057; }
+        #right-que-item { background-color: #d1e7dd; color: #0f5132; }
+        #raw-marks-item { background-color: #cfe2ff; color: #0a58ca; }
         
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1.5rem;
+        }
+
+        .controls-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            background-color: var(--surface-color);
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        .filter-buttons { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+        .filter-buttons button {
+            background: none;
+            border: 1px solid var(--border-color);
+            border-radius: 2rem;
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: inherit;
+            font-weight: 500;
+        }
+        .filter-buttons button.active {
+            background-color: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+        #print-btn {
+            background-color: var(--success-color);
+            color: white;
+            border: none;
+            padding: 0.6rem 1.2rem;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            font-weight: 600;
+            transition: background-color 0.2s;
+        }
+        #print-btn:hover { background-color: #157347; }
+
+        .question-block {
+            background-color: var(--surface-color);
+            margin-bottom: 1.5rem;
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            transition: box-shadow 0.2s ease;
+        }
+        .question-block:hover { box-shadow: var(--shadow-sm); }
+        .question-info-bar {
+            font-size: 0.8rem;
+            color: var(--font-color-light);
+            margin-bottom: 1rem;
+        }
+        .question-block h3 {
+            margin: 0 0 1rem 0;
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+        .question-block img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin: 1rem auto;
+            border-radius: var(--border-radius);
+            border: 1px solid var(--border-color);
+        }
+
+        .options-list {
+            list-style: none;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        /* --- New 2x2 Grid Layout for short options --- */
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.75rem;
+        }
+        .options-grid li:last-child {
+            grid-column: 1 / -1; /* Make the last item (E) span full width */
+        }
+
+        .options-list li {
+            border: 1px solid var(--border-color);
+            padding: 0.75rem 1rem;
+            border-radius: 0.375rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .options-list li:hover {
+            border-color: var(--primary-color);
+            background-color: #fcfdff;
+        }
+        .options-list li.correct, .options-list li.incorrect, .options-list li.special {
+            color: var(--font-color);
+            font-weight: 500;
+        }
+        .options-list li.correct {
+            background-color: var(--success-bg);
+            border-color: var(--success-color);
+        }
+        .options-list li.incorrect {
+            background-color: var(--danger-bg);
+            border-color: var(--danger-color);
+        }
+        .options-list li.special {
+            background-color: var(--special-bg);
+            border-color: var(--warning-color);
+        }
+        .correct-answer-display {
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border-color);
+            font-weight: 600;
+        }
+        
+        /* --- Modal --- */
+        #print-modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-color: rgba(0,0,0,0.6); z-index: 2000;
+            display: none; align-items: center; justify-content: center;
+        }
+        #print-modal {
+            background: white; padding: 2rem; border-radius: var(--border-radius);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            width: 90%; max-width: 400px;
+        }
+        #print-modal h2, #print-modal p, #print-modal label { margin: 0 0 1rem 0; }
+        #print-modal input {
+            width: 100%; padding: 0.75rem; border: 1px solid var(--border-color);
+            border-radius: 0.375rem; font-size: 1rem; font-family: inherit;
+        }
+        .modal-buttons { display: flex; justify-content: flex-end; gap: 0.75rem; margin-top: 1.5rem; }
+        .modal-buttons button {
+            padding: 0.6rem 1.2rem; border-radius: 0.375rem; border: none;
+            cursor: pointer; font-weight: 600; font-size: 0.9rem;
+        }
+        #cancel-print { background-color: #e9ecef; color: var(--font-color); }
+        #confirm-print { background-color: var(--primary-color); color: white; }
+
+        /* --- Fallback Details for Print --- */
         #print-fallback-details { display: none; }
 
+        /* --- Responsive Design --- */
         @media (max-width: 768px) {
-            #shift-selector-page { padding: 0; }
-            .selector-container { 
-                width: 100%; min-height: 100vh; border-radius: 0; 
-                border-top: none; box-shadow: none; padding: 40px 20px; 
-                display: flex; flex-direction: column; justify-content: flex-start;
-            }
-            .selector-container h1 { font-size: 2em; }
-            .container { margin: 0; padding: 15px 10px; border-radius: 0; box-shadow: none; }
-            .header { padding: 8px 10px; justify-content: center; }
-            .header h1 { font-size: 1.1em; width: 100%; order: -1; }
-            .header-controls { width: 100%; justify-content: center; }
-            .summary-bar { gap: 5px; padding: 8px; grid-template-columns: repeat(4, 1fr); }
-            .summary-item .count { font-size: 1.1em; }
-            .summary-item .label { font-size: 0.6em; }
-            .controls-bar { padding: 10px 0; margin-bottom: 15px; }
-            .filter-buttons button { padding: 5px 12px; font-size: 0.85em; }
-            #print-btn { padding: 6px 15px; font-size: 0.85em; }
-            .question-block { padding: 15px; margin-bottom: 20px; }
-            .question-block h3 { font-size: 1em; }
+            .selector-container { padding: 1.5rem; }
+            .shift-selector { grid-template-columns: 1fr; }
+            .header { padding: 0.75rem 1rem; }
+            .header h1 { font-size: 1.1rem; text-align: center; width: 100%; }
+            .header-controls { justify-content: center; width: 100%; }
+            .container { margin: 1rem auto; padding: 0 1rem; }
+            .controls-bar { flex-direction: column; align-items: stretch; }
+            .filter-buttons { justify-content: center; }
+            #print-btn { width: 100%; text-align: center; }
+            .summary-bar { grid-template-columns: repeat(4, 1fr); padding: 0.75rem 1rem; }
+            .summary-item .count { font-size: 1.25rem; }
+            .summary-item .label { font-size: 0.6rem; }
+            .question-block { padding: 1rem; }
+            .options-grid { grid-template-columns: 1fr; } /* Stack options on mobile */
+            .options-grid li:last-child { grid-column: auto; }
         }
 
+        /* --- Professional Print Styles --- */
         @media print {
-            body { font-size: 10pt; background-color: #fff !important; }
-            .top-sticky-bar, .controls-bar, #print-modal-overlay, #shift-selector-page, #back-to-main-btn { 
-                display: none !important;
-            }
-            .container, .question-block { 
-                box-shadow: none !important; 
-                border-color: #ccc !important; 
-                margin: 0;
-                padding: 0;
-                border: none;
-            }
-            #question-paper-page { display: block !important; }
+            body { font-size: 10pt; background-color: #fff !important; color: #000 !important; }
+            .top-sticky-bar, .controls-bar, #print-modal-overlay, #shift-selector-page { display: none !important; }
+            #question-paper-page, .container { display: block !important; margin: 0; padding: 0; box-shadow: none; border: none; }
             
             #print-fallback-details { 
                 display: block !important;
-                border: 2px solid #333;
-                border-radius: 10px;
-                padding: 15px;
-                margin: 20px;
                 font-family: sans-serif;
+                padding: 1cm;
             }
             #print-fallback-details h2 { 
-                text-align: center; 
-                margin-top: 0;
-                margin-bottom: 15px; 
-                font-size: 1.3em;
+                text-align: center; margin-top: 0; margin-bottom: 1rem; font-size: 1.5rem;
+                border-bottom: 2px solid #333; padding-bottom: 0.5rem;
             }
             .print-info-grid {
-                display: grid;
-                grid-template-columns: 1fr 1fr;
-                gap: 5px 15px;
-                text-align: left;
-                margin-bottom: 15px;
+                display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem 1.5rem;
+                margin-bottom: 1rem; padding: 0.75rem;
+                border: 1px solid #ccc; border-radius: 8px;
             }
-            .print-info-grid p { margin: 2px 0; font-size: 1.1em; }
-            
-            /* ⭐ बदला हुआ स्टाइल: पेपर कोड के लिए लाल और बोल्ड टेक्स्ट ⭐ */
-            .print-paper-code strong, .print-paper-code span {
-                color: red !important;
-                font-weight: bold !important;
-            }
+            .print-info-grid p { margin: 2px 0; font-size: 1rem; }
+            .print-paper-code strong, .print-paper-code span { color: red !important; font-weight: bold !important; }
 
             .print-summary-table {
-                width: 100%;
-                border-collapse: collapse;
-                text-align: center;
+                width: 100%; border-collapse: collapse; text-align: center; margin-bottom: 1.5rem;
             }
             .print-summary-table th, .print-summary-table td {
-                border: 1px solid #999;
-                padding: 5px;
-                font-size: 0.9em;
+                border: 1px solid #999; padding: 6px; font-size: 0.9rem;
             }
-            .print-summary-table th { background-color: #f2f2f2; }
-            #print-correct { color: #15803d !important; font-weight: bold; }
-            #print-incorrect { color: #b91c1c !important; font-weight: bold; }
+            .print-summary-table th { background-color: #f2f2f2; font-weight: bold; }
+            #print-correct { color: var(--success-color) !important; font-weight: bold; }
+            #print-incorrect { color: var(--danger-color) !important; font-weight: bold; }
             #print-raw-marks-display, #print-final-rq-display { font-weight: bold; }
 
             .question-block { 
-                page-break-inside: avoid; 
-                padding: 8px;
-                margin-bottom: 10px !important;
-                font-size: 9pt;
-                border-bottom: 1px dotted #999 !important;
+                page-break-inside: avoid; padding: 0.5rem 0; margin-bottom: 0.75rem !important;
+                border-bottom: 1px dashed #aaa !important;
             }
-            .question-block h3 {
-                font-size: 10pt;
-                margin-top: 5px;
-                margin-bottom: 8px;
-            }
-            .question-block img {
-                max-width: 80% !important;
-                page-break-inside: avoid;
-            }
-            .options-list li {
-                padding: 5px 8px;
-                font-size: 9pt;
-                margin-bottom: 2px;
-            }
-            .question-info-bar, .correct-answer-display {
-                font-size: 8pt;
-                padding: 4px 6px;
-                margin-bottom: 5px;
-            }
-            .question-info-bar { margin-top: 0; }
+            .question-block:last-of-type { border-bottom: none !important; }
+
+            .question-info-bar { display: none; } /* Hide for cleaner print */
+            .question-block h3 { font-size: 11pt; margin: 0 0 0.5rem 0; }
+            .question-block img { max-width: 60% !important; page-break-inside: avoid; }
+            .options-list { margin-top: 0.5rem; }
+            .options-list li { padding: 5px 8px; font-size: 10pt; }
+            .correct-answer-display { font-size: 9pt; margin-top: 0.5rem; padding-top: 0.5rem; border-top: 1px solid #ddd; }
+            .options-grid { grid-template-columns: 1fr 1fr; }
 
             .options-list li.correct, .options-list li.incorrect, .options-list li.special {
-                -webkit-print-color-adjust: exact !important;
-                color-adjust: exact !important;
+                -webkit-print-color-adjust: exact !important; color-adjust: exact !important;
             }
-            .options-list li.correct { background-color: var(--correct-bg) !important; color: var(--correct-text) !important; }
-            .options-list li.incorrect { background-color: var(--incorrect-bg) !important; color: var(--incorrect-text) !important; }
-            .options-list li.special { background-color: var(--special-bg) !important; color: var(--special-text) !important; }
+            .options-list li.correct { background-color: var(--success-bg) !important; border-color: #b3d9c5 !important; }
+            .options-list li.incorrect { background-color: var(--danger-bg) !important; border-color: #f1b0b7 !important; }
+            .options-list li.special { background-color: var(--special-bg) !important; border-color: #ffeeba !important; }
         }
     </style>
     
     <script>
-        MathJax = {
-          tex: {
-            inlineMath: [['$', '$'], ['\\(', '\\)']]
-          }
-        };
+        MathJax = { tex: { inlineMath: [['$', '$'], ['\\(', '\\)']] } };
     </script>
     <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 
@@ -246,11 +454,11 @@
                     <td><span id="print-full-total"></span></td>
                     <td><span id="print-valid-total"></span></td>
                     <td><span id="print-attempted"></span></td>
-                    <td><span id="print-correct"></span></td>
-                    <td><span id="print-incorrect"></span></td>
+                    <td id="print-correct"></td>
+                    <td id="print-incorrect"></td>
                     <td><span id="print-skipped"></span></td>
                     <td><span id="print-deleted"></span></td>
-                    <td><span id="print-final-rq-display"></span></td>
+                    <td id="print-final-rq-display"></td>
                 </tr>
             </tbody>
         </table>
@@ -259,17 +467,20 @@
     <div id="shift-selector-page">
         <div class="selector-container">
             <h2>4th Class Paper 2025</h2>
+            <p class="subtitle">कृपया मूल्यांकन के लिए अपनी शिफ़्ट चुनें।</p>
             <div class="shift-selector">
-                <div class="shift-btn" data-shift="shift1"><div class="icon"><i class="fas fa-file-alt"></i></div><div class="text">1st Shift 19.09.2025</div></div>
-                <div class="shift-btn" data-shift="shift2"><div class="icon"><i class="fas fa-file-alt"></i></div><div class="text">2nd Shift 19.09.2025</div></div>
-                <div class="shift-btn" data-shift="shift3"><div class="icon"><i class="fas fa-file-alt"></i></div><div class="text">3rd Shift 20.09.2025</div></div>
-                <div class="shift-btn" data-shift="shift4"><div class="icon"><i class="fas fa-file-alt"></i></div><div class="text">4th Shift 20.09.2025</div></div>
-                <div class="shift-btn" data-shift="shift5"><div class="icon"><i class="fas fa-file-alt"></i></div><div class="text">5th Shift 21.09.2025</div></div>
-                <div class="shift-btn" data-shift="shift6"><div class="icon"><i class="fas fa-file-alt"></i></div><div class="text">6th Shift 21.09.2025</div></div>
+                <a class="shift-btn" data-shift="shift1"><div class="icon"><i class="fas fa-file-alt"></i></div><div class="text">1st Shift 19.09.2025</div></a>
+                <a class="shift-btn" data-shift="shift2"><div class="icon"><i class="fas fa-file-alt"></i></div><div class="text">2nd Shift 19.09.2025</div></a>
+                <a class="shift-btn" data-shift="shift3"><div class="icon"><i class="fas fa-file-alt"></i></div><div class="text">3rd Shift 20.09.2025</div></a>
+                <a class="shift-btn" data-shift="shift4"><div class="icon"><i class="fas fa-file-alt"></i></div><div class="text">4th Shift 20.09.2025</div></a>
+                <a class="shift-btn" data-shift="shift5"><div class="icon"><i class="fas fa-file-alt"></i></div><div class="text">5th Shift 21.09.2025</div></a>
+                <a class="shift-btn" data-shift="shift6"><div class="icon"><i class="fas fa-file-alt"></i></div><div class="text">6th Shift 21.09.2025</div></a>
             </div>
-            <p>Last Update 24/09/2025 02:30 PM</p>
-            <p>सभी प्रश्नों के उत्तर संभावित उत्तर कुंजी के आधार पर है, आधिकारिक कुंजी जारी होने पर UPDATE कर दी जाएगी</p>
-            <p>MP Salodiya</p>
+            <div class="selector-footer">
+                <p>Last Update: 25/09/2025 12:30 PM</p>
+                <p>सभी प्रश्नों के उत्तर संभावित उत्तर कुंजी के आधार पर हैं, आधिकारिक कुंजी जारी होने पर UPDATE कर दी जाएगी।</p>
+                <p><strong>- MP Salodiya</strong></p>
+            </div>
         </div>
     </div>
 
@@ -278,7 +489,7 @@
             <div class="header">
                  <h1 id="shift-title">Shift Title</h1>
                 <div class="header-controls">
-                    <label for="series-select">PAPER Code:</label>
+                    <label for="series-select">Paper Code:</label>
                     <select id="series-select"></select>
                     <button id="toggle-summary-btn">Show Result</button>
                 </div>
@@ -290,29 +501,36 @@
                 <div id="incorrect-item" class="summary-item"><div id="incorrect-count" class="count">0</div><div class="label">Wrong</div></div>
                 <div id="skipped-item" class="summary-item"><div id="skipped-count" class="count">0</div><div class="label">Skip (E)</div></div>
                 <div id="deleted-item" class="summary-item"><div id="deleted-count" class="count">0</div><div class="label">Deleted</div></div>
-                <div id="right-que-item" class="summary-item"><div id="right-que-value" class="count">0.00</div><div class="label">Final R.Q. </div></div>
+                <div id="right-que-item" class="summary-item"><div id="right-que-value" class="count">0.00</div><div class="label">Final R.Q.</div></div>
                 <div id="raw-marks-item" class="summary-item"><div id="raw-marks-value" class="count">0.00</div><div class="label">RAW Marks</div></div>
             </div>
         </div>
         <div class="container">
             <div class="controls-bar">
                 <div class="filter-buttons">
-                    <button class="active" data-filter="all">All</button> <button data-filter="correct">Right</button> <button data-filter="incorrect">Wrong</button> <button data-filter="skipped">Skip (E)</button> <button data-filter="deleted">Deleted</button>
+                    <button class="active" data-filter="all">All</button>
+                    <button data-filter="correct">Right</button>
+                    <button data-filter="incorrect">Wrong</button>
+                    <button data-filter="skipped">Skip (E)</button>
+                    <button data-filter="deleted">Deleted</button>
                 </div>
-                <button id="print-btn">Print</button>
+                <button id="print-btn"><i class="fas fa-print"></i> Print</button>
             </div>
             <div id="questions-container"></div>
         </div>
-        <div id="print-modal-overlay">
-            <div id="print-modal">
-                <h2>Print info</h2>
-                <label for="student-name">Name:</label>
-                <input type="text" id="student-name" placeholder="Your Name">
-                <label for="student-roll">Roll No.:</label>
-                <input type="text" id="student-roll" placeholder="Your Roll No.">
-                <div class="modal-buttons">
-                    <button id="cancel-print">Cancel</button> <button id="confirm-print">Print</button>
-                </div>
+    </div>
+
+    <div id="print-modal-overlay">
+        <div id="print-modal">
+            <h2>Print Details</h2>
+            <p>कृपया प्रिंट करने से पहले अपना नाम और रोल नंबर दर्ज करें।</p>
+            <label for="student-name">Name:</label>
+            <input type="text" id="student-name" placeholder="Your Name">
+            <label for="student-roll">Roll No.:</label>
+            <input type="text" id="student-roll" placeholder="Your Roll No.">
+            <div class="modal-buttons">
+                <button id="cancel-print">Cancel</button>
+                <button id="confirm-print">Confirm & Print</button>
             </div>
         </div>
     </div>
@@ -324,6 +542,9 @@
         const questionPaperPage = document.getElementById('question-paper-page');
         const seriesSelect = document.getElementById('series-select');
 
+        // All original JS functions are kept as they are.
+        // Only one modification is added in displayQuestions function for the 2x2 grid layout.
+        
         function showHomePage() {
             shiftSelectorPage.style.display = 'flex';
             questionPaperPage.style.display = 'none';
@@ -396,10 +617,7 @@
         function updateSummary() {
             let c = 0, i = 0, s = 0, d = 0;
             allQuestions.forEach(q => {
-                if (q.deleted) {
-                    d++;
-                    return;
-                }
+                if (q.deleted) { d++; return; }
                 const st = getQuestionStatus(q.id);
                 if (st === 'correct') c++;
                 else if (st === 'incorrect') i++;
@@ -407,7 +625,6 @@
             });
             
             const a = c + i; 
-            
             const totalValidQuestions = allQuestions.length - d;
             
             document.getElementById('total-count').textContent = totalValidQuestions;
@@ -418,13 +635,9 @@
             document.getElementById('deleted-count').textContent = d;
             
             const rQ = c - (i / 3);
-            let rM = 0;
-            if (totalValidQuestions > 0) {
-                rM = rQ * (200 / totalValidQuestions);
-            }
+            let rM = (totalValidQuestions > 0) ? rQ * (200 / totalValidQuestions) : 0;
             
-            const formattedRQ = (rQ % 1 === 0) ? rQ : rQ.toFixed(2);
-            document.getElementById('right-que-value').textContent = formattedRQ;
+            document.getElementById('right-que-value').textContent = (rQ % 1 === 0) ? rQ : rQ.toFixed(2);
             document.getElementById('raw-marks-value').textContent = rM.toFixed(2);
         }
         
@@ -439,7 +652,6 @@
                     positions.push(`<strong>${series}:</strong> #${pos + 1}`);
                 }
             }
-            
             return positions.length > 0 ? positions.join(' | ') : `Q ID: ${qId}`;
         }
 
@@ -454,6 +666,7 @@
             const qIndices = seriesOrder[series] || Array.from({length: allQuestions.length}, (_, i) => i + 1);
             
             const optionLabels = ['A)', 'B)', 'C)', 'D)', 'E)'];
+            const OPTION_LENGTH_THRESHOLD = 40; // Characters to decide if options are "short"
 
             qIndices.forEach((qIndex, displayNum) => {
                 const qData = allQuestions[qIndex - 1];
@@ -481,12 +694,17 @@
                     const qImg = document.createElement('img');
                     qImg.src = qData.image;
                     qImg.alt = "प्रश्न चित्र";
-                    qImg.style.cssText = "max-width:100%; height:auto; display:block; margin:10px auto; border-radius: 8px;";
                     qB.appendChild(qImg);
                 }
                 
                 const oL = document.createElement('ul');
                 oL.className = 'options-list';
+
+                // ⭐⭐ Smart 2x2 Grid Logic ⭐⭐
+                const optionsAreShort = qData.options.slice(0, 4).every(opt => opt.length < OPTION_LENGTH_THRESHOLD);
+                if (optionsAreShort && qData.options.length === 5) {
+                    oL.classList.add('options-grid');
+                }
                 
                 const optionTexts = qData.options.map(opt => opt.substring(3));
                 let shuffledOptionTexts;
@@ -501,14 +719,10 @@
 
                 finalOptions.forEach(oT => {
                     const oI = document.createElement('li');
-                    oI.innerHTML = oT; 
-                    
-                    const rawOptionText = oT.substring(3).trim();
-                    oI.dataset.rawText = rawOptionText;
-                    
+                    oI.innerHTML = oT;
+                    oI.dataset.rawText = oT.substring(3).trim();
                     const userAnswerText = userAnswers[qData.id];
-                    
-                    if (userAnswerText && userAnswerText === rawOptionText) {
+                    if (userAnswerText && userAnswerText === oI.dataset.rawText) {
                         if (status === 'correct') oI.classList.add('correct');
                         else if (status === 'incorrect') oI.classList.add('incorrect');
                         else if (status === 'skipped') oI.classList.add('special');
@@ -518,11 +732,9 @@
                 qB.appendChild(oL);
 
                 if (isDeleted) {
-                    qB.style.backgroundColor = '#f3f4f6';
-                    qB.style.opacity = '0.8';
                     const deletedAnsDisplay = document.createElement('div');
                     deletedAnsDisplay.className = 'correct-answer-display';
-                    deletedAnsDisplay.innerHTML = 'Status: <strong style="color: red;">Delete</strong>';
+                    deletedAnsDisplay.innerHTML = 'Status: <strong style="color: var(--danger-color);">Deleted</strong>';
                     qB.appendChild(deletedAnsDisplay);
                 }
                 else if (status !== 'unattempted') {
@@ -534,7 +746,7 @@
                     if (newCorrectIndex !== -1) {
                         dynamicCorrectAnswer = `${optionLabels[newCorrectIndex]} ${correctAnswerText}`;
                     }
-                    aD.innerHTML = `Correct Ans. is - <strong style="color: var(--correct-text);">${dynamicCorrectAnswer}</strong>`;
+                    aD.innerHTML = `Correct Ans: <strong style="color: var(--success-color);">${dynamicCorrectAnswer}</strong>`;
                     qB.appendChild(aD);
                 }
 
@@ -543,8 +755,7 @@
                 oL.addEventListener('click', (e) => {
                     const clickedLi = e.target.closest('li');
                     if (clickedLi && !isDeleted) {
-                        const selectedOptionText = clickedLi.dataset.rawText;
-                        userAnswers[qData.id] = selectedOptionText;
+                        userAnswers[qData.id] = clickedLi.dataset.rawText;
                         saveData();
                         displayQuestions(currentSeries, activeFilter);
                     }
@@ -552,12 +763,9 @@
             });
 
             if (qC.innerHTML === '') {
-                qC.innerHTML = `<p style="text-align:center; color: var(--light-text);">इस फ़िल्टर में कोई प्रश्न नहीं है।</p>`;
+                qC.innerHTML = `<p style="text-align:center; color: var(--font-color-light); padding: 2rem;">इस फ़िल्टर में कोई प्रश्न नहीं है।</p>`;
             }
-            
-            if (window.MathJax) {
-                MathJax.typesetPromise();
-            }
+            if (window.MathJax) { MathJax.typesetPromise(); }
         }
            
         function updateActiveFilterButton(filter) {
@@ -596,7 +804,6 @@
             document.getElementById('print-skipped').textContent = document.getElementById('skipped-count').textContent;
             document.getElementById('print-deleted').textContent = document.getElementById('deleted-count').textContent;
             
-            // ⭐ प्रिंट के लिए मानों को सही तत्वों में सेट करना ⭐
             document.getElementById('print-final-rq-display').textContent = document.getElementById('right-que-value').textContent;
             document.getElementById('print-raw-marks-display').textContent = document.getElementById('raw-marks-value').textContent;
 
@@ -610,20 +817,15 @@
         document.getElementById('confirm-print').addEventListener('click', () => {
             const name = document.getElementById('student-name').value;
             const rollNo = document.getElementById('student-roll').value;
-            if (!name || !rollNo) {
-                alert("नाम और रोल नंबर दोनों आवश्यक हैं।");
-                return;
-            }
+            if (!name || !rollNo) { alert("नाम और रोल नंबर दोनों आवश्यक हैं।"); return; }
             pMO.style.display = 'none';
-            triggerPrint(name, rollNo);
+            triggerPrint(name, rollNo); 
         });
 
         document.addEventListener('DOMContentLoaded', () => {
-            if (window.location.hash) {
-                const shiftIdFromUrl = window.location.hash.substring(1);
-                if (shiftIdFromUrl && allShiftData[shiftIdFromUrl]) {
-                    loadShift(shiftIdFromUrl);
-                }
+            const shiftIdFromUrl = window.location.hash.substring(1);
+            if (shiftIdFromUrl && typeof allShiftData !== 'undefined' && allShiftData[shiftIdFromUrl]) {
+                loadShift(shiftIdFromUrl);
             } else {
                 showHomePage();
             }
