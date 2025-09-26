@@ -130,7 +130,7 @@ const allShiftData = {
         },
         seriesOptionOrder:{
             'DS22 Set 1':[0, 1, 2, 3, 4],
-           'DS22 Set 11':[1, 2, 3, 0, 4]
+           'DS22 Set 11':[1, 2, 3, 0, 4]}
     },
     'shift2':{
         title:'4th Grade 2nd Shift (19.09.2025)',
