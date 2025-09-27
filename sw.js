@@ -1,11 +1,11 @@
+
 const CACHE_NAME = '4th-Grade-Anlysis-by-MP-SALODIYA-v1';
-// Files to cache for offline use
 const urlsToCache = [
   '/',
   '/index.html'
 ];
 
-// Install a service worker
+// 1. Install Event: Cache the core files
 self.addEventListener('install', event => {
   event.waitUntil(
     caches.open(CACHE_NAME)
@@ -16,7 +16,7 @@ self.addEventListener('install', event => {
   );
 });
 
-// Cache and return requests
+// 2. Fetch Event: Serve from cache first, then network
 self.addEventListener('fetch', event => {
   event.respondWith(
     caches.match(event.request)
@@ -25,13 +25,14 @@ self.addEventListener('fetch', event => {
         if (response) {
           return response;
         }
+        // Not in cache - fetch from network
         return fetch(event.request);
       }
     )
   );
 });
 
-// Update a service worker
+// 3. Activate Event: Clean up old caches
 self.addEventListener('activate', event => {
   const cacheWhitelist = [CACHE_NAME];
   event.waitUntil(
