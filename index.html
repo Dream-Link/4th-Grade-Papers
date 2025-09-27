@@ -87,6 +87,7 @@
         .selector-footer p { margin: 0.5rem 0; }
 
         #question-paper-page { display: none; flex-direction: column; }
+        #question-paper-page.hide-q-info .question-info-bar { display: none; }
         
         .top-sticky-bar {
             position: sticky; top: 0; z-index: 1000; background-color: var(--surface-color);
@@ -99,6 +100,10 @@
         .header h1 {
             font-size: 1.25rem; font-weight: 600; margin: 0; flex-grow: 1;
             text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        }
+        #toggle-info-bar-btn {
+            background: none; border: none; font-size: 1.2rem; cursor: pointer; color: var(--secondary-color);
+            margin: 0 1rem 0 -2rem;
         }
         .header-controls { display: flex; align-items: center; gap: 0.75rem; flex-shrink: 0; }
         .header-controls label { font-size: 0.875rem; font-weight: 500; }
@@ -199,6 +204,7 @@
         #cancel-print { background-color: #e9ecef; color: var(--font-color); }
         #confirm-print { background-color: var(--primary-color); color: white; }
         #get-omr-btn { background-color: var(--success-color); color: white; }
+        #get-official-key-btn { background-color: #6f42c1; color: white; }
 
         .print-only-container { display: none; }
 
@@ -207,7 +213,8 @@
             .shift-selector { grid-template-columns: 1fr; gap: 1rem; }
             
             .header { padding: 0.5rem; gap: 0.5rem; justify-content: center; }
-            .header h1 { order: 1; width: 100%; font-size: 1.1rem; padding: 0.25rem 0; }
+            .header h1 { order: 1; width: 100%; font-size: 1.1rem; padding: 0.25rem 0; text-align: center; }
+            #toggle-info-bar-btn { position: absolute; left: 5px; top: 10px; margin: 0; }
             .header-controls {
                 order: 2; width: 100%; justify-content: space-around;
                 gap: 0.5rem; padding: 0 0.5rem;
@@ -234,11 +241,14 @@
             .options-container { padding: 1rem; }
             .options-grid { grid-template-columns: 1fr; }
             .options-grid li:last-child:nth-child(5) { grid-column: auto; }
+            
+            .modal-buttons { justify-content: center; gap: 0.25rem; }
+            .modal-buttons button { padding: 0.5rem; font-size: 0.7rem; flex-grow: 1; }
         }
 
         @media print {
             body { font-size: 10pt; background-color: #fff !important; color: #000 !important; }
-            .question-block, .print-header-details { page-break-inside: avoid; }
+            .question-block, .print-header-details, .official-key-print-container { page-break-inside: avoid; }
             * { background-color: transparent !important; box-shadow: none !important; color: #000 !important; }
             
             .print-header-details { padding: 1cm 1cm 0; }
@@ -254,7 +264,8 @@
             
             .question-block { margin-bottom: 0.5rem !important; border: none !important; border-bottom: 1px dashed #aaa !important; }
             .question-block:last-of-type { border-bottom: none !important; }
-            .question-info-bar { display: none !important; }
+            /* .question-info-bar { display: none !important; } */
+            #question-paper-page.hide-q-info .question-info-bar { display: none !important; }
             .question-content, .options-container { padding: 0.4rem 8px !important; }
             .question-content h3 { font-size: 10.5pt; margin: 0 0 0.4rem 0 !important; font-weight: normal; }
             .question-content h3 .print-q-num { font-weight: bold; }
@@ -281,6 +292,15 @@
             .omr-options { display: flex; }
             .omr-bubble { width: 18px; height: 18px; border: 1px solid #000 !important; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 10px; margin-right: 5px; }
             .omr-bubble.filled { background-color: #0d47a1 !important; border-color: #0d47a1 !important; color: white !important; -webkit-print-color-adjust: exact !important; color-adjust: exact !important; }
+            
+            .official-key-print-container { padding: 1cm; }
+            .official-key-header h1 { text-align: center; font-size: 1.5rem; margin: 0 0 0.5rem 0; }
+            .official-key-header p { text-align: center; font-size: 1.1rem; margin: 0 0 1.5rem 0; font-weight: bold; }
+            .official-key-grid { display: flex; justify-content: space-around; align-items: flex-start; gap: 1.5rem; }
+            .official-key-column { width: 45%; }
+            .official-key-table { width: 100%; border-collapse: collapse; }
+            .official-key-table th, .official-key-table td { border: 1px solid #333 !important; padding: 5px; text-align: center; font-size: 10pt; }
+            .official-key-table th { background-color: #f2f2f2 !important; }
         }
     </style>
     
@@ -317,6 +337,7 @@
             </table>
         </div>
         <div id="omr-print-container"></div>
+        <div id="official-key-print-container"></div>
     </div>
 
     <div id="shift-selector-page">
@@ -344,6 +365,7 @@
         <div class="top-sticky-bar">
             <div class="header">
                 <h1 id="shift-title">Shift Title</h1>
+                <button id="toggle-info-bar-btn" title="Toggle Question Info"><i class="fas fa-eye"></i></button>
                 <div class="header-controls">
                     <label for="series-select">Paper Code:</label>
                     <select id="series-select"></select>
@@ -386,6 +408,7 @@
             <input type="text" id="student-roll" placeholder="Your Roll No.">
             <div class="modal-buttons">
                 <button id="cancel-print">Cancel</button>
+                <button id="get-official-key-btn">Official Answer Key</button>
                 <button id="get-omr-btn">Get OMR</button>
                 <button id="confirm-print">Confirm & Print</button>
             </div>
@@ -408,6 +431,7 @@
             const seriesSelect = document.getElementById('series-select');
             const printBtn = document.getElementById('header-print-btn');
             const pMO = document.getElementById('print-modal-overlay');
+            const toggleInfoBtn = document.getElementById('toggle-info-bar-btn');
 
             function showHomePage() {
                 shiftSelectorPage.style.display = 'flex';
@@ -660,6 +684,18 @@
                 e.target.textContent = sB.classList.contains('hidden') ? 'Show Result' : 'Hide Result';
             });
             
+            toggleInfoBtn.addEventListener('click', () => {
+                const icon = toggleInfoBtn.querySelector('i');
+                questionPaperPage.classList.toggle('hide-q-info');
+                if(questionPaperPage.classList.contains('hide-q-info')) {
+                    icon.classList.remove('fa-eye');
+                    icon.classList.add('fa-eye-slash');
+                } else {
+                    icon.classList.remove('fa-eye-slash');
+                    icon.classList.add('fa-eye');
+                }
+            });
+            
             function populatePrintHeader(name, rollNo){
                 document.getElementById('print-title').textContent = document.getElementById('shift-title').textContent;
                 document.getElementById('print-name').textContent = name;
@@ -712,27 +748,23 @@
                                     triggerPrint();
                                 });
                             } else {
-                                // Fallback if MathJax is not present or fails to load
                                 triggerPrint();
                             }
                         }
-
-                        // Wait for all images to load, then trigger render & print
+                        
                         const images = document.querySelectorAll('img');
                         const promises = [];
                         images.forEach(img => {
                             if (!img.complete) {
                                 promises.push(new Promise(resolve => {
                                     img.onload = resolve;
-                                    img.onerror = resolve; // Resolve even on error to not block printing
+                                    img.onerror = resolve;
                                 }));
                             }
                         });
 
                         Promise.all(promises).then(RENDER_AND_PRINT);
-                        // Failsafe timeout in case images hang
                         setTimeout(RENDER_AND_PRINT, 5000);
-
                     <\/script>
                 `;
 
@@ -745,13 +777,62 @@
                             ${mathJaxConfig}
                             ${mathJaxScript}
                         </head>
-                        <body class="${bodyClass}">
+                        <body class="${bodyClass} ${questionPaperPage.classList.contains('hide-q-info') ? 'hide-q-info' : ''}">
                             ${content}
                             ${printLogic}
                         </body>
                     </html>
                 `);
                 printWindow.document.close();
+            }
+
+            function getCorrectOptionForSeries(qData, series) {
+                if (qData.deleted) return 'Delete';
+                const optionLabels = ['A', 'B', 'C', 'D', 'E'];
+                const correctAnswerText = qData.answer.substring(3);
+                const optionTexts = qData.options.map(opt => opt.substring(3));
+                
+                const optionOrder = currentShiftData.seriesOptionOrder?.[series];
+                const shuffledOptionTexts = optionOrder ? optionOrder.map(index => optionTexts[index]) : [...optionTexts];
+                
+                const newCorrectIndex = shuffledOptionTexts.indexOf(correctAnswerText);
+                return (newCorrectIndex !== -1) ? optionLabels[newCorrectIndex] : '?';
+            }
+
+            function generateAndPrintOfficialKey() {
+                const container = document.getElementById('official-key-print-container');
+                let html = `
+                    <div class="official-key-header">
+                        <h1>चतुर्थ श्रेणी कर्मचारी</h1>
+                        <p>${currentShiftData.title} | पेपर कोड: ${currentSeries}</p>
+                    </div>
+                    <div class="official-key-grid">
+                `;
+
+                const seriesOrder = currentShiftData.seriesOrder[currentSeries] || Array.from({length: allQuestions.length}, (_, i) => i + 1);
+                const totalQuestions = seriesOrder.length;
+                const questionsPerColumn = 30;
+                const numColumns = Math.ceil(totalQuestions / questionsPerColumn);
+                
+                for (let c = 0; c < numColumns; c++) {
+                    html += `<div class="official-key-column"><table class="official-key-table"><thead><tr><th>प्रश्न</th><th>उत्तर</th></tr></thead><tbody>`;
+                    const start = c * questionsPerColumn;
+                    const end = Math.min(start + questionsPerColumn, totalQuestions);
+                    for (let i = start; i < end; i++) {
+                        const displayNum = i + 1;
+                        const qIndex = seriesOrder[i];
+                        const qData = allQuestions[qIndex - 1];
+                        if(qData) {
+                            const correctOpt = getCorrectOptionForSeries(qData, currentSeries);
+                            html += `<tr><td>${displayNum}</td><td>${correctOpt}</td></tr>`;
+                        }
+                    }
+                    html += `</tbody></table></div>`;
+                }
+
+                html += `</div>`;
+                container.innerHTML = html;
+                openPrintWindow(container.innerHTML);
             }
 
             function generateAndPrintOMR(name, rollNo) {
@@ -843,6 +924,11 @@
                 if (!name || !rollNo) { alert("नाम और रोल नंबर दोनों आवश्यक हैं।"); return; }
                 pMO.style.display = 'none';
                 generateAndPrintOMR(name, rollNo);
+            });
+
+            document.getElementById('get-official-key-btn').addEventListener('click', () => {
+                 pMO.style.display = 'none';
+                 generateAndPrintOfficialKey();
             });
 
             const shiftIdFromUrl = window.location.hash.substring(1);
