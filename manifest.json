@@ -1,11 +1,11 @@
   {
   "name": "4th Grade Anlysis by MP SALODIYA",
-  "short_name": "Store Manager",
+  "short_name": "चतुर्थ श्रेणी कर्मचारी",
   "start_url": ".",
   "display": "standalone",
   "background_color": "#F3F4F6",
   "theme_color": "#3B82F6",
-  "description": "एक स्मार्ट स्टोर मैनेजर जो प्रोडक्ट्स और बिलिंग को मैनेज करता है।",
+  "description": "Paper Answers & prints",
   "icons": [
     {
       "src": "icon-192x192.png",
@@ -20,3 +20,4 @@
     }
   ]
 }
+
