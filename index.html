@@ -105,6 +105,10 @@
             background: none; border: none; font-size: 1.2rem; cursor: pointer; color: var(--secondary-color);
             margin: 0 1rem 0 -2rem;
         }
+        #reset-answers-btn {
+            background: none; border: none; font-size: 1.1rem; cursor: pointer; color: var(--secondary-color);
+            margin: 0 1rem;
+        }
         .header-controls { display: flex; align-items: center; gap: 0.75rem; flex-shrink: 0; }
         .header-controls label { font-size: 0.875rem; font-weight: 500; }
         .header-controls select, .header-controls button {
@@ -215,6 +219,7 @@
             .header { padding: 0.5rem; gap: 0.5rem; justify-content: center; }
             .header h1 { order: 1; width: 100%; font-size: 1.1rem; padding: 0.25rem 0; text-align: center; }
             #toggle-info-bar-btn { position: absolute; left: 5px; top: 10px; margin: 0; }
+            #reset-answers-btn { position: absolute; right: 5px; top: 10px; margin: 0; }
             .header-controls {
                 order: 2; width: 100%; justify-content: space-around;
                 gap: 0.5rem; padding: 0 0.5rem;
@@ -264,7 +269,7 @@
             
             .question-block { margin-bottom: 0.5rem !important; border: none !important; border-bottom: 1px dashed #aaa !important; }
             .question-block:last-of-type { border-bottom: none !important; }
-            /* .question-info-bar { display: none !important; } */
+            .question-info-bar { display: none !important; }
             #question-paper-page.hide-q-info .question-info-bar { display: none !important; }
             .question-content, .options-container { padding: 0.4rem 8px !important; }
             .question-content h3 { font-size: 10.5pt; margin: 0 0 0.4rem 0 !important; font-weight: normal; }
@@ -364,8 +369,9 @@
     <div id="question-paper-page">
         <div class="top-sticky-bar">
             <div class="header">
-                <h1 id="shift-title">Shift Title</h1>
                 <button id="toggle-info-bar-btn" title="Toggle Question Info"><i class="fas fa-eye"></i></button>
+                <h1 id="shift-title">Shift Title</h1>
+                <button id="reset-answers-btn" title="Reset Answers"><i class="fas fa-sync-alt"></i></button>
                 <div class="header-controls">
                     <label for="series-select">Paper Code:</label>
                     <select id="series-select"></select>
@@ -432,6 +438,7 @@
             const printBtn = document.getElementById('header-print-btn');
             const pMO = document.getElementById('print-modal-overlay');
             const toggleInfoBtn = document.getElementById('toggle-info-bar-btn');
+            const resetBtn = document.getElementById('reset-answers-btn');
 
             function showHomePage() {
                 shiftSelectorPage.style.display = 'flex';
@@ -494,10 +501,13 @@
             }
 
             function getQuestionStatus(qId) {
+                const qData = allQuestions.find(q => q.id === qId);
+                if (qData.deleted) return 'deleted'; //This check now happens implicitly below but this is a fast path
+                
                 const uAnsText = userAnswers[qId];
                 if (!uAnsText) return 'unattempted';
                 if (uAnsText === "अनुत्तरित प्रश्न" || uAnsText === "Question not attempted") return 'skipped';
-                const qData = allQuestions.find(q => q.id === qId);
+                
                 const correctAnswerText = qData.answer.substring(3);
                 return uAnsText === correctAnswerText ? 'correct' : 'incorrect';
             }
@@ -505,7 +515,7 @@
             function updateSummary() {
                 let c = 0, i = 0, s = 0, d = 0;
                 allQuestions.forEach(q => {
-                    if (q.deleted) { d++; return; }
+                    if (q.deleted) { d++; return; } // Scoring logic: deleted questions are not scored.
                     const st = getQuestionStatus(q.id);
                     if (st === 'correct') c++;
                     else if (st === 'incorrect') i++;
@@ -561,6 +571,7 @@
                     if (!qData) return;
 
                     const isDeleted = qData.deleted === true;
+                    // For filtering, a deleted question is always 'deleted'. For display, we get its answered status.
                     const status = isDeleted ? 'deleted' : getQuestionStatus(qData.id);
 
                     if (filter !== 'all' && filter !== status) return;
@@ -649,7 +660,7 @@
                     
                     oL.addEventListener('click', (e) => {
                         const clickedLi = e.target.closest('li');
-                        if (clickedLi && !isDeleted) {
+                        if (clickedLi) {
                             userAnswers[qData.id] = clickedLi.dataset.rawText;
                             saveData();
                             displayQuestions(currentSeries, activeFilter);
@@ -671,6 +682,14 @@
             seriesSelect.addEventListener('change', (e) => {
                 displayQuestions(e.target.value, activeFilter);
                 saveData();
+            });
+            
+            resetBtn.addEventListener('click', () => {
+                if (confirm("क्या आप वाकई इस पेपर के लिए अपने सभी उत्तर हटाना चाहते हैं?")) {
+                    userAnswers = {};
+                    saveData();
+                    displayQuestions(currentSeries, 'all');
+                }
             });
 
             document.querySelectorAll('.filter-buttons button').forEach(b => b.addEventListener('click', () => {
@@ -712,20 +731,10 @@
                 document.getElementById('print-raw-marks-display').textContent = document.getElementById('raw-marks-value').textContent;
             }
 
-            /**
-             * MODIFIED FUNCTION FOR ANDROID COMPATIBILITY
-             * Creates a hidden iframe to load print content, which is more reliable on mobile browsers
-             * than the previous window.open() method. It waits for images and MathJax to render
-             * before triggering the print dialog.
-             */
             function openPrintWindow(content, bodyClass = '') {
-                // Remove any old iframe to prevent conflicts
                 const oldFrame = document.getElementById('printf');
-                if (oldFrame) {
-                    oldFrame.remove();
-                }
+                if (oldFrame) { oldFrame.remove(); }
 
-                // Create a new iframe and style it to be off-screen
                 const printFrame = document.createElement('iframe');
                 printFrame.id = 'printf';
                 printFrame.style.position = 'absolute';
@@ -733,92 +742,51 @@
                 printFrame.style.height = '0';
                 printFrame.style.border = '0';
                 printFrame.style.left = '-9999px';
-
                 document.body.appendChild(printFrame);
 
-                // Get all necessary assets for the print view
                 const styles = document.getElementById('main-styles').innerHTML;
                 const fontLink = `<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;500;600;700&display=swap" rel="stylesheet">`;
                 const mathJaxScript = `<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"><\/script>`;
                 const mathJaxConfig = `<script>MathJax = { tex: { inlineMath: [['$', '$'], ['\\(', '\\)']] } };<\/script>`;
-
-                // This script will run inside the iframe to manage the printing process
                 const printLogic = `
                     <script>
                         (() => {
-                            let hasPrinted = false; // Flag to prevent multiple print dialogs
-
+                            let hasPrinted = false;
                             const triggerPrint = () => {
                                 if (hasPrinted) return;
                                 hasPrinted = true;
-
                                 try {
-                                    window.focus(); // Focus on the iframe window before printing
-                                    window.print(); // Trigger the print dialog
-                                } catch (e) {
-                                    console.error("Print failed:", e);
-                                } finally {
-                                    // Clean up by removing the iframe from the parent document after a delay
+                                    window.focus(); window.print();
+                                } catch (e) { console.error("Print failed:", e); } 
+                                finally {
                                     setTimeout(() => {
                                         const frame = parent.document.getElementById('printf');
                                         if (frame) frame.remove();
                                     }, 1000);
                                 }
                             };
-
                             const runPrintProcess = () => {
-                                // Promise to wait for MathJax to be ready and to typeset the content
                                 const mathJaxPromise = (typeof MathJax !== 'undefined' && MathJax.typesetPromise)
                                     ? MathJax.startup.promise.then(() => MathJax.typesetPromise())
                                     : Promise.resolve();
-                                
-                                // Create an array of promises for all images to ensure they are loaded
                                 const imagePromises = [...document.querySelectorAll('img')].map(img => {
                                     if (img.complete) return Promise.resolve();
-                                    return new Promise(resolve => {
-                                        img.onload = resolve;
-                                        img.onerror = resolve; // Resolve even on error to not block printing
-                                    });
+                                    return new Promise(resolve => { img.onload = resolve; img.onerror = resolve; });
                                 });
-
-                                // When both MathJax and all images are ready, trigger the print
                                 Promise.all([mathJaxPromise, ...imagePromises])
-                                    .then(() => {
-                                        triggerPrint();
-                                    })
-                                    .catch(err => {
-                                        console.error('Error during pre-print processing, attempting to print anyway.', err);
-                                        triggerPrint();
-                                    });
-                                
-                                // A failsafe timeout to ensure printing happens even if a promise hangs
+                                    .then(() => { triggerPrint(); })
+                                    .catch(err => { console.error('Pre-print error:', err); triggerPrint(); });
                                 setTimeout(triggerPrint, 8000);
                             };
-
-                            // Start the entire process only when the iframe's content window is fully loaded
                             window.addEventListener('load', runPrintProcess);
                         })();
                     <\/script>
                 `;
-
-                // Construct the full HTML for the iframe
                 const frameContent = `
-                    <html>
-                        <head>
-                            <title>Print</title>
-                            ${fontLink}
-                            <style>${styles}</style>
-                            ${mathJaxConfig}
-                            ${mathJaxScript}
-                        </head>
-                        <body class="${bodyClass} ${questionPaperPage.classList.contains('hide-q-info') ? 'hide-q-info' : ''}">
-                            ${content}
-                            ${printLogic}
-                        </body>
-                    </html>
-                `;
+                    <html><head><title>Print</title>${fontLink}<style>${styles}</style>${mathJaxConfig}${mathJaxScript}</head>
+                    <body class="${bodyClass} ${questionPaperPage.classList.contains('hide-q-info') ? 'hide-q-info' : ''}">
+                        ${content}${printLogic}</body></html>`;
 
-                // Write the constructed HTML into the iframe
                 printFrame.contentDocument.open();
                 printFrame.contentDocument.write(frameContent);
                 printFrame.contentDocument.close();
@@ -839,13 +807,10 @@
 
             function generateAndPrintOfficialKey() {
                 const container = document.getElementById('official-key-print-container');
-                let html = `
-                    <div class="official-key-header">
+                let html = `<div class="official-key-header">
                         <h1>चतुर्थ श्रेणी कर्मचारी संभावित उत्तर कुंजी</h1>
                         <p>${currentShiftData.title} | पेपर कोड: ${currentSeries}</p>
-                    </div>
-                    <div class="official-key-grid">
-                `;
+                    </div><div class="official-key-grid">`;
 
                 const seriesOrder = currentShiftData.seriesOrder[currentSeries] || Array.from({length: allQuestions.length}, (_, i) => i + 1);
                 const totalQuestions = seriesOrder.length;
@@ -887,7 +852,6 @@
                 const seriesOrder = currentShiftData.seriesOrder[currentSeries] || Array.from({length: allQuestions.length}, (_, i) => i + 1);
                 const totalQuestions = seriesOrder.length;
                 const questionsPerColumn = Math.ceil(totalQuestions / 4);
-                
                 const optionLabels = ['A', 'B', 'C', 'D', 'E'];
 
                 for (let c = 0; c < 4; c++) {
@@ -902,9 +866,24 @@
                         if (!allQuestions[qIndex - 1]) continue;
                         const qData = allQuestions[qIndex - 1];
                         
+                        const status = getQuestionStatus(qData.id);
+                        const isDeleted = qData.deleted === true;
+
                         const row = document.createElement('div');
                         row.className = 'omr-row';
-                        row.innerHTML = `<div class="omr-q-num">${displayNum}.</div>`;
+                        
+                        const qNumDiv = document.createElement('div');
+                        qNumDiv.className = 'omr-q-num';
+                        qNumDiv.textContent = `${displayNum}.`;
+                        
+                        if (isDeleted) {
+                            row.style.opacity = '0.6';
+                        } else if (status === 'incorrect') {
+                            qNumDiv.style.color = 'red';
+                        } else if (status === 'skipped') {
+                            qNumDiv.style.color = 'blue';
+                        }
+                        row.appendChild(qNumDiv);
                         
                         const optionsDiv = document.createElement('div');
                         optionsDiv.className = 'omr-options';
@@ -924,7 +903,10 @@
                              const bubble = document.createElement('div');
                              bubble.className = 'omr-bubble';
                              bubble.textContent = label;
-                             if (index === filledOptionIndex) bubble.classList.add('filled');
+                             if (index === filledOptionIndex) {
+                                bubble.classList.add('filled');
+                                if(isDeleted) bubble.style.opacity = '0.7';
+                             }
                              optionsDiv.appendChild(bubble);
                         });
 
