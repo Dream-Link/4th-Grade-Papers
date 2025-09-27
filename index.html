@@ -284,11 +284,6 @@
         }
     </style>
     
-    <script>
-        MathJax = { tex: { inlineMath: [['$', '$'], ['\\(', '\\)']] } };
-    </script>
-    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
-
 </head>
 <body>
     
@@ -404,7 +399,7 @@
         document.addEventListener('DOMContentLoaded', () => {
             
             if (typeof allShiftData === 'undefined') {
-                document.body.innerHTML = '<h1 style="text-align:center; padding: 2rem; color: red;">Error: Wait... Update किया जा रहा है..."</h1>';
+                document.body.innerHTML = '<h1 style="text-align:center; padding: 2rem; color: red;">Error: Wait...Update किया जा रहा है...</h1>';
                 return;
             }
 
@@ -689,6 +684,57 @@
                 }
                 const styles = document.getElementById('main-styles').innerHTML;
                 const fontLink = `<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;500;600;700&display=swap" rel="stylesheet">`;
+                const mathJaxScript = `<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"><\/script>`;
+                const mathJaxConfig = `<script>MathJax = { tex: { inlineMath: [['$', '$'], ['\\(', '\\)']] } };<\/script>`;
+
+                const printLogic = `
+                    <script>
+                        function RENDER_AND_PRINT() {
+                            const triggerPrint = () => {
+                                try {
+                                    setTimeout(function() {
+                                        window.print();
+                                        setTimeout(function() { window.close(); }, 200);
+                                    }, 250);
+                                } catch (e) {
+                                    console.error("Print failed:", e);
+                                    window.close();
+                                }
+                            };
+
+                            if (typeof MathJax !== 'undefined' && MathJax.typesetPromise) {
+                                MathJax.startup.promise.then(() => {
+                                    return MathJax.typesetPromise();
+                                }).then(() => {
+                                    triggerPrint();
+                                }).catch((err) => {
+                                    console.error('MathJax failed, printing anyway.', err);
+                                    triggerPrint();
+                                });
+                            } else {
+                                // Fallback if MathJax is not present or fails to load
+                                triggerPrint();
+                            }
+                        }
+
+                        // Wait for all images to load, then trigger render & print
+                        const images = document.querySelectorAll('img');
+                        const promises = [];
+                        images.forEach(img => {
+                            if (!img.complete) {
+                                promises.push(new Promise(resolve => {
+                                    img.onload = resolve;
+                                    img.onerror = resolve; // Resolve even on error to not block printing
+                                }));
+                            }
+                        });
+
+                        Promise.all(promises).then(RENDER_AND_PRINT);
+                        // Failsafe timeout in case images hang
+                        setTimeout(RENDER_AND_PRINT, 5000);
+
+                    <\/script>
+                `;
 
                 printWindow.document.write(`
                     <html>
@@ -696,15 +742,12 @@
                             <title>Print</title>
                             ${fontLink}
                             <style>${styles}</style>
+                            ${mathJaxConfig}
+                            ${mathJaxScript}
                         </head>
                         <body class="${bodyClass}">
                             ${content}
-                            <script>
-                                setTimeout(function() {
-                                    window.print();
-                                    setTimeout(function() { window.close(); }, 100);
-                                }, 500);
-                            <\/script>
+                            ${printLogic}
                         </body>
                     </html>
                 `);
