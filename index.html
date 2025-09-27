@@ -712,63 +712,97 @@
                 document.getElementById('print-raw-marks-display').textContent = document.getElementById('raw-marks-value').textContent;
             }
 
+            /**
+             * MODIFIED FUNCTION FOR ANDROID COMPATIBILITY
+             * Creates a hidden iframe to load print content, which is more reliable on mobile browsers
+             * than the previous window.open() method. It waits for images and MathJax to render
+             * before triggering the print dialog.
+             */
             function openPrintWindow(content, bodyClass = '') {
-                const printWindow = window.open('', '_blank');
-                if (!printWindow) {
-                    alert("Please allow popups for this site to print.");
-                    return;
+                // Remove any old iframe to prevent conflicts
+                const oldFrame = document.getElementById('printf');
+                if (oldFrame) {
+                    oldFrame.remove();
                 }
+
+                // Create a new iframe and style it to be off-screen
+                const printFrame = document.createElement('iframe');
+                printFrame.id = 'printf';
+                printFrame.style.position = 'absolute';
+                printFrame.style.width = '0';
+                printFrame.style.height = '0';
+                printFrame.style.border = '0';
+                printFrame.style.left = '-9999px';
+
+                document.body.appendChild(printFrame);
+
+                // Get all necessary assets for the print view
                 const styles = document.getElementById('main-styles').innerHTML;
                 const fontLink = `<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;500;600;700&display=swap" rel="stylesheet">`;
                 const mathJaxScript = `<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"><\/script>`;
                 const mathJaxConfig = `<script>MathJax = { tex: { inlineMath: [['$', '$'], ['\\(', '\\)']] } };<\/script>`;
 
+                // This script will run inside the iframe to manage the printing process
                 const printLogic = `
                     <script>
-                        function RENDER_AND_PRINT() {
+                        (() => {
+                            let hasPrinted = false; // Flag to prevent multiple print dialogs
+
                             const triggerPrint = () => {
+                                if (hasPrinted) return;
+                                hasPrinted = true;
+
                                 try {
-                                    setTimeout(function() {
-                                        window.print();
-                                        setTimeout(function() { window.close(); }, 200);
-                                    }, 250);
+                                    window.focus(); // Focus on the iframe window before printing
+                                    window.print(); // Trigger the print dialog
                                 } catch (e) {
                                     console.error("Print failed:", e);
-                                    window.close();
+                                } finally {
+                                    // Clean up by removing the iframe from the parent document after a delay
+                                    setTimeout(() => {
+                                        const frame = parent.document.getElementById('printf');
+                                        if (frame) frame.remove();
+                                    }, 1000);
                                 }
                             };
 
-                            if (typeof MathJax !== 'undefined' && MathJax.typesetPromise) {
-                                MathJax.startup.promise.then(() => {
-                                    return MathJax.typesetPromise();
-                                }).then(() => {
-                                    triggerPrint();
-                                }).catch((err) => {
-                                    console.error('MathJax failed, printing anyway.', err);
-                                    triggerPrint();
+                            const runPrintProcess = () => {
+                                // Promise to wait for MathJax to be ready and to typeset the content
+                                const mathJaxPromise = (typeof MathJax !== 'undefined' && MathJax.typesetPromise)
+                                    ? MathJax.startup.promise.then(() => MathJax.typesetPromise())
+                                    : Promise.resolve();
+                                
+                                // Create an array of promises for all images to ensure they are loaded
+                                const imagePromises = [...document.querySelectorAll('img')].map(img => {
+                                    if (img.complete) return Promise.resolve();
+                                    return new Promise(resolve => {
+                                        img.onload = resolve;
+                                        img.onerror = resolve; // Resolve even on error to not block printing
+                                    });
                                 });
-                            } else {
-                                triggerPrint();
-                            }
-                        }
-                        
-                        const images = document.querySelectorAll('img');
-                        const promises = [];
-                        images.forEach(img => {
-                            if (!img.complete) {
-                                promises.push(new Promise(resolve => {
-                                    img.onload = resolve;
-                                    img.onerror = resolve;
-                                }));
-                            }
-                        });
 
-                        Promise.all(promises).then(RENDER_AND_PRINT);
-                        setTimeout(RENDER_AND_PRINT, 5000);
+                                // When both MathJax and all images are ready, trigger the print
+                                Promise.all([mathJaxPromise, ...imagePromises])
+                                    .then(() => {
+                                        triggerPrint();
+                                    })
+                                    .catch(err => {
+                                        console.error('Error during pre-print processing, attempting to print anyway.', err);
+                                        triggerPrint();
+                                    });
+                                
+                                // A failsafe timeout to ensure printing happens even if a promise hangs
+                                setTimeout(triggerPrint, 8000);
+                            };
+
+                            // Start the entire process only when the iframe's content window is fully loaded
+                            window.addEventListener('load', runPrintProcess);
+                        })();
                     <\/script>
                 `;
 
-                printWindow.document.write(`
+                // Construct the full HTML for the iframe
+                const frameContent = `
                     <html>
                         <head>
                             <title>Print</title>
@@ -782,8 +816,12 @@
                             ${printLogic}
                         </body>
                     </html>
-                `);
-                printWindow.document.close();
+                `;
+
+                // Write the constructed HTML into the iframe
+                printFrame.contentDocument.open();
+                printFrame.contentDocument.write(frameContent);
+                printFrame.contentDocument.close();
             }
 
             function getCorrectOptionForSeries(qData, series) {
