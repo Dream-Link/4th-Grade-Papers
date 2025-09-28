@@ -13,6 +13,16 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    
+    <script>
+        MathJax = {
+          tex: {
+            inlineMath: [['$', '$'], ['\\(', '\\)']]
+          }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
     <style id="main-styles">
         :root {
             --primary-color: #0d6efd;
@@ -85,6 +95,59 @@
         .shift-btn .text { font-size: 1.1rem; font-weight: 600; color: var(--font-color); }
         .selector-footer { margin-top: 3rem; font-size: 0.875rem; color: var(--secondary-color); line-height: 1.5; }
         .selector-footer p { margin: 0.5rem 0; }
+        
+        /* Features Box Styling */
+        .features-box {
+            background-color: var(--surface-color);
+            border: 1px solid var(--primary-light);
+            border-left: 5px solid var(--primary-color);
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            margin-top: 2rem;
+            text-align: left;
+            box-shadow: var(--shadow-sm);
+        }
+        .features-box h4 {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--primary-dark);
+            margin-top: 0;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .features-box ul {
+            list-style: none;
+            padding-left: 0;
+            margin: 0;
+        }
+        .features-box li {
+            position: relative;
+            padding-left: 1.75rem;
+            margin-bottom: 0.75rem;
+            line-height: 1.5;
+        }
+        .features-box li::before {
+            content: '\f058'; /* Font Awesome check-circle icon */
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            color: var(--success-color);
+            position: absolute;
+            left: 0;
+            top: 2px;
+            font-size: 1.1rem;
+        }
+        .creator-link {
+            color: var(--font-color);
+            text-decoration: none;
+            font-weight: 700;
+            transition: color 0.2s;
+        }
+        .creator-link:hover {
+            color: var(--primary-color);
+            text-decoration: underline;
+        }
+
 
         #question-paper-page { display: none; flex-direction: column; }
         #question-paper-page.hide-q-info .question-info-bar { display: none; }
@@ -360,9 +423,26 @@
             <div class="selector-footer">
                 <p>Last Update: 27.11.2025 18:30</p>
                 <p>सभी प्रश्नों के उत्तर संभावित उत्तर कुंजी के आधार पर हैं, आधिकारिक कुंजी जारी होने पर UPDATE कर दी जाएगी।</p>
-                <p>• Features # चतुर्थ श्रेणी कर्मचारी भर्ती के सभी 144 सेट जल्दी उपलब्ध होंगे। # जो भी सेट सलेक्ट करेंगे उसके अनुरूप ही अपने आप प्रश्न क्रमांक & ऑप्शन क्रमांक सेट हो जाएंगे। # show result से कभी भी Live Calculated result देखे। # OMR प्रिंट की सुविधा। # किसी भी सेट के अनुसार Answer key प्रिंट & पेपर प्रिंट की सुविधा # प्रिंट में रिजल्ट डिटेल सहित प्रिंट की सुविधा<p>
-                <p>स्वयं भी अपने Official पेपर को Official Answer key से मिलाकर पुष्टि जरूर करे<p>
-                <p><strong>- MP Salodiya</strong></p>
+                
+                <div class="features-box">
+                    <h4>इस वेबपेज की मुख्य सुविधाएं</h4>
+                    <ul>
+                        <li>अलग-अलग शिफ्ट के पेपर चुनें और उनका अभ्यास करें।</li>
+                        <li>अपने पेपर कोड (Series) के अनुसार सही प्रश्न-क्रम देखें।</li>
+                        <li>उत्तर देते ही तुरंत अपना लाइव स्कोर और विश्लेषण देखें।</li>
+                        <li>नकारात्मक अंकन (Negative Marking) के साथ ऑटोमैटिक स्कोर गणना।</li>
+                        <li>केवल सही, गलत, या छोड़े गए प्रश्नों को फ़िल्टर करके अपनी गलतियों को सुधारें।</li>
+                        <li>आपकी प्रगति (Progress) अपने आप ब्राउज़र में सेव हो जाती है।</li>
+                        <li>अपना नाम, रोल नंबर और रिजल्ट के साथ पूरा पेपर प्रिंट करें।</li>
+                        <li>दिए गए उत्तरों के साथ अपनी OMR शीट प्रिंट करें।</li>
+                        <li>किसी भी पेपर कोड के अनुसार ऑफिशियल उत्तर कुंजी (Answer Key) प्रिंट करें।</li>
+                    </ul>
+                </div>
+
+                <p>स्वयं भी अपने Official पेपर को Official Answer key से मिलाकर पुष्टि जरूर करे।</p>
+                <p>
+                    <a href="https:Wait" target="_blank" class="creator-link">- MP Salodiya (Click to Contact)</a>
+                </p>
             </div>
         </div>
     </div>
@@ -671,7 +751,13 @@
                 if (qC.innerHTML === '') {
                     qC.innerHTML = `<p style="text-align:center; color: var(--font-color-light); padding: 2rem;">इस फ़िल्टर में कोई प्रश्न नहीं है।</p>`;
                 }
-                if (window.MathJax) { MathJax.typesetPromise(); }
+                
+                // Call MathJax to render math in the newly added questions
+                if (window.MathJax) {
+                    MathJax.typesetPromise([qC]).catch(function (err) {
+                        console.log('MathJax error: ', err);
+                    });
+                }
             }
                
             function updateActiveFilterButton(filter) {
