@@ -284,14 +284,7 @@
         #get-official-key-btn { background-color: #6f42c1; color: white; }
 
         .print-only-container { display: none; }
-       .home-page-image {
-    max-width: 100%;   /* <-- बस इस लाइन को 200px से 100% कर दें */
-    height: auto;
-    display: block;
-    margin: 1.5rem auto 2.5rem; 
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-}
+
         @media (max-width: 768px) {
             .selector-container h2 { font-size: 1.8rem; }
             .shift-selector { grid-template-columns: 1fr; gap: 1rem; }
@@ -396,28 +389,28 @@
             }
         }
         
-        /* ======================= START: THEME SELECTOR CSS (ADDED) ======================= */
+        /* ======================= START: THEME SELECTOR CSS ======================= */
         .theme-selector {
             position: absolute;
             top: 1.5rem;
             left: 1.5rem;
             z-index: 100;
         }
-       #theme-toggle-btn {
-    width: 23px;
-    height: 23px;
-    border-radius: 50%;
-    border: 1px solid var(--border-color);
-    background-color: var(--surface-color);
-    color: var(--font-color);
-    font-size: 0.6rem;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: var(--shadow-sm);
-    transition: all 0.2s ease;
-}
+        #theme-toggle-btn {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            border: 1px solid var(--border-color);
+            background-color: var(--surface-color);
+            color: var(--font-color);
+            font-size: 1rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: var(--shadow-sm);
+            transition: all 0.2s ease;
+        }
         #theme-toggle-btn:hover {
             box-shadow: var(--shadow-md);
             color: var(--primary-color);
@@ -457,17 +450,12 @@
         }
 
         /* --- Theme Palettes Start --- */
-        /* Light Blue (Default) is already defined in :root */
-
-        /* Dark Blue Theme */
         :root[data-theme='dark-blue'] {
             --primary-color: #3b82f6; --primary-dark: #2563eb; --primary-light: #1e3a8a;
             --bg-color: #111827; --surface-color: #1f2937; --font-color: #f3f4f6;
             --font-color-light: #9ca3af; --border-color: #374151; --success-bg: #064e3b;
             --danger-bg: #7f1d1d; --special-bg: #78350f; --subtle-bg: #374151;
         }
-
-        /* Green Themes */
         :root[data-theme='light-green'] {
             --primary-color: #22c55e; --primary-dark: #16a34a; --primary-light: #dcfce7;
         }
@@ -477,8 +465,6 @@
             --font-color-light: #a1a1aa; --border-color: #3f3f46; --success-bg: #064e3b;
             --danger-bg: #7f1d1d; --special-bg: #78350f; --subtle-bg: #3f3f46;
         }
-
-        /* Purple Themes */
         :root[data-theme='light-purple'] {
             --primary-color: #8b5cf6; --primary-dark: #7c3aed; --primary-light: #ede9fe;
         }
@@ -488,8 +474,6 @@
             --font-color-light: #a9a2c1; --border-color: #403561; --success-bg: #064e3b;
             --danger-bg: #7f1d1d; --special-bg: #78350f; --subtle-bg: #403561;
         }
-
-        /* Orange Themes */
         :root[data-theme='light-orange'] {
             --primary-color: #f97316; --primary-dark: #ea580c; --primary-light: #ffedd5;
         }
@@ -499,8 +483,6 @@
             --font-color-light: #b0a8a4; --border-color: #514641; --success-bg: #064e3b;
             --danger-bg: #7f1d1d; --special-bg: #78350f; --subtle-bg: #514641;
         }
-
-        /* Teal Themes */
         :root[data-theme='light-teal'] {
             --primary-color: #14b8a6; --primary-dark: #0d9488; --primary-light: #ccfbf1;
         }
@@ -510,8 +492,6 @@
             --font-color-light: #94a3b8; --border-color: #334155; --success-bg: #064e3b;
             --danger-bg: #7f1d1d; --special-bg: #78350f; --subtle-bg: #334155;
         }
-
-        /* Solarized Themes */
         :root[data-theme='solarized-light'] {
             --primary-color: #268bd2; --primary-dark: #002b36; --primary-light: #eee8d5;
             --bg-color: #fdf6e3; --surface-color: #eee8d5; --font-color: #657b83;
@@ -524,7 +504,24 @@
             --font-color-light: #586e75; --border-color: #586e75; --success-bg: #2d4f2d;
             --danger-bg: #6b3e3e; --special-bg: #635741; --subtle-bg: #0b4250;
         }
-        /* ======================== END: THEME SELECTOR CSS (ADDED) ========================= */
+        /* ======================== END: THEME SELECTOR CSS ========================= */
+
+        /* ======================== START: NEW WARNING BOX CSS (ADDED) ========================= */
+        #unattempted-warning-item {
+            grid-column: 1 / -1;
+            margin-top: 0.5rem;
+            text-align: center;
+            color: var(--danger-color);
+            background-color: var(--danger-bg);
+            border: 1px solid var(--danger-color);
+            font-size: 0.9rem;
+            font-weight: 500;
+            display: none; /* Hide by default */
+        }
+        #unattempted-warning-item.visible {
+            display: block; /* Show with JS */
+        }
+        /* ======================== END: NEW WARNING BOX CSS (ADDED) ========================= */
     </style>
     
 </head>
@@ -586,7 +583,6 @@
     <div id="shift-selector-page">
         <div class="selector-container">
             <h2>चतुर्थ श्रेणी कर्मचारी</h2>
-           <img src="https://raw.githubusercontent.com/Dream-Link/4th-Grade-Papers/main/144%20set.png" alt="Paper Analysis Logo" class="home-page-image">
             <p class="subtitle">कृपया अपनी शिफ़्ट चुनें।</p>
             <div class="shift-selector">
                 <a class="shift-btn" data-shift="shift1"><div class="icon"><i class="fas fa-file-alt"></i></div><div class="text">1st Shift 19.09.2025</div></a>
@@ -597,7 +593,8 @@
                 <a class="shift-btn" data-shift="shift6"><div class="icon"><i class="fas fa-file-alt"></i></div><div class="text">6th Shift 21.09.2025</div></a>
             </div>
             <div class="selector-footer">
-                <p>Last Update: 29.09.2025 14:30</p>
+                <p>Last Update: 29.11.2025 14:00</p>
+                <p>सभी 144 सेट के अनुसार प्रश्नों के क्रम & उनके ऑप्शन क्रम सहित उपलब्ध कर दिए गए है</p>
                 <p>सभी प्रश्नों के उत्तर संभावित उत्तर कुंजी के आधार पर हैं, आधिकारिक कुंजी जारी होने पर UPDATE कर दी जाएगी।</p>
                 
                 <div class="features-box">
@@ -608,9 +605,12 @@
                         <li>नकारात्मक अंकन (Negative Marking) के साथ ऑटोमैटिक स्कोर गणना।</li>
                         <li>केवल सही, गलत, या छोड़े गए प्रश्नों को फ़िल्टर करके अपनी गलतियों को सुधारें।</li>
                         <li>आपकी प्रगति (Progress) अपने आप ब्राउज़र में सेव हो जाती है।</li>
+                        <li>EYE बटन से विभिन्न सीरीज के अनुसार प्रश्न क्रमांक hide की सुविधा</li>
+                        <li>रिफ्रेश बटन से सभी टिक मार्क रीसेट की सुविधा</li>
                         <li>अपना नाम, रोल नंबर और रिजल्ट के साथ पूरा पेपर प्रिंट करें।</li>
                         <li>दिए गए उत्तरों के साथ अपनी OMR शीट प्रिंट करें।</li>
                         <li>किसी भी पेपर कोड के अनुसार ऑफिशियल उत्तर कुंजी (Answer Key) प्रिंट करें।</li>
+                        <li>आवश्यकतानुसार थीम भी बदल सकते है</li>
                     </ul>
                 </div>
 
@@ -644,7 +644,10 @@
                 <div id="deleted-item" class="summary-item"><div id="deleted-count" class="count">0</div><div class="label">Deleted</div></div>
                 <div id="right-que-item" class="summary-item"><div id="right-que-value" class="count">0.00</div><div class="label">Final R.Q.</div></div>
                 <div id="raw-marks-item" class="summary-item"><div id="raw-marks-value" class="count">0.00</div><div class="label">RAW Marks</div></div>
-            </div>
+                <div id="unattempted-warning-item" class="summary-item">
+                    <span>आपने अभी तक <strong id="unattempted-count">0</strong> प्रश्नों में कोई भी ऑप्शन टिक नहीं किया है।</span>
+                </div>
+                </div>
         </div>
         <div class="container">
             <div class="controls-bar">
@@ -682,7 +685,7 @@
 
         document.addEventListener('DOMContentLoaded', () => {
 
-            // ======================= START: THEME SELECTOR JAVASCRIPT (ADDED) =======================
+            // ======================= START: THEME SELECTOR JAVASCRIPT =======================
             const themeToggleBtn = document.getElementById('theme-toggle-btn');
             const themeDropdown = document.getElementById('theme-dropdown');
             const themeSelector = document.querySelector('.theme-selector');
@@ -735,7 +738,7 @@
                 const savedTheme = localStorage.getItem(THEME_KEY) || 'auto';
                 applyTheme(savedTheme);
             }
-            // ======================== END: THEME SELECTOR JAVASCRIPT (ADDED) ========================
+            // ======================== END: THEME SELECTOR JAVASCRIPT ========================
             
             if (typeof allShiftData === 'undefined') {
                 document.body.innerHTML = '<h1 style="text-align:center; padding: 2rem; color: red;">Error: Wait...Update किया जा रहा है...</h1>';
@@ -754,7 +757,7 @@
             function showHomePage() {
                 shiftSelectorPage.style.display = 'flex';
                 questionPaperPage.style.display = 'none';
-                if(themeSelector) themeSelector.style.display = 'block'; // <-- MODIFIED
+                if(themeSelector) themeSelector.style.display = 'block';
                 currentShiftId = null;
                 history.pushState({page: 'home'}, 'Home', window.location.pathname);
                 window.location.hash = '';
@@ -773,7 +776,7 @@
             function loadShift(shiftId, shouldPushState = true) {
                 shiftSelectorPage.style.display = 'none';
                 questionPaperPage.style.display = 'flex';
-                if(themeSelector) themeSelector.style.display = 'none'; // <-- MODIFIED
+                if(themeSelector) themeSelector.style.display = 'none';
                 currentShiftId = shiftId;
                 currentShiftData = allShiftData[shiftId];
                 allQuestions = currentShiftData.questions;
@@ -843,6 +846,19 @@
                 const a = c + i + attemptedForDeleted;
                 const totalValidQuestions = allQuestions.length - d;
                 
+                // ======================= START: NEW WARNING BOX LOGIC (MODIFIED) =======================
+                const unattempted = totalValidQuestions - (c + i + s);
+                const warningBox = document.getElementById('unattempted-warning-item');
+                if (warningBox) {
+                    if (unattempted > 0) {
+                        document.getElementById('unattempted-count').textContent = unattempted;
+                        warningBox.classList.add('visible');
+                    } else {
+                        warningBox.classList.remove('visible');
+                    }
+                }
+                // ======================= END: NEW WARNING BOX LOGIC (MODIFIED) =======================
+
                 document.getElementById('total-count').textContent = totalValidQuestions;
                 document.getElementById('attempted-count').textContent = a;
                 document.getElementById('correct-count').textContent = c;
@@ -1235,7 +1251,7 @@
 
                 html += `</div>`;
                 // --- नया फुटर ---
-                html += `<div class="official-key-footer"><p>नोट - बोर्ड द्वारा जारी उत्तर कुंजी से भी पुष्टि जरूर कर लेवें</p></div>`;
+                html += `<div class="official-key-footer"><p>नोट - बोर्ड द्वारा जारी Official उत्तर कुंजी से भी पुष्टि जरूर करे</p></div>`;
 
                 container.innerHTML = html;
                 openPrintWindow(container.innerHTML);
@@ -1366,7 +1382,7 @@
 
             document.getElementById('get-official-key-btn').addEventListener('click', () => {
                  pMO.style.display = 'none';
-                 generateAndPrintOfficialKey(); 
+                 generateAndPrintOfficialKey();
             });
 
             const shiftIdFromUrl = window.location.hash.substring(1);
