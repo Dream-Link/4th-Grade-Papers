@@ -326,13 +326,13 @@
 
         /* ===== होम पेज इमेज के लिए नया स्टाइल ===== */
         .home-page-image {
-            max-width: 200px;   /* आप अपनी जरूरत के अनुसार चौड़ाई बदल सकते हैं */
-            height: auto;       /* चौड़ाई के अनुसार ऊंचाई अपने आप एडजस्ट हो जाएगी */
-            display: block;     /* इमेज को सेंटर में लाने के लिए जरूरी */
-            margin: 1.5rem auto 2.5rem; /* ऊपर, दाएं/बाएं (ऑटो से सेंटर), नीचे का स्पेस */
-            border-radius: 8px; /* इमेज के कोनों को हल्का गोल करने के लिए */
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1); /* हल्की परछाई देने के लिए */
-        }
+    max-width: 100%;   /* <-- बस इस लाइन को 200px से 100% कर दें */
+    height: auto;
+    display: block;
+    margin: 1.5rem auto 2.5rem; 
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
 
         @media print {
             body { font-size: 10pt; background-color: #fff !important; color: #000 !important; }
@@ -604,8 +604,8 @@
                 <a class="shift-btn" data-shift="shift6"><div class="icon"><i class="fas fa-file-alt"></i></div><div class="text">6th Shift 21.09.2025</div></a>
             </div>
             <div class="selector-footer">
-                <p>Last Update: 29.06.2025 14:00</p>
-                <p>सभी 144 सेट के अनुसार प्रश्नों के क्रम & उनके ऑप्शन क्रम सहित उपलब्ध कर दिए गए है</p>
+                <p>Last Update: 29.06.2025 15:00</p>
+               
                 <p>सभी प्रश्नों के उत्तर संभावित उत्तर कुंजी के आधार पर हैं, आधिकारिक कुंजी जारी होने पर UPDATE कर दी जाएगी।</p>
                 
                 <div class="features-box">
