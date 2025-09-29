@@ -715,11 +715,12 @@
                     localStorage.setItem(THEME_KEY, theme);
                 };
 
+              
                 // Toggle dropdown visibility
-                themeToggleBtn.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    themeDropdown.classList.toggle('hidden');
-                });
+themeToggleBtn.addEventListener('click', (e) => {
+    e.stopPropagation(); // <-- यह लाइन जोड़ें
+    themeDropdown.classList.toggle('hidden');
+});
 
                 // Close dropdown if clicked outside
                 document.addEventListener('click', () => {
