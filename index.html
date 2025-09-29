@@ -322,6 +322,16 @@
             
             .modal-buttons { justify-content: center; gap: 0.25rem; }
             .modal-buttons button { padding: 0.5rem; font-size: 0.7rem; flex-grow: 1; }
+            /* ... आपका मौजूदा CSS कोड ... */
+
+        /* ===== होम पेज इमेज के लिए नया स्टाइल ===== */
+        .home-page-image {
+            max-width: 200px;   /* आप अपनी जरूरत के अनुसार चौड़ाई बदल सकते हैं */
+            height: auto;       /* चौड़ाई के अनुसार ऊंचाई अपने आप एडजस्ट हो जाएगी */
+            display: block;     /* इमेज को सेंटर में लाने के लिए जरूरी */
+            margin: 1.5rem auto 2.5rem; /* ऊपर, दाएं/बाएं (ऑटो से सेंटर), नीचे का स्पेस */
+            border-radius: 8px; /* इमेज के कोनों को हल्का गोल करने के लिए */
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1); /* हल्की परछाई देने के लिए */
         }
 
         @media print {
@@ -583,6 +593,7 @@
     <div id="shift-selector-page">
         <div class="selector-container">
             <h2>चतुर्थ श्रेणी कर्मचारी</h2>
+             <img src="https://raw.githubusercontent.com/Dream-Link/4th-Grade-Paper-Anlysis/main/144%20set.png" alt="Paper Analysis Logo" class="home-page-image">
             <p class="subtitle">कृपया अपनी शिफ़्ट चुनें।</p>
             <div class="shift-selector">
                 <a class="shift-btn" data-shift="shift1"><div class="icon"><i class="fas fa-file-alt"></i></div><div class="text">1st Shift 19.09.2025</div></a>
@@ -593,7 +604,7 @@
                 <a class="shift-btn" data-shift="shift6"><div class="icon"><i class="fas fa-file-alt"></i></div><div class="text">6th Shift 21.09.2025</div></a>
             </div>
             <div class="selector-footer">
-                <p>Last Update: 29.11.2025 14:00</p>
+                <p>Last Update: 29.06.2025 14:00</p>
                 <p>सभी 144 सेट के अनुसार प्रश्नों के क्रम & उनके ऑप्शन क्रम सहित उपलब्ध कर दिए गए है</p>
                 <p>सभी प्रश्नों के उत्तर संभावित उत्तर कुंजी के आधार पर हैं, आधिकारिक कुंजी जारी होने पर UPDATE कर दी जाएगी।</p>
                 
