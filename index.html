@@ -217,7 +217,7 @@
 
         .question-block {
             background-color: var(--surface-color); margin-bottom: 1.5rem; border: 1px solid var(--border-color);
-            border-radius: var(--border-radius); transition: box-shadow 0.2s ease; overflow: hidden;
+            border-radius: var(--border-radius); transition: box-shadow 0.2s ease, background-color 0.2s; overflow: hidden;
         }
         .question-block:hover { box-shadow: var(--shadow-sm); }
         
@@ -243,6 +243,12 @@
         .options-list li.correct { background-color: var(--success-bg); border-color: var(--success-color); }
         .options-list li.incorrect { background-color: var(--danger-bg); border-color: var(--danger-color); }
         .options-list li.special { background-color: var(--special-bg); border-color: var(--warning-color); }
+        /* --- नया स्टाइल --- */
+        .options-list li.selected-neutral {
+            border-color: #333;
+            background-color: #e9ecef;
+            font-weight: 600;
+        }
         
         .correct-answer-display { margin-top: 1.25rem; padding-top: 1rem; border-top: 1px solid var(--border-color); font-weight: 600; }
         
@@ -338,12 +344,13 @@
             .options-list { margin-top: 0.3rem !important; gap: 3px !important; }
             .options-list li { padding: 4px 8px !important; font-size: 10pt !important; border: 1px solid #ccc !important; }
             .correct-answer-display { font-size: 9pt; margin-top: 0.4rem; padding-top: 0.4rem; border-top: 1px solid #ddd !important; }
-            .options-list li.correct, .options-list li.incorrect, .options-list li.special {
+            .options-list li.correct, .options-list li.incorrect, .options-list li.special, .options-list li.selected-neutral {
                 -webkit-print-color-adjust: exact !important; color-adjust: exact !important;
             }
             .options-list li.correct { background-color: var(--success-bg) !important; }
             .options-list li.incorrect { background-color: var(--danger-bg) !important; }
             .options-list li.special { background-color: var(--special-bg) !important; }
+            .options-list li.selected-neutral { background-color: #e9ecef !important; }
             
             body.omr-print-body .print-header-details { padding: 0.5cm 1cm 0 !important; }
             body.omr-print-body .print-header-details h2 { font-size: 1.1rem; margin-bottom: 0.4rem; padding-bottom: 0.2rem; }
@@ -358,7 +365,9 @@
             .omr-options { display: flex; }
             .omr-bubble { width: 18px; height: 18px; border: 1px solid #000 !important; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 10px; margin-right: 5px; }
             .omr-bubble.filled { background-color: #0d47a1 !important; border-color: #0d47a1 !important; color: white !important; -webkit-print-color-adjust: exact !important; color-adjust: exact !important; }
-            
+            /* --- नया स्टाइल --- */
+            .omr-bubble.filled-neutral { background-color: #555 !important; border-color: #333 !important; color: white !important; -webkit-print-color-adjust: exact !important; color-adjust: exact !important; }
+
             .official-key-print-container { padding: 1cm; }
             .official-key-header h1 { text-align: center; font-size: 1.5rem; margin: 0 0 0.5rem 0; }
             .official-key-header p { text-align: center; font-size: 1.1rem; margin: 0 0 1.5rem 0; font-weight: bold; }
@@ -367,6 +376,11 @@
             .official-key-table { width: 100%; border-collapse: collapse; }
             .official-key-table th, .official-key-table td { border: 1px solid #333 !important; padding: 5px; text-align: center; font-size: 10pt; }
             .official-key-table th { background-color: #f2f2f2 !important; }
+            /* --- नया स्टाइल --- */
+            .official-key-footer {
+                margin-top: 1.5rem; padding-top: 0.75rem; border-top: 1px solid #ccc !important;
+                text-align: center; font-size: 9pt; color: #555 !important;
+            }
         }
     </style>
     
@@ -592,16 +606,20 @@
             }
 
             function updateSummary() {
-                let c = 0, i = 0, s = 0, d = 0;
+                let c = 0, i = 0, s = 0, d = 0, attemptedForDeleted = 0;
                 allQuestions.forEach(q => {
-                    if (q.deleted) { d++; return; }
-                    const st = getQuestionStatus(q.id);
-                    if (st === 'correct') c++;
-                    else if (st === 'incorrect') i++;
-                    else if (st === 'skipped') s++;
+                    const status = getQuestionStatus(q.id);
+                    if (q.deleted) {
+                         d++;
+                         if (userAnswers[q.id]) attemptedForDeleted++;
+                         return;
+                    }
+                    if (status === 'correct') c++;
+                    else if (status === 'incorrect') i++;
+                    else if (status === 'skipped') s++;
                 });
                 
-                const a = c + i; 
+                const a = c + i + attemptedForDeleted;
                 const totalValidQuestions = allQuestions.length - d;
                 
                 document.getElementById('total-count').textContent = totalValidQuestions;
@@ -649,13 +667,17 @@
                     if (!qData) return;
 
                     const isDeleted = qData.deleted === true;
-                    const status = isDeleted ? 'deleted' : getQuestionStatus(qData.id);
+                    const status = getQuestionStatus(qData.id);
+                    const finalStatusForFilter = isDeleted ? (userAnswers[qData.id] ? 'deleted' : 'unattempted') : status;
 
-                    if (filter !== 'all' && filter !== status) return;
+                    if (filter !== 'all' && filter !== finalStatusForFilter) return;
                     
                     const qB = document.createElement('div');
                     qB.className = 'question-block';
                     qB.dataset.questionId = qData.id;
+                     if (isDeleted) {
+                        qB.style.backgroundColor = '#f1f3f5';
+                    }
                     
                     const iB = document.createElement('div');
                     iB.className = 'question-info-bar';
@@ -689,8 +711,20 @@
                     }
                     
                     const optionTexts = qData.options.map(opt => opt.substring(3));
-                    const optionOrder = currentShiftData.seriesOptionOrder?.[series];
-                    const shuffledOptionTexts = optionOrder ? optionOrder.map(index => optionTexts[index]) : [...optionTexts];
+                    
+                    let shuffledOptionTexts;
+                    const seriesOptionConfig = currentShiftData.seriesOptionOrder?.[series];
+
+                    if (Array.isArray(seriesOptionConfig)) {
+                        shuffledOptionTexts = seriesOptionConfig.map(index => optionTexts[index]);
+                    } else if (typeof seriesOptionConfig === 'object' && seriesOptionConfig !== null) {
+                        const specificOrder = seriesOptionConfig[qData.id];
+                        const defaultOrder = seriesOptionConfig['default'];
+                        const orderToUse = specificOrder || defaultOrder;
+                        shuffledOptionTexts = orderToUse ? orderToUse.map(index => optionTexts[index]) : [...optionTexts];
+                    } else {
+                        shuffledOptionTexts = [...optionTexts];
+                    }
                     
                     shuffledOptionTexts.forEach((text, index) => {
                         const oI = document.createElement('li');
@@ -702,7 +736,6 @@
                     qB.appendChild(oCont);
                     questionsContainer.appendChild(qB);
                     
-                    // Update UI for this single question block after it's added
                     updateQuestionUI(qData.id);
                 });
 
@@ -716,8 +749,6 @@
                     });
                 }
             }
-
-            // --- बदला हुआ लॉजिक यहाँ से शुरू ---
             
             function updateQuestionUI(qId) {
                 const qBlock = document.querySelector(`.question-block[data-question-id='${qId}']`);
@@ -732,24 +763,23 @@
                 const optionsContainer = qBlock.querySelector('.options-container');
                 let answerDisplay = qBlock.querySelector('.correct-answer-display');
 
-                // Clear existing styles from options
                 optionsList.querySelectorAll('li').forEach(li => {
-                    li.classList.remove('correct', 'incorrect', 'special');
+                    li.classList.remove('correct', 'incorrect', 'special', 'selected-neutral');
                 });
 
-                // Apply new style to the selected option
                 const userAnswerText = userAnswers[qId];
                 if (userAnswerText) {
                     const selectedLi = Array.from(optionsList.querySelectorAll('li')).find(li => li.dataset.rawText === userAnswerText);
                     if (selectedLi) {
-                        if (status === 'correct') selectedLi.classList.add('correct');
+                        if (isDeleted) {
+                            selectedLi.classList.add('selected-neutral');
+                        } else if (status === 'correct') selectedLi.classList.add('correct');
                         else if (status === 'incorrect') selectedLi.classList.add('incorrect');
                         else if (status === 'skipped') selectedLi.classList.add('special');
                     }
                 }
 
-                // Manage the correct answer display
-                if (answerDisplay) answerDisplay.remove(); // Remove old one if exists
+                if (answerDisplay) answerDisplay.remove();
 
                 if (isDeleted) {
                     answerDisplay = document.createElement('div');
@@ -762,8 +792,20 @@
                     
                     const optionLabels = ['A)', 'B)', 'C)', 'D)', 'E)'];
                     const optionTexts = qData.options.map(opt => opt.substring(3));
-                    const optionOrder = currentShiftData.seriesOptionOrder?.[currentSeries];
-                    const shuffledOptionTexts = optionOrder ? optionOrder.map(index => optionTexts[index]) : [...optionTexts];
+                    
+                    let shuffledOptionTexts;
+                    const seriesOptionConfig = currentShiftData.seriesOptionOrder?.[currentSeries];
+                    if (Array.isArray(seriesOptionConfig)) {
+                        shuffledOptionTexts = seriesOptionConfig.map(index => optionTexts[index]);
+                    } else if (typeof seriesOptionConfig === 'object' && seriesOptionConfig !== null) {
+                        const specificOrder = seriesOptionConfig[qData.id];
+                        const defaultOrder = seriesOptionConfig['default'];
+                        const orderToUse = specificOrder || defaultOrder;
+                        shuffledOptionTexts = orderToUse ? orderToUse.map(index => optionTexts[index]) : [...optionTexts];
+                    } else {
+                        shuffledOptionTexts = [...optionTexts];
+                    }
+
                     const correctAnswerText = qData.answer.substring(3);
                     const newCorrectIndex = shuffledOptionTexts.indexOf(correctAnswerText);
                     let dynamicCorrectAnswer = qData.answer;
@@ -785,21 +827,21 @@
 
                 const qId = parseInt(questionBlock.dataset.questionId);
                 const qData = allQuestions.find(q => q.id === qId);
-                if (!qData || qData.deleted) return; // Do nothing for deleted questions
+                if (!qData) return;
 
                 userAnswers[qId] = clickedLi.dataset.rawText;
                 saveData();
                 updateQuestionUI(qId);
                 updateSummary();
                 
-                // If a filter is active and the question's new status doesn't match, hide it.
+                const isDeleted = qData.deleted === true;
                 const newStatus = getQuestionStatus(qId);
-                if (activeFilter !== 'all' && activeFilter !== newStatus) {
-                    questionBlock.style.display = 'none';
+                const finalStatusForFilter = isDeleted ? (userAnswers[qId] ? 'deleted' : 'unattempted') : newStatus;
+
+                if (activeFilter !== 'all' && activeFilter !== finalStatusForFilter) {
+                    setTimeout(() => { questionBlock.style.display = 'none'; }, 200);
                 }
             });
-
-            // --- बदला हुआ लॉजिक यहाँ खत्म ---
                
             function updateActiveFilterButton(filter) {
                 document.querySelectorAll('.filter-buttons button').forEach(btn => btn.classList.remove('active'));
@@ -815,7 +857,7 @@
                 if (confirm("क्या आप वाकई इस पेपर के लिए अपने सभी उत्तर हटाना चाहते हैं?")) {
                     userAnswers = {};
                     saveData();
-                    displayQuestions(currentSeries, 'all'); // Re-render to show fresh state
+                    displayQuestions(currentSeries, 'all');
                 }
             });
 
@@ -925,8 +967,18 @@
                 const correctAnswerText = qData.answer.substring(3);
                 const optionTexts = qData.options.map(opt => opt.substring(3));
                 
-                const optionOrder = currentShiftData.seriesOptionOrder?.[series];
-                const shuffledOptionTexts = optionOrder ? optionOrder.map(index => optionTexts[index]) : [...optionTexts];
+                let shuffledOptionTexts;
+                const seriesOptionConfig = currentShiftData.seriesOptionOrder?.[series];
+                if (Array.isArray(seriesOptionConfig)) {
+                    shuffledOptionTexts = seriesOptionConfig.map(index => optionTexts[index]);
+                } else if (typeof seriesOptionConfig === 'object' && seriesOptionConfig !== null) {
+                    const specificOrder = seriesOptionConfig[qData.id];
+                    const defaultOrder = seriesOptionConfig['default'];
+                    const orderToUse = specificOrder || defaultOrder;
+                    shuffledOptionTexts = orderToUse ? orderToUse.map(index => optionTexts[index]) : [...optionTexts];
+                } else {
+                    shuffledOptionTexts = [...optionTexts];
+                }
                 
                 const newCorrectIndex = shuffledOptionTexts.indexOf(correctAnswerText);
                 return (newCorrectIndex !== -1) ? optionLabels[newCorrectIndex] : '?';
@@ -961,6 +1013,9 @@
                 }
 
                 html += `</div>`;
+                // --- नया फुटर ---
+                html += `<div class="official-key-footer"><p>बोर्ड द्वारा जारी उत्तर कुंजी को प्राथमिकता देवे</p></div>`;
+
                 container.innerHTML = html;
                 openPrintWindow(container.innerHTML);
             }
@@ -1004,7 +1059,7 @@
                         qNumDiv.textContent = `${displayNum}.`;
                         
                         if (isDeleted) {
-                            row.style.opacity = '0.6';
+                            row.style.opacity = '0.7';
                         } else if (status === 'incorrect') {
                             qNumDiv.style.color = 'red';
                         } else if (status === 'skipped') {
@@ -1020,8 +1075,19 @@
 
                         if (userAnswerText) {
                             const originalOptionTexts = qData.options.map(opt => opt.substring(3));
-                            const optionOrder = currentShiftData.seriesOptionOrder?.[currentSeries];
-                            let shuffledOptionTexts = optionOrder ? optionOrder.map(idx => originalOptionTexts[idx]) : [...originalOptionTexts];
+                            let shuffledOptionTexts;
+                            const seriesOptionConfig = currentShiftData.seriesOptionOrder?.[currentSeries];
+                             if (Array.isArray(seriesOptionConfig)) {
+                                shuffledOptionTexts = seriesOptionConfig.map(index => originalOptionTexts[index]);
+                            } else if (typeof seriesOptionConfig === 'object' && seriesOptionConfig !== null) {
+                                const specificOrder = seriesOptionConfig[qData.id];
+                                const defaultOrder = seriesOptionConfig['default'];
+                                const orderToUse = specificOrder || defaultOrder;
+                                shuffledOptionTexts = orderToUse ? orderToUse.map(index => originalOptionTexts[index]) : [...originalOptionTexts];
+                            } else {
+                                shuffledOptionTexts = [...originalOptionTexts];
+                            }
+
                             const userAnsIndex = shuffledOptionTexts.findIndex(txt => txt.trim() === userAnswerText.trim());
                             if(userAnsIndex !== -1) filledOptionIndex = userAnsIndex;
                         }
@@ -1031,8 +1097,12 @@
                              bubble.className = 'omr-bubble';
                              bubble.textContent = label;
                              if (index === filledOptionIndex) {
-                                bubble.classList.add('filled');
-                                if(isDeleted) bubble.style.opacity = '0.7';
+                                // --- डिलीट प्रश्न के लिए बदला हुआ लॉजिक ---
+                                if(isDeleted) {
+                                    bubble.classList.add('filled-neutral');
+                                } else {
+                                    bubble.classList.add('filled');
+                                }
                              }
                              optionsDiv.appendChild(bubble);
                         });
