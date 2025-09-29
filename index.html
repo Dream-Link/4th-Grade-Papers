@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="hi">
-<head>
+<head> 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>4th Grade Paper Analysis by MP SALODIYA</title>
@@ -322,17 +322,7 @@
             
             .modal-buttons { justify-content: center; gap: 0.25rem; }
             .modal-buttons button { padding: 0.5rem; font-size: 0.7rem; flex-grow: 1; }
-            /* ... आपका मौजूदा CSS कोड ... */
-
-        /* ===== होम पेज इमेज के लिए नया स्टाइल ===== */
-        .home-page-image {
-    max-width: 100%;   /* <-- बस इस लाइन को 200px से 100% कर दें */
-    height: auto;
-    display: block;
-    margin: 1.5rem auto 2.5rem; 
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-}
+        }
 
         @media print {
             body { font-size: 10pt; background-color: #fff !important; color: #000 !important; }
@@ -407,13 +397,13 @@
             z-index: 100;
         }
         #theme-toggle-btn {
-            width: 35px;
-            height: 35px;
+            width: 45px;
+            height: 45px;
             border-radius: 50%;
             border: 1px solid var(--border-color);
             background-color: var(--surface-color);
             color: var(--font-color);
-            font-size: 1rem;
+            font-size: 1.2rem;
             cursor: pointer;
             display: flex;
             align-items: center;
@@ -593,7 +583,6 @@
     <div id="shift-selector-page">
         <div class="selector-container">
             <h2>चतुर्थ श्रेणी कर्मचारी</h2>
-             <img src="https://raw.githubusercontent.com/Dream-Link/4th-Grade-Papers/main/144%20set.png" alt="Paper Analysis Logo" class="home-page-image">
             <p class="subtitle">कृपया अपनी शिफ़्ट चुनें।</p>
             <div class="shift-selector">
                 <a class="shift-btn" data-shift="shift1"><div class="icon"><i class="fas fa-file-alt"></i></div><div class="text">1st Shift 19.09.2025</div></a>
@@ -604,8 +593,7 @@
                 <a class="shift-btn" data-shift="shift6"><div class="icon"><i class="fas fa-file-alt"></i></div><div class="text">6th Shift 21.09.2025</div></a>
             </div>
             <div class="selector-footer">
-                <p>Last Update: 29.06.2025 15:00</p>
-               
+                <p>Last Update: 28.11.2025 14:30</p>
                 <p>सभी प्रश्नों के उत्तर संभावित उत्तर कुंजी के आधार पर हैं, आधिकारिक कुंजी जारी होने पर UPDATE कर दी जाएगी।</p>
                 
                 <div class="features-box">
@@ -616,12 +604,9 @@
                         <li>नकारात्मक अंकन (Negative Marking) के साथ ऑटोमैटिक स्कोर गणना।</li>
                         <li>केवल सही, गलत, या छोड़े गए प्रश्नों को फ़िल्टर करके अपनी गलतियों को सुधारें।</li>
                         <li>आपकी प्रगति (Progress) अपने आप ब्राउज़र में सेव हो जाती है।</li>
-                        <li>EYE बटन से विभिन्न सीरीज के अनुसार प्रश्न क्रमांक hide की सुविधा</li>
-                        <li>रिफ्रेश बटन से सभी टिक मार्क रीसेट की सुविधा</li>
                         <li>अपना नाम, रोल नंबर और रिजल्ट के साथ पूरा पेपर प्रिंट करें।</li>
                         <li>दिए गए उत्तरों के साथ अपनी OMR शीट प्रिंट करें।</li>
                         <li>किसी भी पेपर कोड के अनुसार ऑफिशियल उत्तर कुंजी (Answer Key) प्रिंट करें।</li>
-                        <li>आवश्यकतानुसार थीम भी बदल सकते है</li>
                     </ul>
                 </div>
 
@@ -656,7 +641,7 @@
                 <div id="right-que-item" class="summary-item"><div id="right-que-value" class="count">0.00</div><div class="label">Final R.Q.</div></div>
                 <div id="raw-marks-item" class="summary-item"><div id="raw-marks-value" class="count">0.00</div><div class="label">RAW Marks</div></div>
                 <div id="unattempted-warning-item" class="summary-item">
-                    <span>आपने अभी तक <strong id="unattempted-count">0</strong> प्रश्नों में कोई भी ऑप्शन टिक नहीं किया है।</span>
+                    <span>आप अभी तक <strong id="unattempted-count">0</strong> प्रश्नों में कोई भी ऑप्शन टिक नहीं किया है।</span>
                 </div>
                 </div>
         </div>
@@ -715,12 +700,11 @@
                     localStorage.setItem(THEME_KEY, theme);
                 };
 
-              
                 // Toggle dropdown visibility
-themeToggleBtn.addEventListener('click', (e) => {
-    e.stopPropagation(); // <-- यह लाइन जोड़ें
-    themeDropdown.classList.toggle('hidden');
-});
+                themeToggleBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    themeDropdown.classList.toggle('hidden');
+                });
 
                 // Close dropdown if clicked outside
                 document.addEventListener('click', () => {
@@ -1263,7 +1247,7 @@ themeToggleBtn.addEventListener('click', (e) => {
 
                 html += `</div>`;
                 // --- नया फुटर ---
-                html += `<div class="official-key-footer"><p>नोट - बोर्ड द्वारा जारी Official उत्तर कुंजी से भी पुष्टि जरूर करे</p></div>`;
+                html += `<div class="official-key-footer"><p>बोर्ड द्वारा जारी उत्तर कुंजी को प्राथमिकता देवे</p></div>`;
 
                 container.innerHTML = html;
                 openPrintWindow(container.innerHTML);
@@ -1402,7 +1386,7 @@ themeToggleBtn.addEventListener('click', (e) => {
                 loadShift(shiftIdFromUrl);
             } else {
                 showHomePage();
-            } 
+            }
         });
 
         if ('serviceWorker' in navigator) {
