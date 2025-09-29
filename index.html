@@ -96,7 +96,6 @@
         .selector-footer { margin-top: 3rem; font-size: 0.875rem; color: var(--secondary-color); line-height: 1.5; }
         .selector-footer p { margin: 0.5rem 0; }
         
-        /* Features Box Styling */
         .features-box {
             background-color: var(--surface-color);
             border: 1px solid var(--primary-light);
@@ -128,7 +127,7 @@
             line-height: 1.5;
         }
         .features-box li::before {
-            content: '\f058'; /* Font Awesome check-circle icon */
+            content: '\f058';
             font-family: 'Font Awesome 6 Free';
             font-weight: 900;
             color: var(--success-color);
@@ -147,7 +146,6 @@
             color: var(--primary-color);
             text-decoration: underline;
         }
-
 
         #question-paper-page { display: none; flex-direction: column; }
         #question-paper-page.hide-q-info .question-info-bar { display: none; }
@@ -518,6 +516,7 @@
             const pMO = document.getElementById('print-modal-overlay');
             const toggleInfoBtn = document.getElementById('toggle-info-bar-btn');
             const resetBtn = document.getElementById('reset-answers-btn');
+            const questionsContainer = document.getElementById('questions-container');
 
             function showHomePage() {
                 shiftSelectorPage.style.display = 'flex';
@@ -581,7 +580,8 @@
 
             function getQuestionStatus(qId) {
                 const qData = allQuestions.find(q => q.id === qId);
-                if (qData.deleted) return 'deleted'; //This check now happens implicitly below but this is a fast path
+                if (!qData) return 'unattempted';
+                if (qData.deleted) return 'deleted';
                 
                 const uAnsText = userAnswers[qId];
                 if (!uAnsText) return 'unattempted';
@@ -594,7 +594,7 @@
             function updateSummary() {
                 let c = 0, i = 0, s = 0, d = 0;
                 allQuestions.forEach(q => {
-                    if (q.deleted) { d++; return; } // Scoring logic: deleted questions are not scored.
+                    if (q.deleted) { d++; return; }
                     const st = getQuestionStatus(q.id);
                     if (st === 'correct') c++;
                     else if (st === 'incorrect') i++;
@@ -633,8 +633,7 @@
             }
 
             function displayQuestions(series, filter = 'all') {
-                const qC = document.getElementById('questions-container');
-                qC.innerHTML = '';
+                questionsContainer.innerHTML = '';
                 currentSeries = series;
                 updateSummary();
                 updateActiveFilterButton(filter);
@@ -650,7 +649,6 @@
                     if (!qData) return;
 
                     const isDeleted = qData.deleted === true;
-                    // For filtering, a deleted question is always 'deleted'. For display, we get its answered status.
                     const status = isDeleted ? 'deleted' : getQuestionStatus(qData.id);
 
                     if (filter !== 'all' && filter !== status) return;
@@ -691,73 +689,117 @@
                     }
                     
                     const optionTexts = qData.options.map(opt => opt.substring(3));
-                    let shuffledOptionTexts;
                     const optionOrder = currentShiftData.seriesOptionOrder?.[series];
-
-                    if (optionOrder) {
-                        shuffledOptionTexts = optionOrder.map(index => optionTexts[index]);
-                    } else {
-                        shuffledOptionTexts = [...optionTexts];
-                    }
-                    const finalOptions = shuffledOptionTexts.map((text, index) => `${optionLabels[index]} ${text}`);
-
-                    finalOptions.forEach(oT => {
+                    const shuffledOptionTexts = optionOrder ? optionOrder.map(index => optionTexts[index]) : [...optionTexts];
+                    
+                    shuffledOptionTexts.forEach((text, index) => {
                         const oI = document.createElement('li');
-                        oI.innerHTML = oT;
-                        oI.dataset.rawText = oT.substring(3).trim();
-                        const userAnswerText = userAnswers[qData.id];
-                        if (userAnswerText && userAnswerText === oI.dataset.rawText) {
-                            if (status === 'correct') oI.classList.add('correct');
-                            else if (status === 'incorrect') oI.classList.add('incorrect');
-                            else if (status === 'skipped') oI.classList.add('special');
-                        }
+                        oI.innerHTML = `${optionLabels[index]} ${text}`;
+                        oI.dataset.rawText = text.trim();
                         oL.appendChild(oI);
                     });
                     oCont.appendChild(oL);
-
-                    if (isDeleted) {
-                        const deletedAnsDisplay = document.createElement('div');
-                        deletedAnsDisplay.className = 'correct-answer-display';
-                        deletedAnsDisplay.innerHTML = 'Status: <strong style="color: var(--danger-color);">Deleted</strong>';
-                        oCont.appendChild(deletedAnsDisplay);
-                    }
-                    else if (status !== 'unattempted') {
-                        const aD = document.createElement('div');
-                        aD.className = 'correct-answer-display';
-                        const correctAnswerText = qData.answer.substring(3);
-                        const newCorrectIndex = shuffledOptionTexts.indexOf(correctAnswerText);
-                        let dynamicCorrectAnswer = qData.answer;
-                        if (newCorrectIndex !== -1) {
-                            dynamicCorrectAnswer = `${optionLabels[newCorrectIndex]} ${correctAnswerText}`;
-                        }
-                        aD.innerHTML = `Correct Ans: <strong style="color: var(--success-color);">${dynamicCorrectAnswer}</strong>`;
-                        oCont.appendChild(aD);
-                    }
                     qB.appendChild(oCont);
-
-                    qC.appendChild(qB);
+                    questionsContainer.appendChild(qB);
                     
-                    oL.addEventListener('click', (e) => {
-                        const clickedLi = e.target.closest('li');
-                        if (clickedLi) {
-                            userAnswers[qData.id] = clickedLi.dataset.rawText;
-                            saveData();
-                            displayQuestions(currentSeries, activeFilter);
-                        }
-                    });
+                    // Update UI for this single question block after it's added
+                    updateQuestionUI(qData.id);
                 });
 
-                if (qC.innerHTML === '') {
-                    qC.innerHTML = `<p style="text-align:center; color: var(--font-color-light); padding: 2rem;">इस फ़िल्टर में कोई प्रश्न नहीं है।</p>`;
+                if (questionsContainer.innerHTML === '') {
+                    questionsContainer.innerHTML = `<p style="text-align:center; color: var(--font-color-light); padding: 2rem;">इस फ़िल्टर में कोई प्रश्न नहीं है।</p>`;
                 }
                 
-                // Call MathJax to render math in the newly added questions
                 if (window.MathJax) {
-                    MathJax.typesetPromise([qC]).catch(function (err) {
+                    MathJax.typesetPromise([questionsContainer]).catch(function (err) {
                         console.log('MathJax error: ', err);
                     });
                 }
             }
+
+            // --- बदला हुआ लॉजिक यहाँ से शुरू ---
+            
+            function updateQuestionUI(qId) {
+                const qBlock = document.querySelector(`.question-block[data-question-id='${qId}']`);
+                if (!qBlock) return;
+
+                const qData = allQuestions.find(q => q.id === qId);
+                if (!qData) return;
+
+                const status = getQuestionStatus(qId);
+                const isDeleted = qData.deleted === true;
+                const optionsList = qBlock.querySelector('.options-list');
+                const optionsContainer = qBlock.querySelector('.options-container');
+                let answerDisplay = qBlock.querySelector('.correct-answer-display');
+
+                // Clear existing styles from options
+                optionsList.querySelectorAll('li').forEach(li => {
+                    li.classList.remove('correct', 'incorrect', 'special');
+                });
+
+                // Apply new style to the selected option
+                const userAnswerText = userAnswers[qId];
+                if (userAnswerText) {
+                    const selectedLi = Array.from(optionsList.querySelectorAll('li')).find(li => li.dataset.rawText === userAnswerText);
+                    if (selectedLi) {
+                        if (status === 'correct') selectedLi.classList.add('correct');
+                        else if (status === 'incorrect') selectedLi.classList.add('incorrect');
+                        else if (status === 'skipped') selectedLi.classList.add('special');
+                    }
+                }
+
+                // Manage the correct answer display
+                if (answerDisplay) answerDisplay.remove(); // Remove old one if exists
+
+                if (isDeleted) {
+                    answerDisplay = document.createElement('div');
+                    answerDisplay.className = 'correct-answer-display';
+                    answerDisplay.innerHTML = 'Status: <strong style="color: var(--danger-color);">Deleted</strong>';
+                    optionsContainer.appendChild(answerDisplay);
+                } else if (status !== 'unattempted') {
+                    answerDisplay = document.createElement('div');
+                    answerDisplay.className = 'correct-answer-display';
+                    
+                    const optionLabels = ['A)', 'B)', 'C)', 'D)', 'E)'];
+                    const optionTexts = qData.options.map(opt => opt.substring(3));
+                    const optionOrder = currentShiftData.seriesOptionOrder?.[currentSeries];
+                    const shuffledOptionTexts = optionOrder ? optionOrder.map(index => optionTexts[index]) : [...optionTexts];
+                    const correctAnswerText = qData.answer.substring(3);
+                    const newCorrectIndex = shuffledOptionTexts.indexOf(correctAnswerText);
+                    let dynamicCorrectAnswer = qData.answer;
+                    if (newCorrectIndex !== -1) {
+                         dynamicCorrectAnswer = `${optionLabels[newCorrectIndex]} ${correctAnswerText}`;
+                    }
+                    
+                    answerDisplay.innerHTML = `Correct Ans: <strong style="color: var(--success-color);">${dynamicCorrectAnswer}</strong>`;
+                    optionsContainer.appendChild(answerDisplay);
+                }
+            }
+
+            questionsContainer.addEventListener('click', (e) => {
+                const clickedLi = e.target.closest('li');
+                if (!clickedLi) return;
+
+                const questionBlock = e.target.closest('.question-block');
+                if (!questionBlock) return;
+
+                const qId = parseInt(questionBlock.dataset.questionId);
+                const qData = allQuestions.find(q => q.id === qId);
+                if (!qData || qData.deleted) return; // Do nothing for deleted questions
+
+                userAnswers[qId] = clickedLi.dataset.rawText;
+                saveData();
+                updateQuestionUI(qId);
+                updateSummary();
+                
+                // If a filter is active and the question's new status doesn't match, hide it.
+                const newStatus = getQuestionStatus(qId);
+                if (activeFilter !== 'all' && activeFilter !== newStatus) {
+                    questionBlock.style.display = 'none';
+                }
+            });
+
+            // --- बदला हुआ लॉजिक यहाँ खत्म ---
                
             function updateActiveFilterButton(filter) {
                 document.querySelectorAll('.filter-buttons button').forEach(btn => btn.classList.remove('active'));
@@ -773,7 +815,7 @@
                 if (confirm("क्या आप वाकई इस पेपर के लिए अपने सभी उत्तर हटाना चाहते हैं?")) {
                     userAnswers = {};
                     saveData();
-                    displayQuestions(currentSeries, 'all');
+                    displayQuestions(currentSeries, 'all'); // Re-render to show fresh state
                 }
             });
 
