@@ -249,7 +249,6 @@
         .options-list li.correct { background-color: var(--success-bg); border-color: var(--success-color); }
         .options-list li.incorrect { background-color: var(--danger-bg); border-color: var(--danger-color); }
         .options-list li.special { background-color: var(--special-bg); border-color: var(--warning-color); }
-        /* --- नया स्टाइल --- */
         .options-list li.selected-neutral {
             border-color: #333;
             background-color: #e9ecef;
@@ -371,7 +370,6 @@
             .omr-options { display: flex; }
             .omr-bubble { width: 18px; height: 18px; border: 1px solid #000 !important; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 10px; margin-right: 5px; }
             .omr-bubble.filled { background-color: #0d47a1 !important; border-color: #0d47a1 !important; color: white !important; -webkit-print-color-adjust: exact !important; color-adjust: exact !important; }
-            /* --- नया स्टाइल --- */
             .omr-bubble.filled-neutral { background-color: #555 !important; border-color: #333 !important; color: white !important; -webkit-print-color-adjust: exact !important; color-adjust: exact !important; }
 
             .official-key-print-container { padding: 1cm; }
@@ -382,7 +380,6 @@
             .official-key-table { width: 100%; border-collapse: collapse; }
             .official-key-table th, .official-key-table td { border: 1px solid #333 !important; padding: 5px; text-align: center; font-size: 10pt; }
             .official-key-table th { background-color: #f2f2f2 !important; }
-            /* --- नया स्टाइल --- */
             .official-key-footer {
                 margin-top: 1.5rem; padding-top: 0.75rem; border-top: 1px solid #ccc !important;
                 text-align: center; font-size: 9pt; color: #555 !important;
@@ -488,7 +485,7 @@
         }
         :root[data-theme='dark-teal'] {
             --primary-color: #2dd4bf; --primary-dark: #14b8a6; --primary-light: #042f2e;
-            --bg-color: #0f172a; --surface-color: #1e293b; --font-color: #f1f5f9;
+            --bg-color: #0f172a; --surface-color: #1e2b; --font-color: #f1f5f9;
             --font-color-light: #94a3b8; --border-color: #334155; --success-bg: #064e3b;
             --danger-bg: #7f1d1d; --special-bg: #78350f; --subtle-bg: #334155;
         }
@@ -540,7 +537,7 @@
             <li data-theme="light-purple">Purple Light</li>
             <li data-theme="dark-purple">Purple Dark</li>
             <li data-theme="light-orange">Orange Light</li>
-            <li data-theme="dark-orange">Orange Dark</li>
+            <li data-theme="dark-orange">Dark Dark</li>
             <li data-theme="light-teal">Teal Light</li>
             <li data-theme="dark-teal">Dark Teal</li>
             <li data-theme="solarized-light">Solarized Light</li>
@@ -676,8 +673,25 @@
         </div>
     </div>
     
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
     <script src="questions-data.js"></script>
     <script>
+        // START: FIREBASE CONFIG (ADDED)
+        const firebaseConfig = {
+          apiKey: "AIzaSy...", // अपनी असली apiKey यहाँ डालें
+          authDomain: "myexamanalyzer.firebaseapp.com",
+          projectId: "myexamanalyzer",
+          storageBucket: "myexamanalyzer.appspot.com",
+          messagingSenderId: "...",
+          appId: "..."
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        // END: FIREBASE CONFIG (ADDED)
+
         let currentShiftId = null, allQuestions = [], userAnswers = {}, currentSeries = '', activeFilter = 'all', currentShiftData = {};
 
         document.addEventListener('DOMContentLoaded', () => {
@@ -690,7 +704,6 @@
             const THEME_KEY = 'selected_theme_mps';
 
             if (themeToggleBtn) { // Run only if the theme button exists
-                // Function to apply a theme
                 const applyTheme = (theme) => {
                     if (theme === 'auto') {
                         const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
@@ -700,21 +713,15 @@
                     }
                     localStorage.setItem(THEME_KEY, theme);
                 };
-
-                // Toggle dropdown visibility
                 themeToggleBtn.addEventListener('click', (e) => {
                     e.stopPropagation();
                     themeDropdown.classList.toggle('hidden');
                 });
-
-                // Close dropdown if clicked outside
                 document.addEventListener('click', () => {
                     if (!themeDropdown.classList.contains('hidden')) {
                         themeDropdown.classList.add('hidden');
                     }
                 });
-
-                // Handle theme selection from dropdown
                 themeDropdown.addEventListener('click', (e) => {
                     if (e.target.tagName === 'LI') {
                         const selectedTheme = e.target.dataset.theme;
@@ -722,16 +729,12 @@
                         themeDropdown.classList.add('hidden');
                     }
                 });
-
-                // Listen for changes in OS theme preference
                 window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
                     const savedTheme = localStorage.getItem(THEME_KEY);
                     if (savedTheme === 'auto') {
                         applyTheme('auto');
                     }
                 });
-
-                // Apply saved or default theme on load
                 const savedTheme = localStorage.getItem(THEME_KEY) || 'auto';
                 applyTheme(savedTheme);
             }
@@ -813,6 +816,41 @@
                 localStorage.setItem(`currentSeries_${currentShiftId}`, currentSeries);
             }
 
+            // START: FIREBASE FUNCTION (ADDED)
+            function sendAnswerToFirebase(userId) {
+                if (!currentShiftId || !db) return; // db को भी चेक करें
+
+                const summaryData = {
+                    correct: document.getElementById('correct-count').textContent,
+                    incorrect: document.getElementById('incorrect-count').textContent,
+                    skipped: document.getElementById('skipped-count').textContent,
+                    attempted: document.getElementById('attempted-count').textContent,
+                    finalRQ: document.getElementById('right-que-value').textContent,
+                    rawMarks: document.getElementById('raw-marks-value').textContent,
+                    validQuestions: document.getElementById('total-count').textContent
+                };
+
+                db.collection('userResponses')
+                  .doc(currentShiftId)
+                  .collection('users')
+                  .doc(userId)
+                  .set({
+                      answers: userAnswers,
+                      summary: summaryData,
+                      series: currentSeries,
+                      rollNo: document.getElementById('student-roll').value || 'Not Provided',
+                      name: document.getElementById('student-name').value || 'Not Provided',
+                      lastUpdated: new Date()
+                  }, { merge: true })
+                  .then(() => {
+                      console.log(`Data for User: ${userId} successfully saved to Firebase!`);
+                  })
+                  .catch((error) => {
+                      console.error("Firebase Error: ", error);
+                  });
+            }
+            // END: FIREBASE FUNCTION (ADDED)
+
             function getQuestionStatus(qId) {
                 const qData = allQuestions.find(q => q.id === qId);
                 if (!qData) return 'unattempted';
@@ -843,7 +881,6 @@
                 const a = c + i + attemptedForDeleted;
                 const totalValidQuestions = allQuestions.length - d;
                 
-                // ======================= START: NEW WARNING BOX LOGIC (MODIFIED) =======================
                 const unattempted = totalValidQuestions - (c + i + s);
                 const warningBox = document.getElementById('unattempted-warning-item');
                 if (warningBox) {
@@ -854,7 +891,6 @@
                         warningBox.classList.remove('visible');
                     }
                 }
-                // ======================= END: NEW WARNING BOX LOGIC (MODIFIED) =======================
 
                 document.getElementById('total-count').textContent = totalValidQuestions;
                 document.getElementById('attempted-count').textContent = a;
@@ -1052,6 +1088,7 @@
                 }
             }
 
+            // START: CLICK LISTENER (MODIFIED FOR FIREBASE)
             questionsContainer.addEventListener('click', (e) => {
                 const clickedLi = e.target.closest('li');
                 if (!clickedLi) return;
@@ -1064,10 +1101,22 @@
                 if (!qData) return;
 
                 userAnswers[qId] = clickedLi.dataset.rawText;
-                saveData();
-                updateQuestionUI(qId);
-                updateSummary();
                 
+                saveData(); // Save to local storage first
+                updateQuestionUI(qId);
+                updateSummary(); // IMPORTANT: Update summary before sending to Firebase
+
+                // Get or create a unique user ID
+                let userId = localStorage.getItem(`userId_${currentShiftId}`);
+                if (!userId) {
+                    userId = 'user_' + Date.now() + Math.random().toString(36).substr(2, 9);
+                    localStorage.setItem(`userId_${currentShiftId}`, userId);
+                }
+                
+                // Send all updated data to Firebase
+                sendAnswerToFirebase(userId); 
+                
+                // Existing filter logic
                 const isDeleted = qData.deleted === true;
                 const newStatus = getQuestionStatus(qId);
                 const finalStatusForFilter = isDeleted ? (userAnswers[qId] ? 'deleted' : 'unattempted') : newStatus;
@@ -1076,6 +1125,7 @@
                     setTimeout(() => { questionBlock.style.display = 'none'; }, 200);
                 }
             });
+            // END: CLICK LISTENER (MODIFIED FOR FIREBASE)
                
             function updateActiveFilterButton(filter) {
                 document.querySelectorAll('.filter-buttons button').forEach(btn => btn.classList.remove('active'));
@@ -1091,6 +1141,11 @@
                 if (confirm("क्या आप वाकई इस पेपर के लिए अपने सभी उत्तर हटाना चाहते हैं?")) {
                     userAnswers = {};
                     saveData();
+                    // After resetting, also send the empty data to Firebase to update the record
+                    let userId = localStorage.getItem(`userId_${currentShiftId}`);
+                    if (userId) {
+                        sendAnswerToFirebase(userId);
+                    }
                     displayQuestions(currentSeries, 'all');
                 }
             });
@@ -1247,7 +1302,6 @@
                 }
 
                 html += `</div>`;
-                // --- नया फुटर ---
                 html += `<div class="official-key-footer"><p>नोट - यह अभी संभावित उत्तर कुंजी है, बोर्ड द्वारा Official उत्तर कुंजी जारी होने पर UPDATE कर दी जाएगी </p></div>`;
 
                 container.innerHTML = html;
@@ -1331,7 +1385,6 @@
                              bubble.className = 'omr-bubble';
                              bubble.textContent = label;
                              if (index === filledOptionIndex) {
-                                // --- डिलीट प्रश्न के लिए बदला हुआ लॉजिक ---
                                 if(isDeleted) {
                                     bubble.classList.add('filled-neutral');
                                 } else {
