@@ -1126,21 +1126,35 @@ questionsContainer.addEventListener('click', (e) => {
     }
 });
 // END: CLICK LISTENER (MODIFIED FOR FIREBASE)
-      // START: SAVE ON EXIT LISTENER (ADDED)
-document.addEventListener('visibilitychange', () => {
-  // यह जांचता है कि यूजर ने टैब बदला है या पेज से हट रहा है
-  if (document.visibilityState === 'hidden') {
+   
+// START: RELIABLE SAVE ON EXIT LISTENER (IMPROVED)
+function saveFinalDataOnExit() {
+  // यह सुनिश्चित करता है कि डेटा सिर्फ एक बार सेव हो, अगर दोनों इवेंट एक साथ फायर हो जाएं
+  if (document.visibilityState === 'hidden' && !window.hasSavedOnExit) {
+    window.hasSavedOnExit = true; // एक फ्लैग सेट करें
+    
     let userId = localStorage.getItem(`userId_${currentShiftId}`);
 
-    // अगर यूजर आईडी और शिफ्ट आईडी मौजूद है, तभी डेटा सेव करें
     if (userId && currentShiftId) {
-      console.log('Page is being hidden. Saving final answers and summary to Firebase...');
-      // यह फंक्शन अब सिर्फ एक बार चलेगा, जिसमें उत्तर और समरी दोनों सेव होंगे
+      console.log('Page is being hidden or unloaded. Saving final data to Firebase...');
       sendAnswerToFirebase(userId);
     }
   }
+}
+
+// टैब बदलने या विंडो मिनिमाइज करने के लिए
+document.addEventListener('visibilitychange', saveFinalDataOnExit);
+
+// टैब/ब्राउज़र बंद करने या दूसरे पेज पर जाने के लिए
+document.addEventListener('pagehide', saveFinalDataOnExit);
+
+// जब पेज वापस दिखे, तो फ्लैग को रीसेट कर दें
+document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'visible') {
+        window.hasSavedOnExit = false;
+    }
 });
-// END: SAVE ON EXIT LISTENER (ADDED)
+// END: RELIABLE SAVE ON EXIT LISTENER (IMPROVED)
                
             function updateActiveFilterButton(filter) {
                 document.querySelectorAll('.filter-buttons button').forEach(btn => btn.classList.remove('active'));
