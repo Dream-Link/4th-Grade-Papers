@@ -1088,44 +1088,59 @@
                 }
             }
 
-            // START: CLICK LISTENER (MODIFIED FOR FIREBASE)
-            questionsContainer.addEventListener('click', (e) => {
-                const clickedLi = e.target.closest('li');
-                if (!clickedLi) return;
+          
+           // START: CLICK LISTENER (MODIFIED FOR FIREBASE)
+questionsContainer.addEventListener('click', (e) => {
+    const clickedLi = e.target.closest('li');
+    if (!clickedLi) return;
 
-                const questionBlock = e.target.closest('.question-block');
-                if (!questionBlock) return;
+    const questionBlock = e.target.closest('.question-block');
+    if (!questionBlock) return;
 
-                const qId = parseInt(questionBlock.dataset.questionId);
-                const qData = allQuestions.find(q => q.id === qId);
-                if (!qData) return;
+    const qId = parseInt(questionBlock.dataset.questionId);
+    const qData = allQuestions.find(q => q.id === qId);
+    if (!qData) return;
 
-                userAnswers[qId] = clickedLi.dataset.rawText;
-                
-                saveData(); // Save to local storage first
-                updateQuestionUI(qId);
-                updateSummary(); // IMPORTANT: Update summary before sending to Firebase
+    userAnswers[qId] = clickedLi.dataset.rawText;
+    
+    // यह लोकल स्टोरेज में तुरंत सेव करेगा
+    saveData(); 
+    updateQuestionUI(qId);
+    // यह स्क्रीन पर समरी को तुरंत अपडेट करेगा
+    updateSummary(); 
 
-                // Get or create a unique user ID
-                let userId = localStorage.getItem(`userId_${currentShiftId}`);
-                if (!userId) {
-                    userId = 'user_' + Date.now() + Math.random().toString(36).substr(2, 9);
-                    localStorage.setItem(`userId_${currentShiftId}`, userId);
-                }
-                
-                // Send all updated data to Firebase
-                sendAnswerToFirebase(userId); 
-                
-                // Existing filter logic
-                const isDeleted = qData.deleted === true;
-                const newStatus = getQuestionStatus(qId);
-                const finalStatusForFilter = isDeleted ? (userAnswers[qId] ? 'deleted' : 'unattempted') : newStatus;
+    // यूजर आईडी बनाएं या प्राप्त करें
+    let userId = localStorage.getItem(`userId_${currentShiftId}`);
+    if (!userId) {
+        userId = 'user_' + Date.now() + Math.random().toString(36).substr(2, 9);
+        localStorage.setItem(`userId_${currentShiftId}`, userId);
+    }
+  
+    // फिल्टर लॉजिक वैसा ही रहेगा
+    const isDeleted = qData.deleted === true;
+    const newStatus = getQuestionStatus(qId);
+    const finalStatusForFilter = isDeleted ? (userAnswers[qId] ? 'deleted' : 'unattempted') : newStatus;
 
-                if (activeFilter !== 'all' && activeFilter !== finalStatusForFilter) {
-                    setTimeout(() => { questionBlock.style.display = 'none'; }, 200);
-                }
-            });
-            // END: CLICK LISTENER (MODIFIED FOR FIREBASE)
+    if (activeFilter !== 'all' && activeFilter !== finalStatusForFilter) {
+        setTimeout(() => { questionBlock.style.display = 'none'; }, 200);
+    }
+});
+// END: CLICK LISTENER (MODIFIED FOR FIREBASE)
+      // START: SAVE ON EXIT LISTENER (ADDED)
+document.addEventListener('visibilitychange', () => {
+  // यह जांचता है कि यूजर ने टैब बदला है या पेज से हट रहा है
+  if (document.visibilityState === 'hidden') {
+    let userId = localStorage.getItem(`userId_${currentShiftId}`);
+
+    // अगर यूजर आईडी और शिफ्ट आईडी मौजूद है, तभी डेटा सेव करें
+    if (userId && currentShiftId) {
+      console.log('Page is being hidden. Saving final answers and summary to Firebase...');
+      // यह फंक्शन अब सिर्फ एक बार चलेगा, जिसमें उत्तर और समरी दोनों सेव होंगे
+      sendAnswerToFirebase(userId);
+    }
+  }
+});
+// END: SAVE ON EXIT LISTENER (ADDED)
                
             function updateActiveFilterButton(filter) {
                 document.querySelectorAll('.filter-buttons button').forEach(btn => btn.classList.remove('active'));
