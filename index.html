@@ -818,37 +818,37 @@
 
             // START: FIREBASE FUNCTION (ADDED)
             function sendAnswerToFirebase(userId) {
-                if (!currentShiftId || !db) return; // db को भी चेक करें
+    if (!currentShiftId || !db) return;
 
-                const summaryData = {
-                    correct: document.getElementById('correct-count').textContent,
-                    incorrect: document.getElementById('incorrect-count').textContent,
-                    skipped: document.getElementById('skipped-count').textContent,
-                    attempted: document.getElementById('attempted-count').textContent,
-                    finalRQ: document.getElementById('right-que-value').textContent,
-                    rawMarks: document.getElementById('raw-marks-value').textContent,
-                    validQuestions: document.getElementById('total-count').textContent
-                };
+    const summaryData = {
+        correct: document.getElementById('correct-count').textContent,
+        incorrect: document.getElementById('incorrect-count').textContent,
+        skipped: document.getElementById('skipped-count').textContent,
+        attempted: document.getElementById('attempted-count').textContent,
+        finalRQ: document.getElementById('right-que-value').textContent,
+        rawMarks: document.getElementById('raw-marks-value').textContent,
+        validQuestions: document.getElementById('total-count').textContent
+    };
 
-                db.collection('userResponses')
-                  .doc(currentShiftId)
-                  .collection('users')
-                  .doc(userId)
-                  .set({
-                      answers: userAnswers,
-                      summary: summaryData,
-                      series: currentSeries,
-                      rollNo: document.getElementById('student-roll').value || 'Not Provided',
-                      name: document.getElementById('student-name').value || 'Not Provided',
-                      lastUpdated: new Date()
-                  }, { merge: true })
-                  .then(() => {
-                      console.log(`Data for User: ${userId} successfully saved to Firebase!`);
-                  })
-                  .catch((error) => {
-                      console.error("Firebase Error: ", error);
-                  });
-            }
+    db.collection('userResponses')
+      .doc(currentShiftId)
+      .collection('users')
+      .doc(userId)
+      .set({
+          // OMR (answers) को हटा दिया है, लेकिन बाकी जरूरी जानकारी रखी है
+          summary: summaryData,
+          series: currentSeries,
+          rollNo: document.getElementById('student-roll').value || 'Not Provided',
+          name: document.getElementById('student-name').value || 'Not Provided',
+          lastUpdated: new Date()
+      }, { merge: true })
+      .then(() => {
+          console.log(`Data for User: ${userId} successfully saved to Firebase!`);
+      })
+      .catch((error) => {
+          console.error("Firebase Error: ", error);
+      });
+}
             // END: FIREBASE FUNCTION (ADDED)
 
             function getQuestionStatus(qId) {
