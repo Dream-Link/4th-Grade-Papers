@@ -903,7 +903,7 @@
                 let rM = (totalValidQuestions > 0) ? rQ * (200 / totalValidQuestions) : 0;
                 
                 document.getElementById('right-que-value').textContent = (rQ % 1 === 0) ? rQ : rQ.toFixed(2);
-                document.getElementById('raw-marks-value').textContent = rM.toFixed(2);
+                document.getElementById('raw-marks-value').textContent = rM.toFixed(4);
             }
             
             function findQuestionPositions(qId) {
