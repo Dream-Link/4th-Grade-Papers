@@ -820,15 +820,16 @@
             function sendAnswerToFirebase(userId) {
     if (!currentShiftId || !db) return;
 
-    const summaryData = {
-        correct: document.getElementById('correct-count').textContent,
-        incorrect: document.getElementById('incorrect-count').textContent,
-        skipped: document.getElementById('skipped-count').textContent,
-        attempted: document.getElementById('attempted-count').textContent,
-        finalRQ: document.getElementById('right-que-value').textContent,
-        rawMarks: document.getElementById('raw-marks-value').textContent,
-        validQuestions: document.getElementById('total-count').textContent
-    };
+   const summaryData = {
+            correct: document.getElementById('correct-count').textContent,
+            incorrect: document.getElementById('incorrect-count').textContent,
+            skipped: document.getElementById('skipped-count').textContent,
+            attempted: document.getElementById('attempted-count').textContent,
+            finalRQ: document.getElementById('right-que-value').textContent,
+            rawMarks: document.getElementById('raw-marks-value').textContent,
+            validQuestions: document.getElementById('total-count').textContent,
+            untickQue: document.getElementById('unattempted-count').textContent 
+        };
 
     db.collection('userResponses')
       .doc(currentShiftId)
