@@ -77,11 +77,7 @@
             text-align: center;
         }
         .selector-container h2 { font-size: 2.25rem; font-weight: 700; margin: 0 0 0.5rem; }
-        .selector-container .subtitle { 
-    font-size: 1.1rem; 
-    color: var(--font-color-light); 
-    margin-bottom: 1.5rem; /* जगह कम कर दी गई है */
-}
+        .selector-container .subtitle { font-size: 1.1rem; color: var(--font-color-light); margin-bottom: 3rem; }
         .shift-selector { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem; }
         .shift-btn {
             display: flex; align-items: center; gap: 1rem; padding: 1.25rem;
@@ -325,59 +321,6 @@
             
             .modal-buttons { justify-content: center; gap: 0.25rem; }
             .modal-buttons button { padding: 0.5rem; font-size: 0.7rem; flex-grow: 1; }
-            /* ================= START: LEADERBOARD MOBILE VIEW CSS ================= */
-        
-        /* Leaderboard ke main box ko full-width banane ke liye */
-        #leaderboard-box {
-            background: transparent;      /* Box ka background hata dein */
-            border: none;                 /* Border hata dein */
-            box-shadow: none;             /* Shadow hata dein */
-            padding: 0;                   /* Padding khatm kar dein */
-            margin-top: 2.5rem;
-        }
-
-        /* Leaderboard ki heading ko aakarshak banane ke liye */
-        #leaderboard-box h4 {
-            text-align: center;
-            font-size: 1.6rem;
-            margin-bottom: 1.5rem;
-            padding-bottom: 0.5rem;
-            border-bottom: 1px solid var(--border-color);
-        }
-        
-        /* Table ke font aur padding ko compact banane ke liye */
-        #leaderboard-table th,
-        #leaderboard-table td {
-            font-size: 0.75rem; /* Font size chota kiya */
-            padding: 0.6rem 0.4rem;   /* Padding kam ki gayi */
-            text-align: center;
-        }
-
-        /* Naam wale column ko left-align rakhein */
-        #leaderboard-table th:nth-child(2),
-        #leaderboard-table td:nth-child(2) {
-            text-align: left;
-        }
-
-        /* Mobile par filter controls ko behtar banane ke liye */
-        #leaderboard-box .leaderboard-controls {
-            gap: 0.5rem;
-        }
-
-        #leaderboard-box .leaderboard-controls select,
-        #leaderboard-box .leaderboard-controls button,
-        #leaderboard-box .leaderboard-controls label {
-            font-size: 0.8rem;
-            padding: 0.5rem;
-            flex-grow: 1; /* Sabhi controls barabar jagah lein */
-        }
-        
-        #leaderboard-box #show-leaderboard-btn {
-            width: 100%;
-            font-size: 1rem;
-        }
-
-        /* ================== END: LEADERBOARD MOBILE VIEW CSS ================== */
         }
 
         @media print {
@@ -575,13 +518,7 @@
         #unattempted-warning-item.visible {
             display: block; /* Show with JS */
         }
-       .leaderboard-name {
-            max-width: 160px;         /* नाम की अधिकतम चौड़ाई, आप इसे कम-ज्यादा कर सकते हैं */
-            white-space: nowrap;      /* टेक्स्ट को एक ही लाइन में रखेगा */
-            overflow: hidden;         /* जो टेक्स्ट चौड़ाई से बाहर जाएगा, उसे छिपा देगा */
-            text-overflow: ellipsis;  /* छिपे हुए टेक्स्ट की जगह '...' दिखाएगा */
-            vertical-align: middle;   /* टेक्स्ट को सेल के बीच में रखने के लिए */
-        }
+        /* ======================== END: NEW WARNING BOX CSS (ADDED) ========================= */
     </style>
     
 </head>
@@ -643,7 +580,7 @@
     <div id="shift-selector-page">
         <div class="selector-container">
             <h2>चतुर्थ श्रेणी कर्मचारी</h2>
-           <img src="https://raw.githubusercontent.com/Dream-Link/4th-Grade-Papers/main/144%20set.png" alt="Paper Set Information" style="width: 100%; border-radius: var(--border-radius); margin-bottom: 1.5rem; box-shadow: var(--shadow-sm);">
+            <img src="https://raw.githubusercontent.com/Dream-Link/4th-Grade-Papers/main/144%20set.png" alt="Paper Set Information" style="width: 100%; border-radius: var(--border-radius); margin-bottom: 2rem; box-shadow: var(--shadow-sm);">
             <p class="subtitle">कृपया अपनी शिफ़्ट चुनें।</p>
             <div class="shift-selector">
                 <a class="shift-btn" data-shift="shift1"><div class="icon"><i class="fas fa-file-alt"></i></div><div class="text">1st Shift 19.09.2025</div></a>
@@ -654,7 +591,7 @@
                 <a class="shift-btn" data-shift="shift6"><div class="icon"><i class="fas fa-file-alt"></i></div><div class="text">6th Shift 21.09.2025</div></a>
             </div>
             <div class="selector-footer">
-                <p>Last Update: 02.10.2025 10:30</p>
+                <p>Last Update: 30.09.2025 10:30</p>
                 <p style="text-align:center; color: red;"> सभी प्रश्नों के उत्तर संभावित उत्तर कुंजी के आधार पर हैं, Official Answer Key जारी होने पर UPDATE कर दी जाएगी।</p>
                 
                 <div class="features-box">
@@ -677,45 +614,42 @@
                 </p>
             </div>
             
-           <div id="leaderboard-box" class="features-box" style="margin-top: 2rem;">
-    <h4>लीडरबोर्ड</h4>
-    
-    <button id="show-leaderboard-btn" style="padding: 0.6rem 1.2rem; border-radius: 0.375rem; border: none; background-color: var(--primary-color); color: white; cursor: pointer; font-size: 1rem; margin-bottom: 1rem;">
-        लीडरबोर्ड देखें
-    </button>
-    <div id="leaderboard-content" style="display: none;">
-        <div class="leaderboard-controls" style="margin-bottom: 1rem; display: flex; gap: 1rem; align-items: center; flex-wrap: wrap;">
-            <label for="leaderboard-shift-filter">शिफ़्ट के अनुसार फ़िल्टर करें:</label>
-            <select id="leaderboard-shift-filter" style="padding: 0.5rem; border-radius: 0.375rem; border: 1px solid var(--border-color);">
-                <option value="all">सभी शिफ़्ट</option>
-                <option value="shift1">1st Shift</option>
-                <option value="shift2">2nd Shift</option>
-                <option value="shift3">3rd Shift</option>
-                <option value="shift4">4th Shift</option>
-                <option value="shift5">5th Shift</option>
-                <option value="shift6">6th Shift</option>
-            </select>
+            <div class="features-box" style="margin-top: 2rem;">
+                <h4>लीडरबोर्ड</h4>
+                <div class="leaderboard-controls" style="margin-bottom: 1rem; display: flex; gap: 1rem; align-items: center; flex-wrap: wrap;">
+                    <label for="leaderboard-shift-filter">शिफ़्ट के अनुसार फ़िल्टर करें:</label>
+                    <select id="leaderboard-shift-filter" style="padding: 0.5rem; border-radius: 0.375rem; border: 1px solid var(--border-color);">
+                        <option value="all">सभी शिफ़्ट</option>
+                        <option value="shift1">1st Shift</option>
+                        <option value="shift2">2nd Shift</option>
+                        <option value="shift3">3rd Shift</option>
+                        <option value="shift4">4th Shift</option>
+                        <option value="shift5">5th Shift</option>
+                        <option value="shift6">6th Shift</option>
+                    </select>
+                    <button id="refresh-leaderboard" style="padding: 0.5rem 1rem; border-radius: 0.375rem; border: none; background-color: var(--primary-color); color: white; cursor: pointer;">रिफ्रेश करें</button>
+                </div>
+                <div id="leaderboard-table-container" style="overflow-x: auto;">
+                    <table id="leaderboard-table" style="width: 100%; border-collapse: collapse; text-align: left;">
+                        <thead>
+                            <tr>
+                                <th style="padding: 0.75rem; border-bottom: 2px solid var(--border-color);">रैंक</th>
+                                <th style="padding: 0.75rem; border-bottom: 2px solid var(--border-color);">नाम</th>
+                                <th style="padding: 0.75rem; border-bottom: 2px solid var(--border-color);">रॉ मार्क्स</th>
+                                <th style="padding: 0.75rem; border-bottom: 2px solid var(--border-color);">सही</th>
+                                <th style="padding: 0.75rem; border-bottom: 2px solid var(--border-color);">गलत</th>
+                                <th style="padding: 0.75rem; border-bottom: 2px solid var(--border-color);">छोड़े गए</th>
+                                <th style="padding: 0.75rem; border-bottom: 2px solid var(--border-color);">शिफ़्ट</th>
+                            </tr>
+                        </thead>
+                        <tbody id="leaderboard-body">
+                            </tbody>
+                    </table>
+                    <p id="leaderboard-loading" style="text-align: center; padding: 1rem; display: none;">लोड हो रहा है...</p>
+                </div>
+            </div>
+
         </div>
-        <div id="leaderboard-table-container" style="overflow-x: auto;">
-            <table id="leaderboard-table" style="width: 100%; border-collapse: collapse; text-align: left;">
-                <thead>
-                    <tr>
-                        <th style="padding: 0.75rem; border-bottom: 2px solid var(--border-color);">रैंक</th>
-                        <th style="padding: 0.75rem; border-bottom: 2px solid var(--border-color);">नाम</th>
-                        <th style="padding: 0.75rem; border-bottom: 2px solid var(--border-color);">रॉ मार्क्स</th>
-                        <th style="padding: 0.75rem; border-bottom: 2px solid var(--border-color);">सही</th>
-                        <th style="padding: 0.75rem; border-bottom: 2px solid var(--border-color);">गलत</th>
-                        <th style="padding: 0.75rem; border-bottom: 2px solid var(--border-color);">छोड़े गए</th>
-                        <th style="padding: 0.75rem; border-bottom: 2px solid var(--border-color);">शिफ़्ट</th>
-                    </tr>
-                </thead>
-                <tbody id="leaderboard-body">
-                    </tbody>
-            </table>
-            <p id="leaderboard-loading" style="text-align: center; padding: 1rem; display: none;">लोड हो रहा है...</p>
-        </div>
-    </div>
-    </div>
     </div>
 
     <div id="question-paper-page">
@@ -842,28 +776,11 @@
             }
             // ======================== END: THEME SELECTOR JAVASCRIPT ========================
             
-           // --- लीडरबोर्ड के लिए नया कोड ---
+            // --- लीडरबोर्ड के लिए नया कोड ---
             const leaderboardShiftFilter = document.getElementById('leaderboard-shift-filter');
+            const refreshLeaderboardBtn = document.getElementById('refresh-leaderboard');
             const leaderboardBody = document.getElementById('leaderboard-body');
             const leaderboardLoading = document.getElementById('leaderboard-loading');
-
-            // ======================= START: नया कोड यहाँ जोड़ें =======================
-            const showLeaderboardBtn = document.getElementById('show-leaderboard-btn');
-            const leaderboardContent = document.getElementById('leaderboard-content');
-
-            if (showLeaderboardBtn) {
-                showLeaderboardBtn.addEventListener('click', () => {
-                    // लीडरबोर्ड के कंटेंट (फिल्टर, टेबल) को दिखाएँ
-                    leaderboardContent.style.display = 'block';
-                    
-                    // अब पहली बार डेटा लोड करें
-                    fetchAndDisplayLeaderboard();
-                    
-                    // कन्फ्यूजन से बचने के लिए "लीडरबोर्ड देखें" बटन को छिपा दें
-                    showLeaderboardBtn.style.display = 'none';
-                });
-            }
-            // ======================= END: नया कोड यहाँ जोड़ें =======================
 
             async function fetchAndDisplayLeaderboard(shiftFilter = 'all') {
                 if (!db) return;
@@ -899,7 +816,7 @@
                     leaderboardBody.innerHTML = allUsers.map((user, index) => `
                         <tr style="border-bottom: 1px solid var(--border-color);">
                             <td style="padding: 0.75rem;">${index + 1}</td>
-                            <td class="leaderboard-name" style="padding: 0.75rem;" title="${user.name}">${user.name}</td>
+                            <td style="padding: 0.75rem;">${user.name}</td>
                             <td style="padding: 0.75rem; font-weight: bold;">${user.rawMarks.toFixed(2)}</td>
                             <td style="padding: 0.75rem; color: var(--success-color);">${user.correct}</td>
                             <td style="padding: 0.75rem; color: var(--danger-color);">${user.incorrect}</td>
@@ -919,7 +836,14 @@
             leaderboardShiftFilter.addEventListener('change', () => {
                 fetchAndDisplayLeaderboard(leaderboardShiftFilter.value);
             });
-          
+
+            refreshLeaderboardBtn.addEventListener('click', () => {
+                fetchAndDisplayLeaderboard(leaderboardShiftFilter.value);
+            });
+
+            if (document.getElementById('shift-selector-page').style.display !== 'none') {
+                fetchAndDisplayLeaderboard();
+            }
             // --- लीडरबोर्ड कोड का अंत ---
 
             if (typeof allShiftData === 'undefined') {
@@ -1016,6 +940,7 @@
                   .collection('users')
                   .doc(userId)
                   .set({
+                      answers: userAnswers,
                       summary: summaryData,
                       series: currentSeries,
                       rollNo: document.getElementById('student-roll').value || 'Not Provided',
