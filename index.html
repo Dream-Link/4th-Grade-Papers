@@ -575,7 +575,13 @@
         #unattempted-warning-item.visible {
             display: block; /* Show with JS */
         }
-        /* ======================== END: NEW WARNING BOX CSS (ADDED) ========================= */
+       .leaderboard-name {
+            max-width: 160px;         /* नाम की अधिकतम चौड़ाई, आप इसे कम-ज्यादा कर सकते हैं */
+            white-space: nowrap;      /* टेक्स्ट को एक ही लाइन में रखेगा */
+            overflow: hidden;         /* जो टेक्स्ट चौड़ाई से बाहर जाएगा, उसे छिपा देगा */
+            text-overflow: ellipsis;  /* छिपे हुए टेक्स्ट की जगह '...' दिखाएगा */
+            vertical-align: middle;   /* टेक्स्ट को सेल के बीच में रखने के लिए */
+        }
     </style>
     
 </head>
@@ -893,7 +899,7 @@
                     leaderboardBody.innerHTML = allUsers.map((user, index) => `
                         <tr style="border-bottom: 1px solid var(--border-color);">
                             <td style="padding: 0.75rem;">${index + 1}</td>
-                            <td style="padding: 0.75rem;">${user.name}</td>
+                            <td class="leaderboard-name" style="padding: 0.75rem;" title="${user.name}">${user.name}</td>
                             <td style="padding: 0.75rem; font-weight: bold;">${user.rawMarks.toFixed(2)}</td>
                             <td style="padding: 0.75rem; color: var(--success-color);">${user.correct}</td>
                             <td style="padding: 0.75rem; color: var(--danger-color);">${user.incorrect}</td>
