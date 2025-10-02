@@ -617,19 +617,19 @@
             <div class="features-box" style="margin-top: 2rem;">
                 <h4>लीडरबोर्ड</h4>
                 <div class="leaderboard-controls" style="margin-bottom: 1rem; display: flex; gap: 1rem; align-items: center; flex-wrap: wrap;">
-                    <label for="leaderboard-shift-filter">शिफ़्ट के अनुसार फ़िल्टर करें:</label>
-                    <select id="leaderboard-shift-filter" style="padding: 0.5rem; border-radius: 0.375rem; border: 1px solid var(--border-color);">
-                        <option value="all">सभी शिफ़्ट</option>
-                        <option value="shift1">1st Shift</option>
-                        <option value="shift2">2nd Shift</option>
-                        <option value="shift3">3rd Shift</option>
-                        <option value="shift4">4th Shift</option>
-                        <option value="shift5">5th Shift</option>
-                        <option value="shift6">6th Shift</option>
-                    </select>
-                    <button id="refresh-leaderboard" style="padding: 0.5rem 1rem; border-radius: 0.375rem; border: none; background-color: var(--primary-color); color: white; cursor: pointer;">रिफ्रेश करें</button>
-                </div>
-                <div id="leaderboard-table-container" style="overflow-x: auto;">
+    <label for="leaderboard-shift-filter">शिफ़्ट के अनुसार फ़िल्टर करें:</label>
+    <select id="leaderboard-shift-filter" style="padding: 0.5rem; border-radius: 0.375rem; border: 1px solid var(--border-color);">
+        <option value="all">सभी शिफ़्ट</option>
+        <option value="shift1">1st Shift</option>
+        <option value="shift2">2nd Shift</option>
+        <option value="shift3">3rd Shift</option>
+        <option value="shift4">4th Shift</option>
+        <option value="shift5">5th Shift</option>
+        <option value="shift6">6th Shift</option>
+    </select>
+    <button id="view-leaderboard-btn" style="padding: 0.5rem 1rem; border-radius: 0.375rem; border: none; background-color: var(--primary-color); color: white; cursor: pointer;">लीडरबोर्ड देखें</button>
+</div>
+<div id="leaderboard-table-container" style="overflow-x: auto; display: none;">
                     <table id="leaderboard-table" style="width: 100%; border-collapse: collapse; text-align: left;">
                         <thead>
                             <tr>
@@ -712,668 +712,387 @@
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
     <script src="questions-data.js"></script>
-    <script>
-        // START: FIREBASE CONFIG (ADDED)
-        const firebaseConfig = {
-          apiKey: "AIzaSyCm3JQ_hvjhwpCZsHFYdgSr3Fudu-K1ezU",
+   <script>
+    // START: FIREBASE CONFIG (ADDED)
+    const firebaseConfig = {
+      apiKey: "AIzaSyCm3JQ_hvjhwpCZsHFYdgSr3Fudu-K1ezU",
       authDomain: "myexamanalyzer.firebaseapp.com",
        projectId: "myexamanalyzer",
    storageBucket: "myexamanalyzer.firebasestorage.app",
   messagingSenderId: "1001576173103",
            appId: "1:1001576173103:web:55b5052cb8169370c400da"
-        };
+    };
 
-        // Initialize Firebase
-        firebase.initializeApp(firebaseConfig);
-        const db = firebase.firestore();
-        // END: FIREBASE CONFIG (ADDED)
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+    // END: FIREBASE CONFIG (ADDED)
 
-        let currentShiftId = null, allQuestions = [], userAnswers = {}, currentSeries = '', activeFilter = 'all', currentShiftData = {};
+    let currentShiftId = null, allQuestions = [], userAnswers = {}, currentSeries = '', activeFilter = 'all', currentShiftData = {};
 
-        document.addEventListener('DOMContentLoaded', () => {
+    document.addEventListener('DOMContentLoaded', () => {
 
-            // ======================= START: THEME SELECTOR JAVASCRIPT =======================
-            const themeToggleBtn = document.getElementById('theme-toggle-btn');
-            const themeDropdown = document.getElementById('theme-dropdown');
-            const themeSelector = document.querySelector('.theme-selector');
-            const root = document.documentElement;
-            const THEME_KEY = 'selected_theme_mps';
+        // ======================= START: THEME SELECTOR JAVASCRIPT =======================
+        const themeToggleBtn = document.getElementById('theme-toggle-btn');
+        const themeDropdown = document.getElementById('theme-dropdown');
+        const themeSelector = document.querySelector('.theme-selector');
+        const root = document.documentElement;
+        const THEME_KEY = 'selected_theme_mps';
 
-            if (themeToggleBtn) { 
-                const applyTheme = (theme) => {
-                    if (theme === 'auto') {
-                        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-                        root.setAttribute('data-theme', prefersDark ? 'dark-blue' : 'light-blue');
-                    } else {
-                        root.setAttribute('data-theme', theme);
-                    }
-                    localStorage.setItem(THEME_KEY, theme);
-                };
-                themeToggleBtn.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    themeDropdown.classList.toggle('hidden');
-                });
-                document.addEventListener('click', () => {
-                    if (!themeDropdown.classList.contains('hidden')) {
-                        themeDropdown.classList.add('hidden');
-                    }
-                });
-                themeDropdown.addEventListener('click', (e) => {
-                    if (e.target.tagName === 'LI') {
-                        const selectedTheme = e.target.dataset.theme;
-                        applyTheme(selectedTheme);
-                        themeDropdown.classList.add('hidden');
-                    }
-                });
-                window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
-                    const savedTheme = localStorage.getItem(THEME_KEY);
-                    if (savedTheme === 'auto') {
-                        applyTheme('auto');
-                    }
-                });
-                const savedTheme = localStorage.getItem(THEME_KEY) || 'auto';
-                applyTheme(savedTheme);
-            }
-            // ======================== END: THEME SELECTOR JAVASCRIPT ========================
-            
-            // --- लीडरबोर्ड के लिए नया कोड ---
-            const leaderboardShiftFilter = document.getElementById('leaderboard-shift-filter');
-            const refreshLeaderboardBtn = document.getElementById('refresh-leaderboard');
-            const leaderboardBody = document.getElementById('leaderboard-body');
-            const leaderboardLoading = document.getElementById('leaderboard-loading');
-
-            async function fetchAndDisplayLeaderboard(shiftFilter = 'all') {
-                if (!db) return;
-
-                leaderboardLoading.style.display = 'block';
-                leaderboardBody.innerHTML = '';
-                let allUsers = [];
-
-                try {
-                    const shiftsToFetch = shiftFilter === 'all' ?
-                        ['shift1', 'shift2', 'shift3', 'shift4', 'shift5', 'shift6'] :
-                        [shiftFilter];
-
-                    for (const shiftId of shiftsToFetch) {
-                        const usersSnapshot = await db.collection('userResponses').doc(shiftId).collection('users').get();
-                        usersSnapshot.forEach(doc => {
-                            const userData = doc.data();
-                            if (userData.summary && userData.summary.rawMarks) {
-                                allUsers.push({
-                                    name: userData.name || 'अज्ञात',
-                                    rawMarks: parseFloat(userData.summary.rawMarks) || 0,
-                                    correct: parseInt(userData.summary.correct) || 0,
-                                    incorrect: parseInt(userData.summary.incorrect) || 0,
-                                    skipped: parseInt(userData.summary.skipped) || 0,
-                                    shift: shiftId
-                                });
-                            }
-                        });
-                    }
-
-                    allUsers.sort((a, b) => b.rawMarks - a.rawMarks);
-
-                    leaderboardBody.innerHTML = allUsers.map((user, index) => `
-                        <tr style="border-bottom: 1px solid var(--border-color);">
-                            <td style="padding: 0.75rem;">${index + 1}</td>
-                            <td style="padding: 0.75rem;">${user.name}</td>
-                            <td style="padding: 0.75rem; font-weight: bold;">${user.rawMarks.toFixed(2)}</td>
-                            <td style="padding: 0.75rem; color: var(--success-color);">${user.correct}</td>
-                            <td style="padding: 0.75rem; color: var(--danger-color);">${user.incorrect}</td>
-                            <td style="padding: 0.75rem;">${user.skipped}</td>
-                            <td style="padding: 0.75rem;">${user.shift.replace('shift', 'Shift ')}</td>
-                        </tr>
-                    `).join('');
-
-                } catch (error) {
-                    console.error("लीडरबोर्ड डेटा लाने में त्रुटि: ", error);
-                    leaderboardBody.innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 1rem; color: var(--danger-color);">डेटा लोड करने में त्रुटि हुई।</td></tr>';
-                } finally {
-                    leaderboardLoading.style.display = 'none';
-                }
-            }
-
-            leaderboardShiftFilter.addEventListener('change', () => {
-                fetchAndDisplayLeaderboard(leaderboardShiftFilter.value);
-            });
-
-            refreshLeaderboardBtn.addEventListener('click', () => {
-                fetchAndDisplayLeaderboard(leaderboardShiftFilter.value);
-            });
-
-            if (document.getElementById('shift-selector-page').style.display !== 'none') {
-                fetchAndDisplayLeaderboard();
-            }
-            // --- लीडरबोर्ड कोड का अंत ---
-
-            if (typeof allShiftData === 'undefined') {
-                document.body.innerHTML = '<h1 style="text-align:center; padding: 2rem; color: red;">Please Wait... Official उत्तर कुंजी अपडेट की जा रही है।</h1>';
-                return;
-            }
-
-            const shiftSelectorPage = document.getElementById('shift-selector-page');
-            const questionPaperPage = document.getElementById('question-paper-page');
-            const seriesSelect = document.getElementById('series-select');
-            const printBtn = document.getElementById('header-print-btn');
-            const pMO = document.getElementById('print-modal-overlay');
-            const toggleInfoBtn = document.getElementById('toggle-info-bar-btn');
-            const resetBtn = document.getElementById('reset-answers-btn');
-            const questionsContainer = document.getElementById('questions-container');
-
-            function showHomePage() {
-                shiftSelectorPage.style.display = 'flex';
-                questionPaperPage.style.display = 'none';
-                if(themeSelector) themeSelector.style.display = 'block';
-                currentShiftId = null;
-                history.pushState({page: 'home'}, 'Home', window.location.pathname);
-                window.location.hash = '';
-            }
-
-            window.addEventListener('popstate', (event) => {
-                if (!event.state || event.state.page === 'home') {
-                    showHomePage();
-                } else if (event.state.shift) {
-                    loadShift(event.state.shift, false);
-                }
-            });
-
-            document.querySelectorAll('.shift-btn').forEach(b => b.addEventListener('click', () => loadShift(b.dataset.shift, true)));
-
-            function loadShift(shiftId, shouldPushState = true) {
-                shiftSelectorPage.style.display = 'none';
-                questionPaperPage.style.display = 'flex';
-                if(themeSelector) themeSelector.style.display = 'none';
-                currentShiftId = shiftId;
-                currentShiftData = allShiftData[shiftId];
-                allQuestions = currentShiftData.questions;
-                
-                document.getElementById('shift-title').textContent = currentShiftData.title;
-
-                seriesSelect.innerHTML = '';
-                const availableSeries = Object.keys(currentShiftData.seriesOrder || {});
-                if (availableSeries.length > 0) {
-                    availableSeries.forEach(seriesKey => {
-                        const option = document.createElement('option');
-                        option.value = seriesKey;
-                        option.textContent = seriesKey;
-                        seriesSelect.appendChild(option);
-                    });
-                }
-
-                userAnswers = JSON.parse(localStorage.getItem(`userAnswers_${shiftId}`)) || {};
-                
-                const savedSeries = localStorage.getItem(`currentSeries_${shiftId}`);
-                currentSeries = (savedSeries && availableSeries.includes(savedSeries)) ? savedSeries : availableSeries[0] || '';
-                seriesSelect.value = currentSeries;
-
-                activeFilter = 'all';
-                document.getElementById('toggle-summary-btn').textContent = 'Show Result';
-                document.querySelector('.summary-bar').classList.add('hidden');
-                
-                if (shouldPushState) {
-                   history.pushState({ shift: shiftId }, '', `#${shiftId}`);
-                }
-                displayQuestions(currentSeries, activeFilter);
-            }
-
-            function saveData() {
-                if (!currentShiftId) return;
-                localStorage.setItem(`userAnswers_${currentShiftId}`, JSON.stringify(userAnswers));
-                localStorage.setItem(`currentSeries_${currentShiftId}`, currentSeries);
-            }
-
-            function sendAnswerToFirebase(userId) {
-                if (!currentShiftId || !db) return;
-
-                const summaryData = {
-                    correct: document.getElementById('correct-count').textContent,
-                    incorrect: document.getElementById('incorrect-count').textContent,
-                    skipped: document.getElementById('skipped-count').textContent,
-                    attempted: document.getElementById('attempted-count').textContent,
-                    finalRQ: document.getElementById('right-que-value').textContent,
-                    rawMarks: document.getElementById('raw-marks-value').textContent,
-                    validQuestions: document.getElementById('total-count').textContent
-                };
-
-                db.collection('userResponses')
-                  .doc(currentShiftId)
-                  .collection('users')
-                  .doc(userId)
-                  .set({
-                      summary: summaryData,
-                      series: currentSeries,
-                      rollNo: document.getElementById('student-roll').value || 'Not Provided',
-                      name: document.getElementById('student-name').value || 'Not Provided',
-                      lastUpdated: new Date()
-                  }, { merge: true })
-                  .then(() => {
-                      console.log(`Data for User: ${userId} successfully saved to Firebase!`);
-                  })
-                  .catch((error) => {
-                      console.error("Firebase Error: ", error);
-                  });
-            }
-
-            function getQuestionStatus(qId) {
-                const qData = allQuestions.find(q => q.id === qId);
-                if (!qData) return 'unattempted';
-                if (qData.deleted) return 'deleted';
-                
-                const uAnsText = userAnswers[qId];
-                if (!uAnsText) return 'unattempted';
-                if (uAnsText === "अनुत्तरित प्रश्न" || uAnsText === "Question not attempted") return 'skipped';
-                
-                const correctAnswerText = qData.answer.substring(3);
-                return uAnsText === correctAnswerText ? 'correct' : 'incorrect';
-            }
-
-            function updateSummary() {
-                let c = 0, i = 0, s = 0, d = 0, attemptedForDeleted = 0;
-                allQuestions.forEach(q => {
-                    const status = getQuestionStatus(q.id);
-                    if (q.deleted) {
-                         d++;
-                         if (userAnswers[q.id]) attemptedForDeleted++;
-                         return;
-                    }
-                    if (status === 'correct') c++;
-                    else if (status === 'incorrect') i++;
-                    else if (status === 'skipped') s++;
-                });
-                
-                const a = c + i + attemptedForDeleted;
-                const totalValidQuestions = allQuestions.length - d;
-                
-                const unattempted = totalValidQuestions - (c + i + s);
-                const warningBox = document.getElementById('unattempted-warning-item');
-                if (warningBox) {
-                    if (unattempted > 0) {
-                        document.getElementById('unattempted-count').textContent = unattempted;
-                        warningBox.classList.add('visible');
-                    } else {
-                        warningBox.classList.remove('visible');
-                    }
-                }
-
-                document.getElementById('total-count').textContent = totalValidQuestions;
-                document.getElementById('attempted-count').textContent = a;
-                document.getElementById('correct-count').textContent = c;
-                document.getElementById('incorrect-count').textContent = i;
-                document.getElementById('skipped-count').textContent = s;
-                document.getElementById('deleted-count').textContent = d;
-                
-                const rQ = c - (i / 3);
-                let rM = (totalValidQuestions > 0) ? rQ * (200 / totalValidQuestions) : 0;
-                
-                document.getElementById('right-que-value').textContent = (rQ % 1 === 0) ? rQ : rQ.toFixed(2);
-                document.getElementById('raw-marks-value').textContent = rM.toFixed(2);
-            }
-            
-            function findQuestionPositions(qId) {
-                const qIndex = allQuestions.findIndex(q => q.id === qId);
-                if (qIndex === -1 || !currentShiftData.seriesOrder) return `Q ID: ${qId}`;
-
-                const positions = [];
-                for (const series in currentShiftData.seriesOrder) {
-                    const pos = currentShiftData.seriesOrder[series].indexOf(qIndex + 1);
-                    if (pos !== -1) {
-                        positions.push(`<strong>${series}:</strong> #${pos + 1}`);
-                    }
-                }
-                return positions.length > 0 ? positions.join(' | ') : `Q ID: ${qId}`;
-            }
-
-            function displayQuestions(series, filter = 'all') {
-                questionsContainer.innerHTML = '';
-                currentSeries = series;
-                updateSummary();
-                updateActiveFilterButton(filter);
-
-                const seriesOrder = currentShiftData.seriesOrder || {};
-                const qIndices = seriesOrder[series] || Array.from({length: allQuestions.length}, (_, i) => i + 1);
-                
-                const optionLabels = ['A)', 'B)', 'C)', 'D)', 'E)'];
-                const OPTION_LENGTH_THRESHOLD = 40; 
-
-                qIndices.forEach((qIndex, displayNum) => {
-                    const qData = allQuestions[qIndex - 1];
-                    if (!qData) return;
-
-                    const isDeleted = qData.deleted === true;
-                    const status = getQuestionStatus(qData.id);
-                    const finalStatusForFilter = isDeleted ? (userAnswers[qData.id] ? 'deleted' : 'unattempted') : status;
-
-                    if (filter !== 'all' && filter !== finalStatusForFilter) return;
-                    
-                    const qB = document.createElement('div');
-                    qB.className = 'question-block';
-                    qB.dataset.questionId = qData.id;
-                     if (isDeleted) {
-                        qB.style.backgroundColor = '#f1f3f5';
-                    }
-                    
-                    const iB = document.createElement('div');
-                    iB.className = 'question-info-bar';
-                    iB.innerHTML = findQuestionPositions(qData.id);
-                    qB.appendChild(iB);
-                    
-                    const qContent = document.createElement('div');
-                    qContent.className = 'question-content';
-
-                    const qT = document.createElement('h3');
-                    qT.innerHTML = `<span class="print-q-num">प्रश्न ${displayNum + 1}: </span> ${qData.question}`;
-                    qContent.appendChild(qT);
-                    
-                    if (qData.image) {
-                        const qImg = document.createElement('img');
-                        qImg.src = qData.image;
-                        qImg.alt = "प्रश्न चित्र";
-                        qContent.appendChild(qImg);
-                    }
-                    qB.appendChild(qContent);
-
-                    const oCont = document.createElement('div');
-                    oCont.className = 'options-container';
-                    
-                    const oL = document.createElement('ul');
-                    oL.className = 'options-list';
-
-                    const optionsAreShort = qData.options.slice(0, 4).every(opt => opt.length < OPTION_LENGTH_THRESHOLD);
-                    if (optionsAreShort && qData.options.length >= 4) {
-                        oL.classList.add('options-grid');
-                    }
-                    
-                    const optionTexts = qData.options.map(opt => opt.substring(3));
-                    
-                    let shuffledOptionTexts;
-                    const seriesOptionConfig = currentShiftData.seriesOptionOrder?.[series];
-
-                    if (Array.isArray(seriesOptionConfig)) {
-                        shuffledOptionTexts = seriesOptionConfig.map(index => optionTexts[index]);
-                    } else if (typeof seriesOptionConfig === 'object' && seriesOptionConfig !== null) {
-                        const specificOrder = seriesOptionConfig[qData.id];
-                        const defaultOrder = seriesOptionConfig['default'];
-                        const orderToUse = specificOrder || defaultOrder;
-                        shuffledOptionTexts = orderToUse ? orderToUse.map(index => optionTexts[index]) : [...optionTexts];
-                    } else {
-                        shuffledOptionTexts = [...optionTexts];
-                    }
-                    
-                    shuffledOptionTexts.forEach((text, index) => {
-                        const oI = document.createElement('li');
-                        oI.innerHTML = `${optionLabels[index]} ${text}`;
-                        oI.dataset.rawText = text.trim();
-                        oL.appendChild(oI);
-                    });
-                    oCont.appendChild(oL);
-                    qB.appendChild(oCont);
-                    questionsContainer.appendChild(qB);
-                    
-                    updateQuestionUI(qData.id);
-                });
-
-                if (questionsContainer.innerHTML === '') {
-                    questionsContainer.innerHTML = `<p style="text-align:center; color: var(--font-color-light); padding: 2rem;">इस फ़िल्टर में कोई प्रश्न नहीं है।</p>`;
-                }
-                
-                if (window.MathJax) {
-                    MathJax.typesetPromise([questionsContainer]).catch(function (err) {
-                        console.log('MathJax error: ', err);
-                    });
-                }
-            }
-            
-            function updateQuestionUI(qId) {
-                const qBlock = document.querySelector(`.question-block[data-question-id='${qId}']`);
-                if (!qBlock) return;
-
-                const qData = allQuestions.find(q => q.id === qId);
-                if (!qData) return;
-
-                const status = getQuestionStatus(qId);
-                const isDeleted = qData.deleted === true;
-                const optionsList = qBlock.querySelector('.options-list');
-                const optionsContainer = qBlock.querySelector('.options-container');
-                let answerDisplay = qBlock.querySelector('.correct-answer-display');
-
-                optionsList.querySelectorAll('li').forEach(li => {
-                    li.classList.remove('correct', 'incorrect', 'special', 'selected-neutral');
-                });
-
-                const userAnswerText = userAnswers[qId];
-                if (userAnswerText) {
-                    const selectedLi = Array.from(optionsList.querySelectorAll('li')).find(li => li.dataset.rawText === userAnswerText);
-                    if (selectedLi) {
-                        if (isDeleted) {
-                            selectedLi.classList.add('selected-neutral');
-                        } else if (status === 'correct') selectedLi.classList.add('correct');
-                        else if (status === 'incorrect') selectedLi.classList.add('incorrect');
-                        else if (status === 'skipped') selectedLi.classList.add('special');
-                    }
-                }
-
-                if (answerDisplay) answerDisplay.remove();
-
-                if (isDeleted) {
-                    answerDisplay = document.createElement('div');
-                    answerDisplay.className = 'correct-answer-display';
-                    answerDisplay.innerHTML = 'Status: <strong style="color: var(--danger-color);">Deleted</strong>';
-                    optionsContainer.appendChild(answerDisplay);
-                } else if (status !== 'unattempted') {
-                    answerDisplay = document.createElement('div');
-                    answerDisplay.className = 'correct-answer-display';
-                    
-                    const optionLabels = ['A)', 'B)', 'C)', 'D)', 'E)'];
-                    const optionTexts = qData.options.map(opt => opt.substring(3));
-                    
-                    let shuffledOptionTexts;
-                    const seriesOptionConfig = currentShiftData.seriesOptionOrder?.[currentSeries];
-                    if (Array.isArray(seriesOptionConfig)) {
-                        shuffledOptionTexts = seriesOptionConfig.map(index => optionTexts[index]);
-                    } else if (typeof seriesOptionConfig === 'object' && seriesOptionConfig !== null) {
-                        const specificOrder = seriesOptionConfig[qData.id];
-                        const defaultOrder = seriesOptionConfig['default'];
-                        const orderToUse = specificOrder || defaultOrder;
-                        shuffledOptionTexts = orderToUse ? orderToUse.map(index => optionTexts[index]) : [...optionTexts];
-                    } else {
-                        shuffledOptionTexts = [...optionTexts];
-                    }
-
-                    const correctAnswerText = qData.answer.substring(3);
-                    const newCorrectIndex = shuffledOptionTexts.indexOf(correctAnswerText);
-                    let dynamicCorrectAnswer = qData.answer;
-                    if (newCorrectIndex !== -1) {
-                         dynamicCorrectAnswer = `${optionLabels[newCorrectIndex]} ${correctAnswerText}`;
-                    }
-                    
-                    answerDisplay.innerHTML = `Correct Ans: <strong style="color: var(--success-color);">${dynamicCorrectAnswer}</strong>`;
-                    optionsContainer.appendChild(answerDisplay);
-                }
-            }
-   
-            questionsContainer.addEventListener('click', (e) => {
-                const clickedLi = e.target.closest('li');
-                if (!clickedLi) return;
-
-                const questionBlock = e.target.closest('.question-block');
-                if (!questionBlock) return;
-
-                const qId = parseInt(questionBlock.dataset.questionId);
-                const qData = allQuestions.find(q => q.id === qId);
-                if (!qData) return;
-
-                userAnswers[qId] = clickedLi.dataset.rawText;
-                
-                saveData(); 
-                updateQuestionUI(qId);
-                updateSummary(); 
-
-                let userId = localStorage.getItem(`userId_${currentShiftId}`);
-                if (!userId) {
-                    userId = 'user_' + Date.now() + Math.random().toString(36).substr(2, 9);
-                    localStorage.setItem(`userId_${currentShiftId}`, userId);
-                }
-            
-                const isDeleted = qData.deleted === true;
-                const newStatus = getQuestionStatus(qId);
-                const finalStatusForFilter = isDeleted ? (userAnswers[qId] ? 'deleted' : 'unattempted') : newStatus;
-
-                if (activeFilter !== 'all' && activeFilter !== finalStatusForFilter) {
-                    setTimeout(() => { questionBlock.style.display = 'none'; }, 200);
-                }
-            });
-   
-            function saveFinalDataOnExit() {
-              if (document.visibilityState === 'hidden' && !window.hasSavedOnExit) {
-                window.hasSavedOnExit = true;
-                
-                let userId = localStorage.getItem(`userId_${currentShiftId}`);
-
-                if (userId && currentShiftId) {
-                  console.log('Page is being hidden or unloaded. Saving final data to Firebase...');
-                  sendAnswerToFirebase(userId);
-                }
-              }
-            }
-
-            document.addEventListener('visibilitychange', saveFinalDataOnExit);
-            document.addEventListener('pagehide', saveFinalDataOnExit);
-            document.addEventListener('visibilitychange', () => {
-                if (document.visibilityState === 'visible') {
-                    window.hasSavedOnExit = false;
-                }
-            });
-               
-            function updateActiveFilterButton(filter) {
-                document.querySelectorAll('.filter-buttons button').forEach(btn => btn.classList.remove('active'));
-                document.querySelector(`.filter-buttons button[data-filter="${filter}"]`).classList.add('active');
-            }
-
-            seriesSelect.addEventListener('change', (e) => {
-                displayQuestions(e.target.value, activeFilter);
-                saveData();
-            });
-            
-            resetBtn.addEventListener('click', () => {
-                if (confirm("क्या आप वाकई इस पेपर के लिए अपने सभी उत्तर हटाना चाहते हैं?")) {
-                    userAnswers = {};
-                    saveData();
-                    let userId = localStorage.getItem(`userId_${currentShiftId}`);
-                    if (userId) {
-                        sendAnswerToFirebase(userId);
-                    }
-                    displayQuestions(currentSeries, 'all');
-                }
-            });
-
-            document.querySelectorAll('.filter-buttons button').forEach(b => b.addEventListener('click', () => {
-                activeFilter = b.dataset.filter;
-                displayQuestions(currentSeries, activeFilter);
-            }));
-
-            document.getElementById('toggle-summary-btn').addEventListener('click', (e) => {
-                const sB = document.querySelector('.summary-bar');
-                sB.classList.toggle('hidden');
-                e.target.textContent = sB.classList.contains('hidden') ? 'Show Result' : 'Hide Result';
-            });
-            
-            toggleInfoBtn.addEventListener('click', () => {
-                const icon = toggleInfoBtn.querySelector('i');
-                questionPaperPage.classList.toggle('hide-q-info');
-                if(questionPaperPage.classList.contains('hide-q-info')) {
-                    icon.classList.remove('fa-eye');
-                    icon.classList.add('fa-eye-slash');
+        if (themeToggleBtn) { 
+            const applyTheme = (theme) => {
+                if (theme === 'auto') {
+                    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                    root.setAttribute('data-theme', prefersDark ? 'dark-blue' : 'light-blue');
                 } else {
-                    icon.classList.remove('fa-eye-slash');
-                    icon.classList.add('fa-eye');
+                    root.setAttribute('data-theme', theme);
+                }
+                localStorage.setItem(THEME_KEY, theme);
+            };
+            themeToggleBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                themeDropdown.classList.toggle('hidden');
+            });
+            document.addEventListener('click', () => {
+                if (!themeDropdown.classList.contains('hidden')) {
+                    themeDropdown.classList.add('hidden');
                 }
             });
+            themeDropdown.addEventListener('click', (e) => {
+                if (e.target.tagName === 'LI') {
+                    const selectedTheme = e.target.dataset.theme;
+                    applyTheme(selectedTheme);
+                    themeDropdown.classList.add('hidden');
+                }
+            });
+            window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+                const savedTheme = localStorage.getItem(THEME_KEY);
+                if (savedTheme === 'auto') {
+                    applyTheme('auto');
+                }
+            });
+            const savedTheme = localStorage.getItem(THEME_KEY) || 'auto';
+            applyTheme(savedTheme);
+        }
+        // ======================== END: THEME SELECTOR JAVASCRIPT ========================
+        
+        // --- लीडरबोर्ड के लिए नया कोड (UPDATED) ---
+        const leaderboardShiftFilter = document.getElementById('leaderboard-shift-filter');
+        const viewLeaderboardBtn = document.getElementById('view-leaderboard-btn');
+        const leaderboardTableContainer = document.getElementById('leaderboard-table-container');
+        const leaderboardBody = document.getElementById('leaderboard-body');
+        const leaderboardLoading = document.getElementById('leaderboard-loading');
+
+        async function fetchAndDisplayLeaderboard(shiftFilter = 'all') {
+            if (!db) return;
+
+            leaderboardLoading.style.display = 'block';
+            leaderboardBody.innerHTML = '';
+            let allUsers = [];
+
+            try {
+                const shiftsToFetch = shiftFilter === 'all' ?
+                    ['shift1', 'shift2', 'shift3', 'shift4', 'shift5', 'shift6'] :
+                    [shiftFilter];
+
+                for (const shiftId of shiftsToFetch) {
+                    const usersSnapshot = await db.collection('userResponses').doc(shiftId).collection('users').get();
+                    usersSnapshot.forEach(doc => {
+                        const userData = doc.data();
+                        if (userData.summary && userData.summary.rawMarks) {
+                            allUsers.push({
+                                name: userData.name || 'अज्ञात',
+                                rawMarks: parseFloat(userData.summary.rawMarks) || 0,
+                                correct: parseInt(userData.summary.correct) || 0,
+                                incorrect: parseInt(userData.summary.incorrect) || 0,
+                                skipped: parseInt(userData.summary.skipped) || 0,
+                                shift: shiftId
+                            });
+                        }
+                    });
+                }
+
+                allUsers.sort((a, b) => b.rawMarks - a.rawMarks);
+
+                leaderboardBody.innerHTML = allUsers.map((user, index) => `
+                    <tr style="border-bottom: 1px solid var(--border-color);">
+                        <td style="padding: 0.75rem;">${index + 1}</td>
+                        <td style="padding: 0.75rem;">${user.name}</td>
+                        <td style="padding: 0.75rem; font-weight: bold;">${user.rawMarks.toFixed(2)}</td>
+                        <td style="padding: 0.75rem; color: var(--success-color);">${user.correct}</td>
+                        <td style="padding: 0.75rem; color: var(--danger-color);">${user.incorrect}</td>
+                        <td style="padding: 0.75rem;">${user.skipped}</td>
+                        <td style="padding: 0.75rem;">${user.shift.replace('shift', 'Shift ')}</td>
+                    </tr>
+                `).join('');
+
+            } catch (error) {
+                console.error("लीडरबोर्ड डेटा लाने में त्रुटि: ", error);
+                leaderboardBody.innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 1rem; color: var(--danger-color);">डेटा लोड करने में त्रुटि हुई।</td></tr>';
+            } finally {
+                leaderboardLoading.style.display = 'none';
+            }
+        }
+        
+        if (viewLeaderboardBtn) {
+            viewLeaderboardBtn.addEventListener('click', () => {
+                leaderboardTableContainer.style.display = 'block';
+                fetchAndDisplayLeaderboard(leaderboardShiftFilter.value);
+                viewLeaderboardBtn.style.display = 'none';
+            });
+        }
+
+        if (leaderboardShiftFilter) {
+            leaderboardShiftFilter.addEventListener('change', () => {
+                if (leaderboardTableContainer.style.display !== 'none') {
+                    fetchAndDisplayLeaderboard(leaderboardShiftFilter.value);
+                }
+            });
+        }
+        // --- लीडरबोर्ड कोड का अंत ---
+
+        if (typeof allShiftData === 'undefined') {
+            document.body.innerHTML = '<h1 style="text-align:center; padding: 2rem; color: red;">Please Wait... Official उत्तर कुंजी अपडेट की जा रही है।</h1>';
+            return;
+        }
+
+        const shiftSelectorPage = document.getElementById('shift-selector-page');
+        const questionPaperPage = document.getElementById('question-paper-page');
+        const seriesSelect = document.getElementById('series-select');
+        const printBtn = document.getElementById('header-print-btn');
+        const pMO = document.getElementById('print-modal-overlay');
+        const toggleInfoBtn = document.getElementById('toggle-info-bar-btn');
+        const resetBtn = document.getElementById('reset-answers-btn');
+        const questionsContainer = document.getElementById('questions-container');
+
+        function showHomePage() {
+            shiftSelectorPage.style.display = 'flex';
+            questionPaperPage.style.display = 'none';
+            if(themeSelector) themeSelector.style.display = 'block';
+            currentShiftId = null;
+            history.pushState({page: 'home'}, 'Home', window.location.pathname);
+            window.location.hash = '';
+        }
+
+        window.addEventListener('popstate', (event) => {
+            if (!event.state || event.state.page === 'home') {
+                showHomePage();
+            } else if (event.state.shift) {
+                loadShift(event.state.shift, false);
+            }
+        });
+
+        document.querySelectorAll('.shift-btn').forEach(b => b.addEventListener('click', () => loadShift(b.dataset.shift, true)));
+
+        function loadShift(shiftId, shouldPushState = true) {
+            shiftSelectorPage.style.display = 'none';
+            questionPaperPage.style.display = 'flex';
+            if(themeSelector) themeSelector.style.display = 'none';
+            currentShiftId = shiftId;
+            currentShiftData = allShiftData[shiftId];
+            allQuestions = currentShiftData.questions;
             
-            function populatePrintHeader(name, rollNo){
-                document.getElementById('print-title').textContent = document.getElementById('shift-title').textContent;
-                document.getElementById('print-name').textContent = name;
-                document.getElementById('print-roll').textContent = rollNo;
-                document.getElementById('print-series').textContent = seriesSelect.value;
-                document.getElementById('print-full-total').textContent = allQuestions.length;
-                document.getElementById('print-valid-total').textContent = document.getElementById('total-count').textContent;
-                document.getElementById('print-attempted').textContent = document.getElementById('attempted-count').textContent;
-                document.getElementById('print-correct-cell').textContent = document.getElementById('correct-count').textContent;
-                document.getElementById('print-incorrect-cell').textContent = document.getElementById('incorrect-count').textContent;
-                document.getElementById('print-skipped').textContent = document.getElementById('skipped-count').textContent;
-                document.getElementById('print-deleted').textContent = document.getElementById('deleted-count').textContent;
-                document.getElementById('print-final-rq-display').textContent = document.getElementById('right-que-value').textContent;
-                document.getElementById('print-raw-marks-display').textContent = document.getElementById('raw-marks-value').textContent;
+            document.getElementById('shift-title').textContent = currentShiftData.title;
+
+            seriesSelect.innerHTML = '';
+            const availableSeries = Object.keys(currentShiftData.seriesOrder || {});
+            if (availableSeries.length > 0) {
+                availableSeries.forEach(seriesKey => {
+                    const option = document.createElement('option');
+                    option.value = seriesKey;
+                    option.textContent = seriesKey;
+                    seriesSelect.appendChild(option);
+                });
             }
 
-            function openPrintWindow(content, bodyClass = '') {
-                const oldFrame = document.getElementById('printf');
-                if (oldFrame) { oldFrame.remove(); }
+            userAnswers = JSON.parse(localStorage.getItem(`userAnswers_${shiftId}`)) || {};
+            
+            const savedSeries = localStorage.getItem(`currentSeries_${shiftId}`);
+            currentSeries = (savedSeries && availableSeries.includes(savedSeries)) ? savedSeries : availableSeries[0] || '';
+            seriesSelect.value = currentSeries;
 
-                const printFrame = document.createElement('iframe');
-                printFrame.id = 'printf';
-                printFrame.style.position = 'absolute';
-                printFrame.style.width = '0';
-                printFrame.style.height = '0';
-                printFrame.style.border = '0';
-                printFrame.style.left = '-9999px';
-                document.body.appendChild(printFrame);
+            activeFilter = 'all';
+            document.getElementById('toggle-summary-btn').textContent = 'Show Result';
+            document.querySelector('.summary-bar').classList.add('hidden');
+            
+            if (shouldPushState) {
+               history.pushState({ shift: shiftId }, '', `#${shiftId}`);
+            }
+            displayQuestions(currentSeries, activeFilter);
+        }
 
-                const styles = document.getElementById('main-styles').innerHTML;
-                const fontLink = `<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;500;600;700&display=swap" rel="stylesheet">`;
-                const mathJaxScript = `<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"><\/script>`;
-                const mathJaxConfig = `<script>MathJax = { tex: { inlineMath: [['$', '$'], ['\\(', '\\)']] } };<\/script>`;
-                const printLogic = `
-                    <script>
-                        (() => {
-                            let hasPrinted = false;
-                            const triggerPrint = () => {
-                                if (hasPrinted) return;
-                                hasPrinted = true;
-                                try {
-                                    window.focus(); window.print();
-                                } catch (e) { console.error("Print failed:", e); } 
-                                finally {
-                                    setTimeout(() => {
-                                        const frame = parent.document.getElementById('printf');
-                                        if (frame) frame.remove();
-                                    }, 1000);
-                                }
-                            };
-                            const runPrintProcess = () => {
-                                const mathJaxPromise = (typeof MathJax !== 'undefined' && MathJax.typesetPromise)
-                                    ? MathJax.startup.promise.then(() => MathJax.typesetPromise())
-                                    : Promise.resolve();
-                                const imagePromises = [...document.querySelectorAll('img')].map(img => {
-                                    if (img.complete) return Promise.resolve();
-                                    return new Promise(resolve => { img.onload = resolve; img.onerror = resolve; });
-                                });
-                                Promise.all([mathJaxPromise, ...imagePromises])
-                                    .then(() => { triggerPrint(); })
-                                    .catch(err => { console.error('Pre-print error:', err); triggerPrint(); });
-                                setTimeout(triggerPrint, 8000);
-                            };
-                            window.addEventListener('load', runPrintProcess);
-                        })();
-                    <\/script>
-                `;
-                const frameContent = `
-                    <html><head><title>Print</title>${fontLink}<style>${styles}</style>${mathJaxConfig}${mathJaxScript}</head>
-                    <body class="${bodyClass} ${questionPaperPage.classList.contains('hide-q-info') ? 'hide-q-info' : ''}">
-                        ${content}${printLogic}</body></html>`;
+        function saveData() {
+            if (!currentShiftId) return;
+            localStorage.setItem(`userAnswers_${currentShiftId}`, JSON.stringify(userAnswers));
+            localStorage.setItem(`currentSeries_${currentShiftId}`, currentSeries);
+        }
 
-                printFrame.contentDocument.open();
-                printFrame.contentDocument.write(frameContent);
-                printFrame.contentDocument.close();
+        function sendAnswerToFirebase(userId) {
+            if (!currentShiftId || !db) return;
+
+            const summaryData = {
+                correct: document.getElementById('correct-count').textContent,
+                incorrect: document.getElementById('incorrect-count').textContent,
+                skipped: document.getElementById('skipped-count').textContent,
+                attempted: document.getElementById('attempted-count').textContent,
+                finalRQ: document.getElementById('right-que-value').textContent,
+                rawMarks: document.getElementById('raw-marks-value').textContent,
+                validQuestions: document.getElementById('total-count').textContent
+            };
+
+            db.collection('userResponses')
+              .doc(currentShiftId)
+              .collection('users')
+              .doc(userId)
+              .set({
+                  summary: summaryData,
+                  series: currentSeries,
+                  rollNo: document.getElementById('student-roll').value || 'Not Provided',
+                  name: document.getElementById('student-name').value || 'Not Provided',
+                  lastUpdated: new Date()
+              }, { merge: true })
+              .then(() => {
+                  console.log(`Data for User: ${userId} successfully saved to Firebase!`);
+              })
+              .catch((error) => {
+                  console.error("Firebase Error: ", error);
+              });
+        }
+
+        function getQuestionStatus(qId) {
+            const qData = allQuestions.find(q => q.id === qId);
+            if (!qData) return 'unattempted';
+            if (qData.deleted) return 'deleted';
+            
+            const uAnsText = userAnswers[qId];
+            if (!uAnsText) return 'unattempted';
+            if (uAnsText === "अनुत्तरित प्रश्न" || uAnsText === "Question not attempted") return 'skipped';
+            
+            const correctAnswerText = qData.answer.substring(3);
+            return uAnsText === correctAnswerText ? 'correct' : 'incorrect';
+        }
+
+        function updateSummary() {
+            let c = 0, i = 0, s = 0, d = 0, attemptedForDeleted = 0;
+            allQuestions.forEach(q => {
+                const status = getQuestionStatus(q.id);
+                if (q.deleted) {
+                     d++;
+                     if (userAnswers[q.id]) attemptedForDeleted++;
+                     return;
+                }
+                if (status === 'correct') c++;
+                else if (status === 'incorrect') i++;
+                else if (status === 'skipped') s++;
+            });
+            
+            const a = c + i + attemptedForDeleted;
+            const totalValidQuestions = allQuestions.length - d;
+            
+            const unattempted = totalValidQuestions - (c + i + s);
+            const warningBox = document.getElementById('unattempted-warning-item');
+            if (warningBox) {
+                if (unattempted > 0) {
+                    document.getElementById('unattempted-count').textContent = unattempted;
+                    warningBox.classList.add('visible');
+                } else {
+                    warningBox.classList.remove('visible');
+                }
             }
 
-            function getCorrectOptionForSeries(qData, series) {
-                if (qData.deleted) return 'Delete';
-                const optionLabels = ['A', 'B', 'C', 'D', 'E'];
-                const correctAnswerText = qData.answer.substring(3);
+            document.getElementById('total-count').textContent = totalValidQuestions;
+            document.getElementById('attempted-count').textContent = a;
+            document.getElementById('correct-count').textContent = c;
+            document.getElementById('incorrect-count').textContent = i;
+            document.getElementById('skipped-count').textContent = s;
+            document.getElementById('deleted-count').textContent = d;
+            
+            const rQ = c - (i / 3);
+            let rM = (totalValidQuestions > 0) ? rQ * (200 / totalValidQuestions) : 0;
+            
+            document.getElementById('right-que-value').textContent = (rQ % 1 === 0) ? rQ : rQ.toFixed(2);
+            document.getElementById('raw-marks-value').textContent = rM.toFixed(2);
+        }
+        
+        function findQuestionPositions(qId) {
+            const qIndex = allQuestions.findIndex(q => q.id === qId);
+            if (qIndex === -1 || !currentShiftData.seriesOrder) return `Q ID: ${qId}`;
+
+            const positions = [];
+            for (const series in currentShiftData.seriesOrder) {
+                const pos = currentShiftData.seriesOrder[series].indexOf(qIndex + 1);
+                if (pos !== -1) {
+                    positions.push(`<strong>${series}:</strong> #${pos + 1}`);
+                }
+            }
+            return positions.length > 0 ? positions.join(' | ') : `Q ID: ${qId}`;
+        }
+
+        function displayQuestions(series, filter = 'all') {
+            questionsContainer.innerHTML = '';
+            currentSeries = series;
+            updateSummary();
+            updateActiveFilterButton(filter);
+
+            const seriesOrder = currentShiftData.seriesOrder || {};
+            const qIndices = seriesOrder[series] || Array.from({length: allQuestions.length}, (_, i) => i + 1);
+            
+            const optionLabels = ['A)', 'B)', 'C)', 'D)', 'E)'];
+            const OPTION_LENGTH_THRESHOLD = 40; 
+
+            qIndices.forEach((qIndex, displayNum) => {
+                const qData = allQuestions[qIndex - 1];
+                if (!qData) return;
+
+                const isDeleted = qData.deleted === true;
+                const status = getQuestionStatus(qData.id);
+                const finalStatusForFilter = isDeleted ? (userAnswers[qData.id] ? 'deleted' : 'unattempted') : status;
+
+                if (filter !== 'all' && filter !== finalStatusForFilter) return;
+                
+                const qB = document.createElement('div');
+                qB.className = 'question-block';
+                qB.dataset.questionId = qData.id;
+                 if (isDeleted) {
+                    qB.style.backgroundColor = '#f1f3f5';
+                }
+                
+                const iB = document.createElement('div');
+                iB.className = 'question-info-bar';
+                iB.innerHTML = findQuestionPositions(qData.id);
+                qB.appendChild(iB);
+                
+                const qContent = document.createElement('div');
+                qContent.className = 'question-content';
+
+                const qT = document.createElement('h3');
+                qT.innerHTML = `<span class="print-q-num">प्रश्न ${displayNum + 1}: </span> ${qData.question}`;
+                qContent.appendChild(qT);
+                
+                if (qData.image) {
+                    const qImg = document.createElement('img');
+                    qImg.src = qData.image;
+                    qImg.alt = "प्रश्न चित्र";
+                    qContent.appendChild(qImg);
+                }
+                qB.appendChild(qContent);
+
+                const oCont = document.createElement('div');
+                oCont.className = 'options-container';
+                
+                const oL = document.createElement('ul');
+                oL.className = 'options-list';
+
+                const optionsAreShort = qData.options.slice(0, 4).every(opt => opt.length < OPTION_LENGTH_THRESHOLD);
+                if (optionsAreShort && qData.options.length >= 4) {
+                    oL.classList.add('options-grid');
+                }
+                
                 const optionTexts = qData.options.map(opt => opt.substring(3));
                 
                 let shuffledOptionTexts;
                 const seriesOptionConfig = currentShiftData.seriesOptionOrder?.[series];
+
                 if (Array.isArray(seriesOptionConfig)) {
                     shuffledOptionTexts = seriesOptionConfig.map(index => optionTexts[index]);
                 } else if (typeof seriesOptionConfig === 'object' && seriesOptionConfig !== null) {
@@ -1385,187 +1104,473 @@
                     shuffledOptionTexts = [...optionTexts];
                 }
                 
-                const newCorrectIndex = shuffledOptionTexts.indexOf(correctAnswerText);
-                return (newCorrectIndex !== -1) ? optionLabels[newCorrectIndex] : '?';
-            }
-
-            function generateAndPrintOfficialKey() {
-                const container = document.getElementById('official-key-print-container');
-                let html = `<div class="official-key-header">
-                        <h1>चतुर्थ श्रेणी कर्मचारी संभावित उत्तर कुंजी</h1>
-                        <p>${currentShiftData.title} | पेपर कोड: ${currentSeries}</p>
-                    </div><div class="official-key-grid">`;
-
-                const seriesOrder = currentShiftData.seriesOrder[currentSeries] || Array.from({length: allQuestions.length}, (_, i) => i + 1);
-                const totalQuestions = seriesOrder.length;
-                const questionsPerColumn = 30;
-                const numColumns = Math.ceil(totalQuestions / questionsPerColumn);
+                shuffledOptionTexts.forEach((text, index) => {
+                    const oI = document.createElement('li');
+                    oI.innerHTML = `${optionLabels[index]} ${text}`;
+                    oI.dataset.rawText = text.trim();
+                    oL.appendChild(oI);
+                });
+                oCont.appendChild(oL);
+                qB.appendChild(oCont);
+                questionsContainer.appendChild(qB);
                 
-                for (let c = 0; c < numColumns; c++) {
-                    html += `<div class="official-key-column"><table class="official-key-table"><thead><tr><th>प्रश्न</th><th>उत्तर</th></tr></thead><tbody>`;
-                    const start = c * questionsPerColumn;
-                    const end = Math.min(start + questionsPerColumn, totalQuestions);
-                    for (let i = start; i < end; i++) {
-                        const displayNum = i + 1;
-                        const qIndex = seriesOrder[i];
-                        const qData = allQuestions[qIndex - 1];
-                        if(qData) {
-                            const correctOpt = getCorrectOptionForSeries(qData, currentSeries);
-                            html += `<tr><td>${displayNum}</td><td>${correctOpt}</td></tr>`;
-                        }
-                    }
-                    html += `</tbody></table></div>`;
-                }
+                updateQuestionUI(qData.id);
+            });
 
-                html += `</div>`;
-                html += `<div class="official-key-footer"><p>नोट - यह अभी संभावित उत्तर कुंजी है, बोर्ड द्वारा Official उत्तर कुंजी जारी होने पर UPDATE कर दी जाएगी </p></div>`;
-
-                container.innerHTML = html;
-                openPrintWindow(container.innerHTML);
+            if (questionsContainer.innerHTML === '') {
+                questionsContainer.innerHTML = `<p style="text-align:center; color: var(--font-color-light); padding: 2rem;">इस फ़िल्टर में कोई प्रश्न नहीं है।</p>`;
             }
-
-            function generateAndPrintOMR(name, rollNo) {
-                populatePrintHeader(name, rollNo); 
-                const container = document.getElementById('omr-print-container');
-                container.innerHTML = ''; 
-
-                const headerSource = document.getElementById('print-fallback-details');
-                container.appendChild(headerSource.cloneNode(true));
-                
-                const grid = document.createElement('div');
-                grid.className = 'omr-grid';
-                
-                const seriesOrder = currentShiftData.seriesOrder[currentSeries] || Array.from({length: allQuestions.length}, (_, i) => i + 1);
-                const totalQuestions = seriesOrder.length;
-                const questionsPerColumn = Math.ceil(totalQuestions / 4);
-                const optionLabels = ['A', 'B', 'C', 'D', 'E'];
-
-                for (let c = 0; c < 4; c++) {
-                    const column = document.createElement('div');
-                    column.className = 'omr-column';
-                    const start = c * questionsPerColumn;
-                    const end = Math.min(start + questionsPerColumn, totalQuestions);
-
-                    for (let i = start; i < end; i++) {
-                        const displayNum = i + 1;
-                        const qIndex = seriesOrder[i];
-                        if (!allQuestions[qIndex - 1]) continue;
-                        const qData = allQuestions[qIndex - 1];
-                        
-                        const status = getQuestionStatus(qData.id);
-                        const isDeleted = qData.deleted === true;
-
-                        const row = document.createElement('div');
-                        row.className = 'omr-row';
-                        
-                        const qNumDiv = document.createElement('div');
-                        qNumDiv.className = 'omr-q-num';
-                        qNumDiv.textContent = `${displayNum}.`;
-                        
-                        if (isDeleted) {
-                            row.style.opacity = '0.7';
-                        } else if (status === 'incorrect') {
-                            qNumDiv.style.color = 'red';
-                        } else if (status === 'skipped') {
-                            qNumDiv.style.color = 'blue';
-                        }
-                        row.appendChild(qNumDiv);
-                        
-                        const optionsDiv = document.createElement('div');
-                        optionsDiv.className = 'omr-options';
-                        
-                        const userAnswerText = userAnswers[qData.id];
-                        let filledOptionIndex = -1;
-
-                        if (userAnswerText) {
-                            const originalOptionTexts = qData.options.map(opt => opt.substring(3));
-                            let shuffledOptionTexts;
-                            const seriesOptionConfig = currentShiftData.seriesOptionOrder?.[currentSeries];
-                             if (Array.isArray(seriesOptionConfig)) {
-                                shuffledOptionTexts = seriesOptionConfig.map(index => originalOptionTexts[index]);
-                            } else if (typeof seriesOptionConfig === 'object' && seriesOptionConfig !== null) {
-                                const specificOrder = seriesOptionConfig[qData.id];
-                                const defaultOrder = seriesOptionConfig['default'];
-                                const orderToUse = specificOrder || defaultOrder;
-                                shuffledOptionTexts = orderToUse ? orderToUse.map(index => originalOptionTexts[index]) : [...originalOptionTexts];
-                            } else {
-                                shuffledOptionTexts = [...originalOptionTexts];
-                            }
-
-                            const userAnsIndex = shuffledOptionTexts.findIndex(txt => txt.trim() === userAnswerText.trim());
-                            if(userAnsIndex !== -1) filledOptionIndex = userAnsIndex;
-                        }
-
-                        optionLabels.forEach((label, index) => {
-                             const bubble = document.createElement('div');
-                             bubble.className = 'omr-bubble';
-                             bubble.textContent = label;
-                             if (index === filledOptionIndex) {
-                                if(isDeleted) {
-                                    bubble.classList.add('filled-neutral');
-                                } else {
-                                    bubble.classList.add('filled');
-                                }
-                             }
-                             optionsDiv.appendChild(bubble);
-                        });
-
-                        row.appendChild(optionsDiv);
-                        column.appendChild(row);
-                    }
-                    grid.appendChild(column);
-                }
-                container.appendChild(grid);
-                
-                openPrintWindow(container.innerHTML, 'omr-print-body');
-            }
-
-            function triggerPaperPrint(name, rollNo) {
-                populatePrintHeader(name, rollNo); 
-                const headerHTML = document.getElementById('print-fallback-details').outerHTML;
-                const questionsHTML = document.getElementById('questions-container').outerHTML;
-                openPrintWindow(headerHTML + questionsHTML);
-            }
-
-            printBtn.addEventListener('click', () => { pMO.style.display = 'flex'; });
-            document.getElementById('cancel-print').addEventListener('click', () => { pMO.style.display = 'none'; });
             
-            document.getElementById('confirm-print').addEventListener('click', () => {
-                const name = document.getElementById('student-name').value;
-                const rollNo = document.getElementById('student-roll').value;
-                if (!name || !rollNo) { alert("नाम और रोल नंबर दोनों आवश्यक हैं।"); return; }
-                pMO.style.display = 'none';
-                triggerPaperPrint(name, rollNo);
+            if (window.MathJax) {
+                MathJax.typesetPromise([questionsContainer]).catch(function (err) {
+                    console.log('MathJax error: ', err);
+                });
+            }
+        }
+        
+        function updateQuestionUI(qId) {
+            const qBlock = document.querySelector(`.question-block[data-question-id='${qId}']`);
+            if (!qBlock) return;
+
+            const qData = allQuestions.find(q => q.id === qId);
+            if (!qData) return;
+
+            const status = getQuestionStatus(qId);
+            const isDeleted = qData.deleted === true;
+            const optionsList = qBlock.querySelector('.options-list');
+            const optionsContainer = qBlock.querySelector('.options-container');
+            let answerDisplay = qBlock.querySelector('.correct-answer-display');
+
+            optionsList.querySelectorAll('li').forEach(li => {
+                li.classList.remove('correct', 'incorrect', 'special', 'selected-neutral');
             });
 
-            document.getElementById('get-omr-btn').addEventListener('click', () => {
-                const name = document.getElementById('student-name').value;
-                const rollNo = document.getElementById('student-roll').value;
-                if (!name || !rollNo) { alert("नाम और रोल नंबर दोनों आवश्यक हैं।"); return; }
-                pMO.style.display = 'none';
-                generateAndPrintOMR(name, rollNo);
-            });
+            const userAnswerText = userAnswers[qId];
+            if (userAnswerText) {
+                const selectedLi = Array.from(optionsList.querySelectorAll('li')).find(li => li.dataset.rawText === userAnswerText);
+                if (selectedLi) {
+                    if (isDeleted) {
+                        selectedLi.classList.add('selected-neutral');
+                    } else if (status === 'correct') selectedLi.classList.add('correct');
+                    else if (status === 'incorrect') selectedLi.classList.add('incorrect');
+                    else if (status === 'skipped') selectedLi.classList.add('special');
+                }
+            }
 
-            document.getElementById('get-official-key-btn').addEventListener('click', () => {
-                 pMO.style.display = 'none';
-                 generateAndPrintOfficialKey();
-            });
+            if (answerDisplay) answerDisplay.remove();
 
-            const shiftIdFromUrl = window.location.hash.substring(1);
-            if (shiftIdFromUrl && allShiftData[shiftIdFromUrl]) {
-                loadShift(shiftIdFromUrl);
-            } else {
-                showHomePage();
+            if (isDeleted) {
+                answerDisplay = document.createElement('div');
+                answerDisplay.className = 'correct-answer-display';
+                answerDisplay.innerHTML = 'Status: <strong style="color: var(--danger-color);">Deleted</strong>';
+                optionsContainer.appendChild(answerDisplay);
+            } else if (status !== 'unattempted') {
+                answerDisplay = document.createElement('div');
+                answerDisplay.className = 'correct-answer-display';
+                
+                const optionLabels = ['A)', 'B)', 'C)', 'D)', 'E)'];
+                const optionTexts = qData.options.map(opt => opt.substring(3));
+                
+                let shuffledOptionTexts;
+                const seriesOptionConfig = currentShiftData.seriesOptionOrder?.[currentSeries];
+                if (Array.isArray(seriesOptionConfig)) {
+                    shuffledOptionTexts = seriesOptionConfig.map(index => optionTexts[index]);
+                } else if (typeof seriesOptionConfig === 'object' && seriesOptionConfig !== null) {
+                    const specificOrder = seriesOptionConfig[qData.id];
+                    const defaultOrder = seriesOptionConfig['default'];
+                    const orderToUse = specificOrder || defaultOrder;
+                    shuffledOptionTexts = orderToUse ? orderToUse.map(index => optionTexts[index]) : [...optionTexts];
+                } else {
+                    shuffledOptionTexts = [...optionTexts];
+                }
+
+                const correctAnswerText = qData.answer.substring(3);
+                const newCorrectIndex = shuffledOptionTexts.indexOf(correctAnswerText);
+                let dynamicCorrectAnswer = qData.answer;
+                if (newCorrectIndex !== -1) {
+                     dynamicCorrectAnswer = `${optionLabels[newCorrectIndex]} ${correctAnswerText}`;
+                }
+                
+                answerDisplay.innerHTML = `Correct Ans: <strong style="color: var(--success-color);">${dynamicCorrectAnswer}</strong>`;
+                optionsContainer.appendChild(answerDisplay);
+            }
+        }
+   
+        questionsContainer.addEventListener('click', (e) => {
+            const clickedLi = e.target.closest('li');
+            if (!clickedLi) return;
+
+            const questionBlock = e.target.closest('.question-block');
+            if (!questionBlock) return;
+
+            const qId = parseInt(questionBlock.dataset.questionId);
+            const qData = allQuestions.find(q => q.id === qId);
+            if (!qData) return;
+
+            userAnswers[qId] = clickedLi.dataset.rawText;
+            
+            saveData(); 
+            updateQuestionUI(qId);
+            updateSummary(); 
+
+            let userId = localStorage.getItem(`userId_${currentShiftId}`);
+            if (!userId) {
+                userId = 'user_' + Date.now() + Math.random().toString(36).substr(2, 9);
+                localStorage.setItem(`userId_${currentShiftId}`, userId);
+            }
+        
+            const isDeleted = qData.deleted === true;
+            const newStatus = getQuestionStatus(qId);
+            const finalStatusForFilter = isDeleted ? (userAnswers[qId] ? 'deleted' : 'unattempted') : newStatus;
+
+            if (activeFilter !== 'all' && activeFilter !== finalStatusForFilter) {
+                setTimeout(() => { questionBlock.style.display = 'none'; }, 200);
+            }
+        });
+   
+        function saveFinalDataOnExit() {
+          if (document.visibilityState === 'hidden' && !window.hasSavedOnExit) {
+            window.hasSavedOnExit = true;
+            
+            let userId = localStorage.getItem(`userId_${currentShiftId}`);
+
+            if (userId && currentShiftId) {
+              console.log('Page is being hidden or unloaded. Saving final data to Firebase...');
+              sendAnswerToFirebase(userId);
+            }
+          }
+        }
+
+        document.addEventListener('visibilitychange', saveFinalDataOnExit);
+        document.addEventListener('pagehide', saveFinalDataOnExit);
+        document.addEventListener('visibilitychange', () => {
+            if (document.visibilityState === 'visible') {
+                window.hasSavedOnExit = false;
+            }
+        });
+           
+        function updateActiveFilterButton(filter) {
+            document.querySelectorAll('.filter-buttons button').forEach(btn => btn.classList.remove('active'));
+            document.querySelector(`.filter-buttons button[data-filter="${filter}"]`).classList.add('active');
+        }
+
+        seriesSelect.addEventListener('change', (e) => {
+            displayQuestions(e.target.value, activeFilter);
+            saveData();
+        });
+        
+        resetBtn.addEventListener('click', () => {
+            if (confirm("क्या आप वाकई इस पेपर के लिए अपने सभी उत्तर हटाना चाहते हैं?")) {
+                userAnswers = {};
+                saveData();
+                let userId = localStorage.getItem(`userId_${currentShiftId}`);
+                if (userId) {
+                    sendAnswerToFirebase(userId);
+                }
+                displayQuestions(currentSeries, 'all');
             }
         });
 
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('./sw.js')
-                    .then(registration => { console.log('ServiceWorker registration successful'); })
-                    .catch(error => { console.log('ServiceWorker registration failed: ', error); });
-            });
+        document.querySelectorAll('.filter-buttons button').forEach(b => b.addEventListener('click', () => {
+            activeFilter = b.dataset.filter;
+            displayQuestions(currentSeries, activeFilter);
+        }));
+
+        document.getElementById('toggle-summary-btn').addEventListener('click', (e) => {
+            const sB = document.querySelector('.summary-bar');
+            sB.classList.toggle('hidden');
+            e.target.textContent = sB.classList.contains('hidden') ? 'Show Result' : 'Hide Result';
+        });
+        
+        toggleInfoBtn.addEventListener('click', () => {
+            const icon = toggleInfoBtn.querySelector('i');
+            questionPaperPage.classList.toggle('hide-q-info');
+            if(questionPaperPage.classList.contains('hide-q-info')) {
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
+        });
+        
+        function populatePrintHeader(name, rollNo){
+            document.getElementById('print-title').textContent = document.getElementById('shift-title').textContent;
+            document.getElementById('print-name').textContent = name;
+            document.getElementById('print-roll').textContent = rollNo;
+            document.getElementById('print-series').textContent = seriesSelect.value;
+            document.getElementById('print-full-total').textContent = allQuestions.length;
+            document.getElementById('print-valid-total').textContent = document.getElementById('total-count').textContent;
+            document.getElementById('print-attempted').textContent = document.getElementById('attempted-count').textContent;
+            document.getElementById('print-correct-cell').textContent = document.getElementById('correct-count').textContent;
+            document.getElementById('print-incorrect-cell').textContent = document.getElementById('incorrect-count').textContent;
+            document.getElementById('print-skipped').textContent = document.getElementById('skipped-count').textContent;
+            document.getElementById('print-deleted').textContent = document.getElementById('deleted-count').textContent;
+            document.getElementById('print-final-rq-display').textContent = document.getElementById('right-que-value').textContent;
+            document.getElementById('print-raw-marks-display').textContent = document.getElementById('raw-marks-value').textContent;
         }
-    </script>
+
+        function openPrintWindow(content, bodyClass = '') {
+            const oldFrame = document.getElementById('printf');
+            if (oldFrame) { oldFrame.remove(); }
+
+            const printFrame = document.createElement('iframe');
+            printFrame.id = 'printf';
+            printFrame.style.position = 'absolute';
+            printFrame.style.width = '0';
+            printFrame.style.height = '0';
+            printFrame.style.border = '0';
+            printFrame.style.left = '-9999px';
+            document.body.appendChild(printFrame);
+
+            const styles = document.getElementById('main-styles').innerHTML;
+            const fontLink = `<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;500;600;700&display=swap" rel="stylesheet">`;
+            const mathJaxScript = `<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"><\/script>`;
+            const mathJaxConfig = `<script>MathJax = { tex: { inlineMath: [['$', '$'], ['\\(', '\\)']] } };<\/script>`;
+            const printLogic = `
+                <script>
+                    (() => {
+                        let hasPrinted = false;
+                        const triggerPrint = () => {
+                            if (hasPrinted) return;
+                            hasPrinted = true;
+                            try {
+                                window.focus(); window.print();
+                            } catch (e) { console.error("Print failed:", e); } 
+                            finally {
+                                setTimeout(() => {
+                                    const frame = parent.document.getElementById('printf');
+                                    if (frame) frame.remove();
+                                }, 1000);
+                            }
+                        };
+                        const runPrintProcess = () => {
+                            const mathJaxPromise = (typeof MathJax !== 'undefined' && MathJax.typesetPromise)
+                                ? MathJax.startup.promise.then(() => MathJax.typesetPromise())
+                                : Promise.resolve();
+                            const imagePromises = [...document.querySelectorAll('img')].map(img => {
+                                if (img.complete) return Promise.resolve();
+                                return new Promise(resolve => { img.onload = resolve; img.onerror = resolve; });
+                            });
+                            Promise.all([mathJaxPromise, ...imagePromises])
+                                .then(() => { triggerPrint(); })
+                                .catch(err => { console.error('Pre-print error:', err); triggerPrint(); });
+                            setTimeout(triggerPrint, 8000);
+                        };
+                        window.addEventListener('load', runPrintProcess);
+                    })();
+                <\/script>
+            `;
+            const frameContent = `
+                <html><head><title>Print</title>${fontLink}<style>${styles}</style>${mathJaxConfig}${mathJaxScript}</head>
+                <body class="${bodyClass} ${questionPaperPage.classList.contains('hide-q-info') ? 'hide-q-info' : ''}">
+                    ${content}${printLogic}</body></html>`;
+
+            printFrame.contentDocument.open();
+            printFrame.contentDocument.write(frameContent);
+            printFrame.contentDocument.close();
+        }
+
+        function getCorrectOptionForSeries(qData, series) {
+            if (qData.deleted) return 'Delete';
+            const optionLabels = ['A', 'B', 'C', 'D', 'E'];
+            const correctAnswerText = qData.answer.substring(3);
+            const optionTexts = qData.options.map(opt => opt.substring(3));
+            
+            let shuffledOptionTexts;
+            const seriesOptionConfig = currentShiftData.seriesOptionOrder?.[series];
+            if (Array.isArray(seriesOptionConfig)) {
+                shuffledOptionTexts = seriesOptionConfig.map(index => optionTexts[index]);
+            } else if (typeof seriesOptionConfig === 'object' && seriesOptionConfig !== null) {
+                const specificOrder = seriesOptionConfig[qData.id];
+                const defaultOrder = seriesOptionConfig['default'];
+                const orderToUse = specificOrder || defaultOrder;
+                shuffledOptionTexts = orderToUse ? orderToUse.map(index => optionTexts[index]) : [...optionTexts];
+            } else {
+                shuffledOptionTexts = [...optionTexts];
+            }
+            
+            const newCorrectIndex = shuffledOptionTexts.indexOf(correctAnswerText);
+            return (newCorrectIndex !== -1) ? optionLabels[newCorrectIndex] : '?';
+        }
+
+        function generateAndPrintOfficialKey() {
+            const container = document.getElementById('official-key-print-container');
+            let html = `<div class="official-key-header">
+                    <h1>चतुर्थ श्रेणी कर्मचारी संभावित उत्तर कुंजी</h1>
+                    <p>${currentShiftData.title} | पेपर कोड: ${currentSeries}</p>
+                </div><div class="official-key-grid">`;
+
+            const seriesOrder = currentShiftData.seriesOrder[currentSeries] || Array.from({length: allQuestions.length}, (_, i) => i + 1);
+            const totalQuestions = seriesOrder.length;
+            const questionsPerColumn = 30;
+            const numColumns = Math.ceil(totalQuestions / questionsPerColumn);
+            
+            for (let c = 0; c < numColumns; c++) {
+                html += `<div class="official-key-column"><table class="official-key-table"><thead><tr><th>प्रश्न</th><th>उत्तर</th></tr></thead><tbody>`;
+                const start = c * questionsPerColumn;
+                const end = Math.min(start + questionsPerColumn, totalQuestions);
+                for (let i = start; i < end; i++) {
+                    const displayNum = i + 1;
+                    const qIndex = seriesOrder[i];
+                    const qData = allQuestions[qIndex - 1];
+                    if(qData) {
+                        const correctOpt = getCorrectOptionForSeries(qData, currentSeries);
+                        html += `<tr><td>${displayNum}</td><td>${correctOpt}</td></tr>`;
+                    }
+                }
+                html += `</tbody></table></div>`;
+            }
+
+            html += `</div>`;
+            html += `<div class="official-key-footer"><p>नोट - यह अभी संभावित उत्तर कुंजी है, बोर्ड द्वारा Official उत्तर कुंजी जारी होने पर UPDATE कर दी जाएगी </p></div>`;
+
+            container.innerHTML = html;
+            openPrintWindow(container.innerHTML);
+        }
+
+        function generateAndPrintOMR(name, rollNo) {
+            populatePrintHeader(name, rollNo); 
+            const container = document.getElementById('omr-print-container');
+            container.innerHTML = ''; 
+
+            const headerSource = document.getElementById('print-fallback-details');
+            container.appendChild(headerSource.cloneNode(true));
+            
+            const grid = document.createElement('div');
+            grid.className = 'omr-grid';
+            
+            const seriesOrder = currentShiftData.seriesOrder[currentSeries] || Array.from({length: allQuestions.length}, (_, i) => i + 1);
+            const totalQuestions = seriesOrder.length;
+            const questionsPerColumn = Math.ceil(totalQuestions / 4);
+            const optionLabels = ['A', 'B', 'C', 'D', 'E'];
+
+            for (let c = 0; c < 4; c++) {
+                const column = document.createElement('div');
+                column.className = 'omr-column';
+                const start = c * questionsPerColumn;
+                const end = Math.min(start + questionsPerColumn, totalQuestions);
+
+                for (let i = start; i < end; i++) {
+                    const displayNum = i + 1;
+                    const qIndex = seriesOrder[i];
+                    if (!allQuestions[qIndex - 1]) continue;
+                    const qData = allQuestions[qIndex - 1];
+                    
+                    const status = getQuestionStatus(qData.id);
+                    const isDeleted = qData.deleted === true;
+
+                    const row = document.createElement('div');
+                    row.className = 'omr-row';
+                    
+                    const qNumDiv = document.createElement('div');
+                    qNumDiv.className = 'omr-q-num';
+                    qNumDiv.textContent = `${displayNum}.`;
+                    
+                    if (isDeleted) {
+                        row.style.opacity = '0.7';
+                    } else if (status === 'incorrect') {
+                        qNumDiv.style.color = 'red';
+                    } else if (status === 'skipped') {
+                        qNumDiv.style.color = 'blue';
+                    }
+                    row.appendChild(qNumDiv);
+                    
+                    const optionsDiv = document.createElement('div');
+                    optionsDiv.className = 'omr-options';
+                    
+                    const userAnswerText = userAnswers[qData.id];
+                    let filledOptionIndex = -1;
+
+                    if (userAnswerText) {
+                        const originalOptionTexts = qData.options.map(opt => opt.substring(3));
+                        let shuffledOptionTexts;
+                        const seriesOptionConfig = currentShiftData.seriesOptionOrder?.[currentSeries];
+                         if (Array.isArray(seriesOptionConfig)) {
+                            shuffledOptionTexts = seriesOptionConfig.map(index => originalOptionTexts[index]);
+                        } else if (typeof seriesOptionConfig === 'object' && seriesOptionConfig !== null) {
+                            const specificOrder = seriesOptionConfig[qData.id];
+                            const defaultOrder = seriesOptionConfig['default'];
+                            const orderToUse = specificOrder || defaultOrder;
+                            shuffledOptionTexts = orderToUse ? orderToUse.map(index => originalOptionTexts[index]) : [...originalOptionTexts];
+                        } else {
+                            shuffledOptionTexts = [...originalOptionTexts];
+                        }
+
+                        const userAnsIndex = shuffledOptionTexts.findIndex(txt => txt.trim() === userAnswerText.trim());
+                        if(userAnsIndex !== -1) filledOptionIndex = userAnsIndex;
+                    }
+
+                    optionLabels.forEach((label, index) => {
+                         const bubble = document.createElement('div');
+                         bubble.className = 'omr-bubble';
+                         bubble.textContent = label;
+                         if (index === filledOptionIndex) {
+                            if(isDeleted) {
+                                bubble.classList.add('filled-neutral');
+                            } else {
+                                bubble.classList.add('filled');
+                            }
+                         }
+                         optionsDiv.appendChild(bubble);
+                    });
+
+                    row.appendChild(optionsDiv);
+                    column.appendChild(row);
+                }
+                grid.appendChild(column);
+            }
+            container.appendChild(grid);
+            
+            openPrintWindow(container.innerHTML, 'omr-print-body');
+        }
+
+        function triggerPaperPrint(name, rollNo) {
+            populatePrintHeader(name, rollNo); 
+            const headerHTML = document.getElementById('print-fallback-details').outerHTML;
+            const questionsHTML = document.getElementById('questions-container').outerHTML;
+            openPrintWindow(headerHTML + questionsHTML);
+        }
+
+        printBtn.addEventListener('click', () => { pMO.style.display = 'flex'; });
+        document.getElementById('cancel-print').addEventListener('click', () => { pMO.style.display = 'none'; });
+        
+        document.getElementById('confirm-print').addEventListener('click', () => {
+            const name = document.getElementById('student-name').value;
+            const rollNo = document.getElementById('student-roll').value;
+            if (!name || !rollNo) { alert("नाम और रोल नंबर दोनों आवश्यक हैं।"); return; }
+            pMO.style.display = 'none';
+            triggerPaperPrint(name, rollNo);
+        });
+
+        document.getElementById('get-omr-btn').addEventListener('click', () => {
+            const name = document.getElementById('student-name').value;
+            const rollNo = document.getElementById('student-roll').value;
+            if (!name || !rollNo) { alert("नाम और रोल नंबर दोनों आवश्यक हैं।"); return; }
+            pMO.style.display = 'none';
+            generateAndPrintOMR(name, rollNo);
+        });
+
+        document.getElementById('get-official-key-btn').addEventListener('click', () => {
+             pMO.style.display = 'none';
+             generateAndPrintOfficialKey();
+        });
+
+        const shiftIdFromUrl = window.location.hash.substring(1);
+        if (shiftIdFromUrl && allShiftData[shiftIdFromUrl]) {
+            loadShift(shiftIdFromUrl);
+        } else {
+            showHomePage();
+        }
+    });
+
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('./sw.js')
+                .then(registration => { console.log('ServiceWorker registration successful'); })
+                .catch(error => { console.log('ServiceWorker registration failed: ', error); });
+        });
+    }
+</script>
 </body>
 </html>
