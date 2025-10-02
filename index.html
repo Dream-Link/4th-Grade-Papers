@@ -792,7 +792,7 @@
                     [shiftFilter];
 
                 for (const shiftId of shiftsToFetch) {
-                    const usersSnapshot = await db.collection('userResponses').doc(shiftId).collection('users').get();
+               const usersSnapshot = await db.collection('userResponses').doc(shiftId).collection('users').get({ source: 'server' });
                     usersSnapshot.forEach(doc => {
                         const userData = doc.data();
                         if (userData.summary && userData.summary.rawMarks) {
