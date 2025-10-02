@@ -72,7 +72,6 @@
         }
         .selector-container {
             width: 100%;
-            max-width: 960px; /* <-- MODIFIED: Increased width */
             padding: 1rem;
             text-align: center;
         }
@@ -613,7 +612,6 @@
                 <p>
                     <a href="https://t.me/Dreamlinkmp" target="_blank" class="creator-link" style="color: blue; text-decoration: underline;">MP Salodiya</a>
                 </p>
-            </p> लीडरबोर्ड में नाम "Not Provided" की जगह तब दिखेगा जब आप प्रिंट बटन से Name & Roll number fill करके Get OMR या Paper Print पर क्लिक करते हो</p>
             </div>
             
             <div class="features-box" style="margin-top: 2rem;">
@@ -640,7 +638,7 @@
                                 <th style="padding: 0.75rem; border-bottom: 2px solid var(--border-color);">रॉ मार्क्स</th>
                                 <th style="padding: 0.75rem; border-bottom: 2px solid var(--border-color);">सही</th>
                                 <th style="padding: 0.75rem; border-bottom: 2px solid var(--border-color);">गलत</th>
-                                <th style="padding: 0.75rem; border-bottom: 2px solid var(--border-color);">छोड़े गए</th>
+                                <th style="padding: 0.75rem; border-bottom: 2px solid var(--border-color);">छोड़े गए (E)</th>
                                 <th style="padding: 0.75rem; border-bottom: 2px solid var(--border-color);">शिफ़्ट</th>
                             </tr>
                         </thead>
@@ -1607,7 +1605,15 @@
             pMO.style.display = 'flex'; 
         });
 
-        document.getElementById('cancel-print').addEventListener('click', () => { pMO.style.display = 'none'; });
+        document.getElementById('cancel-print').addEventListener('click', () => { pMO.style.display = 'none'; })
+            // START: Auto-save name/roll from print popup on input change
+        document.getElementById('student-name').addEventListener('input', (e) => {
+            localStorage.setItem('studentName_mps', e.target.value.trim());
+        });
+        document.getElementById('student-roll').addEventListener('input', (e) => {
+            localStorage.setItem('studentRoll_mps', e.target.value.trim());
+        });
+        // END: Auto-save logic
         
         document.getElementById('confirm-print').addEventListener('click', () => {
             const name = document.getElementById('student-name').value.trim();
