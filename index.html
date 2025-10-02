@@ -613,6 +613,42 @@
                     <a href="https://t.me/Dreamlinkmp" target="_blank" class="creator-link" style="color: blue; text-decoration: underline;">MP Salodiya</a>
                 </p>
             </div>
+            
+            <div class="features-box" style="margin-top: 2rem;">
+                <h4>लीडरबोर्ड</h4>
+                <div class="leaderboard-controls" style="margin-bottom: 1rem; display: flex; gap: 1rem; align-items: center; flex-wrap: wrap;">
+                    <label for="leaderboard-shift-filter">शिफ़्ट के अनुसार फ़िल्टर करें:</label>
+                    <select id="leaderboard-shift-filter" style="padding: 0.5rem; border-radius: 0.375rem; border: 1px solid var(--border-color);">
+                        <option value="all">सभी शिफ़्ट</option>
+                        <option value="shift1">1st Shift</option>
+                        <option value="shift2">2nd Shift</option>
+                        <option value="shift3">3rd Shift</option>
+                        <option value="shift4">4th Shift</option>
+                        <option value="shift5">5th Shift</option>
+                        <option value="shift6">6th Shift</option>
+                    </select>
+                    <button id="refresh-leaderboard" style="padding: 0.5rem 1rem; border-radius: 0.375rem; border: none; background-color: var(--primary-color); color: white; cursor: pointer;">रिफ्रेश करें</button>
+                </div>
+                <div id="leaderboard-table-container" style="overflow-x: auto;">
+                    <table id="leaderboard-table" style="width: 100%; border-collapse: collapse; text-align: left;">
+                        <thead>
+                            <tr>
+                                <th style="padding: 0.75rem; border-bottom: 2px solid var(--border-color);">रैंक</th>
+                                <th style="padding: 0.75rem; border-bottom: 2px solid var(--border-color);">नाम</th>
+                                <th style="padding: 0.75rem; border-bottom: 2px solid var(--border-color);">रॉ मार्क्स</th>
+                                <th style="padding: 0.75rem; border-bottom: 2px solid var(--border-color);">सही</th>
+                                <th style="padding: 0.75rem; border-bottom: 2px solid var(--border-color);">गलत</th>
+                                <th style="padding: 0.75rem; border-bottom: 2px solid var(--border-color);">छोड़े गए</th>
+                                <th style="padding: 0.75rem; border-bottom: 2px solid var(--border-color);">शिफ़्ट</th>
+                            </tr>
+                        </thead>
+                        <tbody id="leaderboard-body">
+                            </tbody>
+                    </table>
+                    <p id="leaderboard-loading" style="text-align: center; padding: 1rem; display: none;">लोड हो रहा है...</p>
+                </div>
+            </div>
+
         </div>
     </div>
 
@@ -703,7 +739,7 @@
             const root = document.documentElement;
             const THEME_KEY = 'selected_theme_mps';
 
-            if (themeToggleBtn) { // Run only if the theme button exists
+            if (themeToggleBtn) { 
                 const applyTheme = (theme) => {
                     if (theme === 'auto') {
                         const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
@@ -740,6 +776,76 @@
             }
             // ======================== END: THEME SELECTOR JAVASCRIPT ========================
             
+            // --- लीडरबोर्ड के लिए नया कोड ---
+            const leaderboardShiftFilter = document.getElementById('leaderboard-shift-filter');
+            const refreshLeaderboardBtn = document.getElementById('refresh-leaderboard');
+            const leaderboardBody = document.getElementById('leaderboard-body');
+            const leaderboardLoading = document.getElementById('leaderboard-loading');
+
+            async function fetchAndDisplayLeaderboard(shiftFilter = 'all') {
+                if (!db) return;
+
+                leaderboardLoading.style.display = 'block';
+                leaderboardBody.innerHTML = '';
+                let allUsers = [];
+
+                try {
+                    const shiftsToFetch = shiftFilter === 'all' ?
+                        ['shift1', 'shift2', 'shift3', 'shift4', 'shift5', 'shift6'] :
+                        [shiftFilter];
+
+                    for (const shiftId of shiftsToFetch) {
+                        const usersSnapshot = await db.collection('userResponses').doc(shiftId).collection('users').get();
+                        usersSnapshot.forEach(doc => {
+                            const userData = doc.data();
+                            if (userData.summary && userData.summary.rawMarks) {
+                                allUsers.push({
+                                    name: userData.name || 'अज्ञात',
+                                    rawMarks: parseFloat(userData.summary.rawMarks) || 0,
+                                    correct: parseInt(userData.summary.correct) || 0,
+                                    incorrect: parseInt(userData.summary.incorrect) || 0,
+                                    skipped: parseInt(userData.summary.skipped) || 0,
+                                    shift: shiftId
+                                });
+                            }
+                        });
+                    }
+
+                    allUsers.sort((a, b) => b.rawMarks - a.rawMarks);
+
+                    leaderboardBody.innerHTML = allUsers.map((user, index) => `
+                        <tr style="border-bottom: 1px solid var(--border-color);">
+                            <td style="padding: 0.75rem;">${index + 1}</td>
+                            <td style="padding: 0.75rem;">${user.name}</td>
+                            <td style="padding: 0.75rem; font-weight: bold;">${user.rawMarks.toFixed(2)}</td>
+                            <td style="padding: 0.75rem; color: var(--success-color);">${user.correct}</td>
+                            <td style="padding: 0.75rem; color: var(--danger-color);">${user.incorrect}</td>
+                            <td style="padding: 0.75rem;">${user.skipped}</td>
+                            <td style="padding: 0.75rem;">${user.shift.replace('shift', 'Shift ')}</td>
+                        </tr>
+                    `).join('');
+
+                } catch (error) {
+                    console.error("लीडरबोर्ड डेटा लाने में त्रुटि: ", error);
+                    leaderboardBody.innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 1rem; color: var(--danger-color);">डेटा लोड करने में त्रुटि हुई।</td></tr>';
+                } finally {
+                    leaderboardLoading.style.display = 'none';
+                }
+            }
+
+            leaderboardShiftFilter.addEventListener('change', () => {
+                fetchAndDisplayLeaderboard(leaderboardShiftFilter.value);
+            });
+
+            refreshLeaderboardBtn.addEventListener('click', () => {
+                fetchAndDisplayLeaderboard(leaderboardShiftFilter.value);
+            });
+
+            if (document.getElementById('shift-selector-page').style.display !== 'none') {
+                fetchAndDisplayLeaderboard();
+            }
+            // --- लीडरबोर्ड कोड का अंत ---
+
             if (typeof allShiftData === 'undefined') {
                 document.body.innerHTML = '<h1 style="text-align:center; padding: 2rem; color: red;">Please Wait... Official उत्तर कुंजी अपडेट की जा रही है।</h1>';
                 return;
@@ -816,9 +922,8 @@
                 localStorage.setItem(`currentSeries_${currentShiftId}`, currentSeries);
             }
 
-            // START: FIREBASE FUNCTION (ADDED)
             function sendAnswerToFirebase(userId) {
-                if (!currentShiftId || !db) return; // db को भी चेक करें
+                if (!currentShiftId || !db) return;
 
                 const summaryData = {
                     correct: document.getElementById('correct-count').textContent,
@@ -849,7 +954,6 @@
                       console.error("Firebase Error: ", error);
                   });
             }
-            // END: FIREBASE FUNCTION (ADDED)
 
             function getQuestionStatus(qId) {
                 const qData = allQuestions.find(q => q.id === qId);
@@ -1087,74 +1191,59 @@
                     optionsContainer.appendChild(answerDisplay);
                 }
             }
-
-          
-           // START: CLICK LISTENER (MODIFIED FOR FIREBASE)
-questionsContainer.addEventListener('click', (e) => {
-    const clickedLi = e.target.closest('li');
-    if (!clickedLi) return;
-
-    const questionBlock = e.target.closest('.question-block');
-    if (!questionBlock) return;
-
-    const qId = parseInt(questionBlock.dataset.questionId);
-    const qData = allQuestions.find(q => q.id === qId);
-    if (!qData) return;
-
-    userAnswers[qId] = clickedLi.dataset.rawText;
-    
-    // यह लोकल स्टोरेज में तुरंत सेव करेगा
-    saveData(); 
-    updateQuestionUI(qId);
-    // यह स्क्रीन पर समरी को तुरंत अपडेट करेगा
-    updateSummary(); 
-
-    // यूजर आईडी बनाएं या प्राप्त करें
-    let userId = localStorage.getItem(`userId_${currentShiftId}`);
-    if (!userId) {
-        userId = 'user_' + Date.now() + Math.random().toString(36).substr(2, 9);
-        localStorage.setItem(`userId_${currentShiftId}`, userId);
-    }
-  
-    // फिल्टर लॉजिक वैसा ही रहेगा
-    const isDeleted = qData.deleted === true;
-    const newStatus = getQuestionStatus(qId);
-    const finalStatusForFilter = isDeleted ? (userAnswers[qId] ? 'deleted' : 'unattempted') : newStatus;
-
-    if (activeFilter !== 'all' && activeFilter !== finalStatusForFilter) {
-        setTimeout(() => { questionBlock.style.display = 'none'; }, 200);
-    }
-});
-// END: CLICK LISTENER (MODIFIED FOR FIREBASE)
    
-// START: RELIABLE SAVE ON EXIT LISTENER (IMPROVED)
-function saveFinalDataOnExit() {
-  // यह सुनिश्चित करता है कि डेटा सिर्फ एक बार सेव हो, अगर दोनों इवेंट एक साथ फायर हो जाएं
-  if (document.visibilityState === 'hidden' && !window.hasSavedOnExit) {
-    window.hasSavedOnExit = true; // एक फ्लैग सेट करें
-    
-    let userId = localStorage.getItem(`userId_${currentShiftId}`);
+            questionsContainer.addEventListener('click', (e) => {
+                const clickedLi = e.target.closest('li');
+                if (!clickedLi) return;
 
-    if (userId && currentShiftId) {
-      console.log('Page is being hidden or unloaded. Saving final data to Firebase...');
-      sendAnswerToFirebase(userId);
-    }
-  }
-}
+                const questionBlock = e.target.closest('.question-block');
+                if (!questionBlock) return;
 
-// टैब बदलने या विंडो मिनिमाइज करने के लिए
-document.addEventListener('visibilitychange', saveFinalDataOnExit);
+                const qId = parseInt(questionBlock.dataset.questionId);
+                const qData = allQuestions.find(q => q.id === qId);
+                if (!qData) return;
 
-// टैब/ब्राउज़र बंद करने या दूसरे पेज पर जाने के लिए
-document.addEventListener('pagehide', saveFinalDataOnExit);
+                userAnswers[qId] = clickedLi.dataset.rawText;
+                
+                saveData(); 
+                updateQuestionUI(qId);
+                updateSummary(); 
 
-// जब पेज वापस दिखे, तो फ्लैग को रीसेट कर दें
-document.addEventListener('visibilitychange', () => {
-    if (document.visibilityState === 'visible') {
-        window.hasSavedOnExit = false;
-    }
-});
-// END: RELIABLE SAVE ON EXIT LISTENER (IMPROVED)
+                let userId = localStorage.getItem(`userId_${currentShiftId}`);
+                if (!userId) {
+                    userId = 'user_' + Date.now() + Math.random().toString(36).substr(2, 9);
+                    localStorage.setItem(`userId_${currentShiftId}`, userId);
+                }
+            
+                const isDeleted = qData.deleted === true;
+                const newStatus = getQuestionStatus(qId);
+                const finalStatusForFilter = isDeleted ? (userAnswers[qId] ? 'deleted' : 'unattempted') : newStatus;
+
+                if (activeFilter !== 'all' && activeFilter !== finalStatusForFilter) {
+                    setTimeout(() => { questionBlock.style.display = 'none'; }, 200);
+                }
+            });
+   
+            function saveFinalDataOnExit() {
+              if (document.visibilityState === 'hidden' && !window.hasSavedOnExit) {
+                window.hasSavedOnExit = true;
+                
+                let userId = localStorage.getItem(`userId_${currentShiftId}`);
+
+                if (userId && currentShiftId) {
+                  console.log('Page is being hidden or unloaded. Saving final data to Firebase...');
+                  sendAnswerToFirebase(userId);
+                }
+              }
+            }
+
+            document.addEventListener('visibilitychange', saveFinalDataOnExit);
+            document.addEventListener('pagehide', saveFinalDataOnExit);
+            document.addEventListener('visibilitychange', () => {
+                if (document.visibilityState === 'visible') {
+                    window.hasSavedOnExit = false;
+                }
+            });
                
             function updateActiveFilterButton(filter) {
                 document.querySelectorAll('.filter-buttons button').forEach(btn => btn.classList.remove('active'));
@@ -1170,7 +1259,6 @@ document.addEventListener('visibilitychange', () => {
                 if (confirm("क्या आप वाकई इस पेपर के लिए अपने सभी उत्तर हटाना चाहते हैं?")) {
                     userAnswers = {};
                     saveData();
-                    // After resetting, also send the empty data to Firebase to update the record
                     let userId = localStorage.getItem(`userId_${currentShiftId}`);
                     if (userId) {
                         sendAnswerToFirebase(userId);
