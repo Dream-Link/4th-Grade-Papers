@@ -321,6 +321,59 @@
             
             .modal-buttons { justify-content: center; gap: 0.25rem; }
             .modal-buttons button { padding: 0.5rem; font-size: 0.7rem; flex-grow: 1; }
+            /* ================= START: LEADERBOARD MOBILE VIEW CSS ================= */
+        
+        /* Leaderboard ke main box ko full-width banane ke liye */
+        #leaderboard-box {
+            background: transparent;      /* Box ka background hata dein */
+            border: none;                 /* Border hata dein */
+            box-shadow: none;             /* Shadow hata dein */
+            padding: 0;                   /* Padding khatm kar dein */
+            margin-top: 2.5rem;
+        }
+
+        /* Leaderboard ki heading ko aakarshak banane ke liye */
+        #leaderboard-box h4 {
+            text-align: center;
+            font-size: 1.6rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        /* Table ke font aur padding ko compact banane ke liye */
+        #leaderboard-table th,
+        #leaderboard-table td {
+            font-size: 0.75rem; /* Font size chota kiya */
+            padding: 0.6rem 0.4rem;   /* Padding kam ki gayi */
+            text-align: center;
+        }
+
+        /* Naam wale column ko left-align rakhein */
+        #leaderboard-table th:nth-child(2),
+        #leaderboard-table td:nth-child(2) {
+            text-align: left;
+        }
+
+        /* Mobile par filter controls ko behtar banane ke liye */
+        #leaderboard-box .leaderboard-controls {
+            gap: 0.5rem;
+        }
+
+        #leaderboard-box .leaderboard-controls select,
+        #leaderboard-box .leaderboard-controls button,
+        #leaderboard-box .leaderboard-controls label {
+            font-size: 0.8rem;
+            padding: 0.5rem;
+            flex-grow: 1; /* Sabhi controls barabar jagah lein */
+        }
+        
+        #leaderboard-box #show-leaderboard-btn {
+            width: 100%;
+            font-size: 1rem;
+        }
+
+        /* ================== END: LEADERBOARD MOBILE VIEW CSS ================== */
         }
 
         @media print {
@@ -614,7 +667,7 @@
                 </p>
             </div>
             
-            <div class="features-box" style="margin-top: 2rem;">
+           <div id="leaderboard-box" class="features-box" style="margin-top: 2rem;">
     <h4>लीडरबोर्ड</h4>
     
     <button id="show-leaderboard-btn" style="padding: 0.6rem 1.2rem; border-radius: 0.375rem; border: none; background-color: var(--primary-color); color: white; cursor: pointer; font-size: 1rem; margin-bottom: 1rem;">
