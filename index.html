@@ -1276,26 +1276,31 @@
             }
         });
    
-        function saveFinalDataOnExit() {
-          if (document.visibilityState === 'hidden' && !window.hasSavedOnExit) {
-            window.hasSavedOnExit = true;
-            
-            let userId = localStorage.getItem(`userId_${currentShiftId}`);
+       // ================= START: EXIT SAVE CODE (NEW) =================
+        // पेज बंद होने पर डेटा बचाने के लिए यह अंतिम और सबसे सरल कोड है।
 
-            if (userId && currentShiftId) {
-              console.log('Page is being hidden or unloaded. Saving final data to Firebase...');
-              sendAnswerToFirebase(userId);
+        function finalSaveOnExit() {
+            // यह सुनिश्चित करें कि currentShiftId और userId मौजूद हैं
+            let userId = localStorage.getItem(`userId_${currentShiftId}`);
+            if (!userId || !currentShiftId) {
+                console.log("Exit Save: उपयोगकर्ता की जानकारी नहीं मिली, सेव नहीं किया जा रहा है।");
+                return; // अगर जानकारी नहीं है तो बाहर निकलें
             }
-          }
+
+            console.log("पेज बंद हो रहा है, अंतिम डेटा सहेजने का प्रयास किया जा रहा है...");
+            
+            // 1. सबसे महत्वपूर्ण: स्क्रीन पर नवीनतम स्कोर की गणना करें
+            // ताकि sendAnswerToFirebase फ़ंक्शन सही डेटा पढ़े
+            updateSummary();
+            
+            // 2. अब Firebase पर डेटा भेजें (वही फ़ंक्शन जो प्रिंट बटन करता है)
+            sendAnswerToFirebase(userId);
         }
 
-        document.addEventListener('visibilitychange', saveFinalDataOnExit);
-        document.addEventListener('pagehide', saveFinalDataOnExit);
-        document.addEventListener('visibilitychange', () => {
-            if (document.visibilityState === 'visible') {
-                window.hasSavedOnExit = false;
-            }
-        });
+        // 'pagehide' इवेंट का उपयोग करें, यह पेज से बाहर निकलने के लिए सबसे विश्वसनीय इवेंट है।
+        window.addEventListener('pagehide', finalSaveOnExit);
+
+        // ================== END: EXIT SAVE CODE (NEW) ==================
            
         function updateActiveFilterButton(filter) {
             document.querySelectorAll('.filter-buttons button').forEach(btn => btn.classList.remove('active'));
