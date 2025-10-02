@@ -814,7 +814,7 @@
                         const userData = doc.data();
                         if (userData.summary && userData.summary.rawMarks) {
                             allUsers.push({
-                                name: userData.name || 'अज्ञात',
+                                name: userData.name || 'Not Provided',
                                 rawMarks: parseFloat(userData.summary.rawMarks) || 0,
                                 correct: parseInt(userData.summary.correct) || 0,
                                 incorrect: parseInt(userData.summary.incorrect) || 0,
