@@ -72,7 +72,7 @@
         }
         .selector-container {
             width: 100%;
-            max-width: 800px;
+            max-width: 960px; /* <-- MODIFIED: Increased width */
             padding: 1rem;
             text-align: center;
         }
@@ -285,6 +285,7 @@
         .print-only-container { display: none; }
 
         @media (max-width: 768px) {
+            .selector-container { max-width: 100%; } /* <-- MODIFIED: Allow full width on mobile */
             .selector-container h2 { font-size: 1.8rem; }
             .shift-selector { grid-template-columns: 1fr; gap: 1rem; }
             
@@ -710,6 +711,19 @@
         </div>
     </div>
     
+    <div id="user-info-modal-overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.7); z-index: 2001; align-items: center; justify-content: center; padding: 1rem;">
+        <div id="user-info-modal" style="background: var(--surface-color); color: var(--font-color); padding: 2rem; border-radius: var(--border-radius); box-shadow: var(--shadow-md); width: 100%; max-width: 400px;">
+            <h2 style="margin-top: 0;">Welcome!</h2>
+            <p style="margin: 0 0 1.5rem 0; color: var(--font-color-light);">कृपया शुरू करने से पहले अपना नाम और रोल नंबर दर्ज करें।</p>
+            <label for="initial-student-name" style="margin: 0 0 0.5rem 0; display: block; font-weight: 500;">Name:</label>
+            <input type="text" id="initial-student-name" placeholder="Your Name" style="width: 100%; padding: 0.75rem; border: 1px solid var(--border-color); border-radius: 0.375rem; font-size: 1rem; font-family: inherit; margin-bottom: 1rem; background-color: var(--bg-color); color: var(--font-color);">
+            <label for="initial-student-roll" style="margin: 0 0 0.5rem 0; display: block; font-weight: 500;">Roll No.:</label>
+            <input type="text" id="initial-student-roll" placeholder="Your Roll No." style="width: 100%; padding: 0.75rem; border: 1px solid var(--border-color); border-radius: 0.375rem; font-size: 1rem; font-family: inherit; margin-bottom: 1rem; background-color: var(--bg-color); color: var(--font-color);">
+            <div style="display: flex; justify-content: flex-end; gap: 0.75rem; margin-top: 1.5rem;">
+                <button id="start-test-btn" style="padding: 0.6rem 1.2rem; border-radius: 0.375rem; border: none; cursor: pointer; font-weight: 600; font-size: 0.9rem; background-color: var(--primary-color); color: white;">Start Test</button>
+            </div>
+        </div>
+    </div>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
     <script src="questions-data.js"></script>
@@ -866,6 +880,28 @@
         const resetBtn = document.getElementById('reset-answers-btn');
         const questionsContainer = document.getElementById('questions-container');
 
+        // --- START: LOGIC FOR NEW USER INFO MODAL ---
+        const startTestBtn = document.getElementById('start-test-btn');
+        if (startTestBtn) {
+            startTestBtn.addEventListener('click', () => {
+                const nameInput = document.getElementById('initial-student-name');
+                const rollInput = document.getElementById('initial-student-roll');
+
+                if (!nameInput.value.trim() || !rollInput.value.trim()) {
+                    alert("नाम और रोल नंबर दोनों आवश्यक हैं।");
+                    return;
+                }
+
+                // Save to localStorage
+                localStorage.setItem('studentName_mps', nameInput.value.trim());
+                localStorage.setItem('studentRoll_mps', rollInput.value.trim());
+
+                // Now load the paper
+                proceedToLoadPaper(currentShiftId, true);
+            });
+        }
+        // --- END: LOGIC FOR NEW USER INFO MODAL ---
+
         function showHomePage() {
             shiftSelectorPage.style.display = 'flex';
             questionPaperPage.style.display = 'none';
@@ -883,13 +919,36 @@
             }
         });
 
-        document.querySelectorAll('.shift-btn').forEach(b => b.addEventListener('click', () => loadShift(b.dataset.shift, true)));
+        document.querySelectorAll('.shift-btn').forEach(b => b.addEventListener('click', (e) => {
+            e.preventDefault();
+            loadShift(b.dataset.shift, true);
+        }));
 
+        // ======================= START: MODIFIED loadShift LOGIC =======================
         function loadShift(shiftId, shouldPushState = true) {
+            currentShiftId = shiftId; // Set shiftId immediately
+
+            // Check if name and roll are already in localStorage
+            const savedName = localStorage.getItem('studentName_mps');
+            const savedRoll = localStorage.getItem('studentRoll_mps');
+
+            if (!savedName || !savedRoll) {
+                // If not found, show the new info modal
+                document.getElementById('initial-student-name').value = savedName || '';
+                document.getElementById('initial-student-roll').value = savedRoll || '';
+                document.getElementById('user-info-modal-overlay').style.display = 'flex';
+            } else {
+                // If found, proceed to load the paper directly
+                proceedToLoadPaper(shiftId, shouldPushState);
+            }
+        }
+
+        function proceedToLoadPaper(shiftId, shouldPushState = true) {
+            document.getElementById('user-info-modal-overlay').style.display = 'none';
             shiftSelectorPage.style.display = 'none';
             questionPaperPage.style.display = 'flex';
             if(themeSelector) themeSelector.style.display = 'none';
-            currentShiftId = shiftId;
+
             currentShiftData = allShiftData[shiftId];
             allQuestions = currentShiftData.questions;
             
@@ -921,6 +980,7 @@
             }
             displayQuestions(currentSeries, activeFilter);
         }
+        // ======================= END: MODIFIED loadShift LOGIC =======================
 
         function saveData() {
             if (!currentShiftId) return;
@@ -928,6 +988,7 @@
             localStorage.setItem(`currentSeries_${currentShiftId}`, currentSeries);
         }
 
+        // ======================= START: MODIFIED Firebase FUNCTION =======================
         function sendAnswerToFirebase(userId) {
             if (!currentShiftId || !db) return;
 
@@ -940,13 +1001,10 @@
                 rawMarks: document.getElementById('raw-marks-value').textContent,
                 validQuestions: document.getElementById('total-count').textContent
             };
-
-            // --- बेहतर कोड यहाँ जोड़ें ---
-            // पहले localStorage से नाम/रोल नंबर लेने की कोशिश करें।
-            // अगर वहाँ नहीं मिलता है, तभी इनपुट फ़ील्ड से लें।
-            const finalName = localStorage.getItem('studentName_mps') || document.getElementById('student-name').value;
-            const finalRollNo = localStorage.getItem('studentRoll_mps') || document.getElementById('student-roll').value;
-            // --- नया कोड का अंत ---
+            
+            // MODIFIED: Always get name/roll from localStorage for reliability, especially on page exit.
+            const finalName = localStorage.getItem('studentName_mps') || 'Not Provided';
+            const finalRollNo = localStorage.getItem('studentRoll_mps') || 'Not Provided';
 
             db.collection('userResponses')
               .doc(currentShiftId)
@@ -955,8 +1013,8 @@
               .set({
                   summary: summaryData,
                   series: currentSeries,
-                  rollNo: finalRollNo || 'Not Provided', // <- बदला हुआ वेरिएबल इस्तेमाल करें
-                  name: finalName || 'Not Provided',     // <- बदला हुआ वेरिएबल इस्तेमाल करें
+                  rollNo: finalRollNo,
+                  name: finalName,
                   lastUpdated: new Date()
               }, { merge: true })
               .then(() => {
@@ -966,6 +1024,7 @@
                   console.error("Firebase Error: ", error);
               });
         }
+        // ======================= END: MODIFIED Firebase FUNCTION =======================
 
         function getQuestionStatus(qId) {
             const qData = allQuestions.find(q => q.id === qId);
@@ -1543,54 +1602,45 @@
         printBtn.addEventListener('click', () => { 
             const savedName = localStorage.getItem('studentName_mps');
             const savedRoll = localStorage.getItem('studentRoll_mps');
-            if (savedName) {
-                document.getElementById('student-name').value = savedName;
-            }
-            if (savedRoll) {
-                document.getElementById('student-roll').value = savedRoll;
-            }pMO.style.display = 'flex'; });
+            if (savedName) document.getElementById('student-name').value = savedName;
+            if (savedRoll) document.getElementById('student-roll').value = savedRoll;
+            pMO.style.display = 'flex'; 
+        });
+
         document.getElementById('cancel-print').addEventListener('click', () => { pMO.style.display = 'none'; });
         
         document.getElementById('confirm-print').addEventListener('click', () => {
-            const name = document.getElementById('student-name').value;
-            const rollNo = document.getElementById('student-roll').value;
+            const name = document.getElementById('student-name').value.trim();
+            const rollNo = document.getElementById('student-roll').value.trim();
             if (!name || !rollNo) { alert("नाम और रोल नंबर दोनों आवश्यक हैं।"); return; }
             
             localStorage.setItem('studentName_mps', name);
             localStorage.setItem('studentRoll_mps', rollNo);
             
-            // --- फायरबेस भेजने के लिए नया कोड जोड़ें ---
             let userId = localStorage.getItem(`userId_${currentShiftId}`);
-            if (userId) {
-                sendAnswerToFirebase(userId); // यह फंक्शन अब सही नाम और रोल नंबर भेजेगा
-            }
-            // --- नया कोड का अंत ---
+            if (userId) sendAnswerToFirebase(userId);
 
             pMO.style.display = 'none';
             triggerPaperPrint(name, rollNo);
         });
 
         document.getElementById('get-omr-btn').addEventListener('click', () => {
-            const name = document.getElementById('student-name').value;
-            const rollNo = document.getElementById('student-roll').value;
+            const name = document.getElementById('student-name').value.trim();
+            const rollNo = document.getElementById('student-roll').value.trim();
             if (!name || !rollNo) { alert("नाम और रोल नंबर दोनों आवश्यक हैं।"); return; }
 
             localStorage.setItem('studentName_mps', name);
             localStorage.setItem('studentRoll_mps', rollNo);
 
-            // --- फायरबेस भेजने के लिए नया कोड जोड़ें ---
             let userId = localStorage.getItem(`userId_${currentShiftId}`);
-            if (userId) {
-                sendAnswerToFirebase(userId); // यह फंक्शन अब सही नाम और रोल नंबर भेजेगा
-            }
-            // --- नया कोड का अंत ---
+            if (userId) sendAnswerToFirebase(userId);
 
             pMO.style.display = 'none';
             generateAndPrintOMR(name, rollNo);
         });
         document.getElementById('get-official-key-btn').addEventListener('click', () => {
-            const name = document.getElementById('student-name').value;
-            const rollNo = document.getElementById('student-roll').value;
+            const name = document.getElementById('student-name').value.trim();
+            const rollNo = document.getElementById('student-roll').value.trim();
             if(name) localStorage.setItem('studentName_mps', name);
             if(rollNo) localStorage.setItem('studentRoll_mps', rollNo);
              pMO.style.display = 'none';
