@@ -78,12 +78,16 @@
         .selector-container h2 { font-size: 2.25rem; font-weight: 700; margin: 0 0 0.5rem; }
         .selector-container .subtitle { font-size: 1.1rem; color: var(--font-color-light); margin-bottom: 3rem; }
         .shift-selector { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem; }
-        .shift-btn {
-            display: flex; align-items: center; gap: 1rem; padding: 1.25rem;
-            background-color: var(--surface-color); border: 1px solid var(--border-color);
-            border-radius: var(--border-radius); text-decoration: none; cursor: pointer;
-            text-align: left; box-shadow: var(--shadow-sm);
-            transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s;
+    .shift-btn {
+    display: flex; align-items: center; gap: 1rem; padding: 0.8rem 1.25rem;
+    background-color: var(--surface-color); border: 1px solid var(--border-color);
+    border-radius: 50px;
+    text-decoration: none; cursor: pointer;
+    text-align: left; box-shadow: var(--shadow-sm);
+    transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s;
+    position: relative; /* <-- यह लाइन जोड़ें */
+    overflow: hidden;   /* <-- और यह लाइन जोड़ें */
+}
         }
         .shift-btn:hover { transform: translateY(-5px); box-shadow: var(--shadow-md); }
         .shift-btn .icon {
@@ -519,6 +523,67 @@
             display: block; /* Show with JS */
         }
         /* ======================== END: NEW WARNING BOX CSS (ADDED) ========================= */
+        /* ======================== START: LEADERBOARD MOBILE STYLES ========================= */
+@media (max-width: 768px) {
+    /* Step 1: स्क्रीन को फुल-विड्थ बनाने के लिए बाहरी पैडिंग कम करें */
+    #shift-selector-page, .selector-container {
+        padding-left: 0.5rem;
+        padding-right: 0.5rem;
+    }
+
+    #leaderboard-section {
+        margin-top: 2rem;
+    }
+    
+    /* Step 2: टेबल के टेक्स्ट को छोटा और कॉम्पैक्ट करें */
+    #leaderboard-table th,
+    #leaderboard-table td {
+        padding: 0.5rem 0.25rem; /* ऊपर-नीचे और अगल-बगल की पैडिंग कम करें */
+        font-size: 0.7rem;      /* फ़ॉन्ट का साइज़ छोटा करें */
+        text-align: center;       /* टेक्स्ट को बीच में लाएं */
+        white-space: nowrap;      /* टेक्स्ट को एक लाइन में रखने की कोशिश करें */
+    }
+
+    /* नाम वाले कॉलम को लेफ्ट-अलाइंड रखें ताकि वह सही दिखे */
+    #leaderboard-table th:nth-child(2),
+    #leaderboard-table td:nth-child(2) {
+        text-align: left;
+        white-space: normal; /* नाम लंबा होने पर उसे अगली लाइन में भेजें */
+    }
+
+    /* Step 3: फिल्टर कंट्रोल को बेहतर बनाएं */
+    .leaderboard-controls {
+        flex-direction: column; /* कंट्रोल्स को एक के नीचे एक लाएं */
+        align-items: stretch;   /* कंट्रोल्स को पूरी चौड़ाई दें */
+        gap: 0.5rem;
+    }
+}
+/* ======================== END: LEADERBOARD MOBILE STYLES ========================= */
+        /* ======================== START: SHIFT BUTTON BORDER ANIMATION ========================= */
+.shift-btn::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 150%; /* बॉक्स से बड़ा ताकि घूम सके */
+    height: 300%; /* बॉक्स से बड़ा ताकि घूम सके */
+    z-index: -1; /* बटन के टेक्स्ट के पीछे रखने के लिए */
+    background: conic-gradient(
+        var(--primary-color) 20deg, 
+        transparent 120deg
+    );
+    animation: rotate-border 4s linear infinite;
+}
+
+@keyframes rotate-border {
+    0% {
+        transform: translate(-50%, -50%) rotate(0deg);
+    }
+    100% {
+        transform: translate(-50%, -50%) rotate(360deg);
+    }
+}
+/* ======================== END: SHIFT BUTTON BORDER ANIMATION ========================= */
     </style>
     
 </head>
@@ -596,23 +661,25 @@
                     <a href="https://t.me/Dreamlinkmp" target="_blank" class="creator-link" style="color: blue; text-decoration: underline;">MP Salodiya</a>
                 </p>
             </div>
-            
-            <div class="features-box" style="margin-top: 2rem;">
-                <h4>लीडरबोर्ड</h4>
-                <div class="leaderboard-controls" style="margin-bottom: 1rem; display: flex; gap: 1rem; align-items: center; flex-wrap: wrap;">
-    <label for="leaderboard-shift-filter">शिफ़्ट के अनुसार फ़िल्टर करें:</label>
-    <select id="leaderboard-shift-filter" style="padding: 0.5rem; border-radius: 0.375rem; border: 1px solid var(--border-color);">
-        <option value="all">सभी शिफ़्ट</option>
-        <option value="shift1">1st Shift</option>
-        <option value="shift2">2nd Shift</option>
-        <option value="shift3">3rd Shift</option>
-        <option value="shift4">4th Shift</option>
-        <option value="shift5">5th Shift</option>
-        <option value="shift6">6th Shift</option>
-    </select>
-    <button id="view-leaderboard-btn" style="padding: 0.5rem 1rem; border-radius: 0.375rem; border: none; background-color: var(--primary-color); color: white; cursor: pointer;">लीडरबोर्ड देखें</button>
-</div>
-<div id="leaderboard-table-container" style="overflow-x: auto; display: none;">
+            <div id="leaderboard-section" style="margin-top: 3rem; width: 100%; text-align: left;">
+                
+                <h4 style="font-size: 1.2rem; font-weight: 700; color: var(--primary-dark); margin-top: 0; margin-bottom: 1.5rem; padding-bottom: 0.75rem; border-bottom: 1px solid var(--border-color);">लीडरबोर्ड</h4>
+
+                <div class="leaderboard-controls" style="margin-bottom: 1.5rem; display: flex; gap: 1rem; align-items: center; flex-wrap: wrap;">
+                    <label for="leaderboard-shift-filter">शिफ़्ट के अनुसार फ़िल्टर करें:</label>
+                    <select id="leaderboard-shift-filter" style="padding: 0.5rem; border-radius: 0.375rem; border: 1px solid var(--border-color);">
+                        <option value="all">सभी शिफ़्ट</option>
+                        <option value="shift1">1st Shift</option>
+                        <option value="shift2">2nd Shift</option>
+                        <option value="shift3">3rd Shift</option>
+                        <option value="shift4">4th Shift</option>
+                        <option value="shift5">5th Shift</option>
+                        <option value="shift6">6th Shift</option>
+                    </select>
+                    <button id="view-leaderboard-btn" style="padding: 0.5rem 1rem; border-radius: 0.375rem; border: none; background-color: var(--primary-color); color: white; cursor: pointer;">लीडरबोर्ड देखें</button>
+                </div>
+
+                <div id="leaderboard-table-container" style="overflow-x: auto; display: none; background-color: var(--surface-color); border: 1px solid var(--border-color); border-radius: var(--border-radius); box-shadow: var(--shadow-sm);">
                     <table id="leaderboard-table" style="width: 100%; border-collapse: collapse; text-align: left;">
                         <thead>
                             <tr>
@@ -626,13 +693,12 @@
                             </tr>
                         </thead>
                         <tbody id="leaderboard-body">
-                            </tbody>
+                        </tbody>
                     </table>
                     <p id="leaderboard-loading" style="text-align: center; padding: 1rem; display: none;">लोड हो रहा है...</p>
                 </div>
-            </div>
-
-        </div>
+            </div> 
+         </div>
     </div>
 
     <div id="question-paper-page">
@@ -779,7 +845,7 @@
         const leaderboardBody = document.getElementById('leaderboard-body');
         const leaderboardLoading = document.getElementById('leaderboard-loading');
 
-        async function fetchAndDisplayLeaderboard(shiftFilter = 'all') {
+       async function fetchAndDisplayLeaderboard(shiftFilter = 'all') {
             if (!db) return;
 
             leaderboardLoading.style.display = 'block';
@@ -807,20 +873,34 @@
                         }
                     });
                 }
+                
+                // START:  REQUIRED CHANGES
+                
+                // 1. उन यूजर्स को फ़िल्टर करें जिनके रॉ मार्क्स 40 और 180 के बीच हैं
+                const filteredUsers = allUsers.filter(user => user.rawMarks >= 40 && user.rawMarks <= 180);
 
-                allUsers.sort((a, b) => b.rawMarks - a.rawMarks);
+                // 2. फ़िल्टर किए गए यूजर्स को रॉ मार्क्स के अनुसार Sort करें
+                filteredUsers.sort((a, b) => b.rawMarks - a.rawMarks);
 
-                leaderboardBody.innerHTML = allUsers.map((user, index) => `
-                    <tr style="border-bottom: 1px solid var(--border-color);">
-                        <td style="padding: 0.75rem;">${index + 1}</td>
-                        <td style="padding: 0.75rem;">${user.name}</td>
-                        <td style="padding: 0.75rem; font-weight: bold;">${user.rawMarks.toFixed(2)}</td>
-                        <td style="padding: 0.75rem; color: var(--success-color);">${user.correct}</td>
-                        <td style="padding: 0.75rem; color: var(--danger-color);">${user.incorrect}</td>
-                        <td style="padding: 0.75rem;">${user.skipped}</td>
-                        <td style="padding: 0.75rem;">${user.shift.replace('shift', 'Shift ')}</td>
-                    </tr>
-                `).join('');
+                // 3. फ़िल्टर किए गए यूजर्स का उपयोग करके टेबल बनाएं और सिंपल स्टाइलिंग रखें
+                leaderboardBody.innerHTML = filteredUsers.map((user, index) => `
+    <tr style="border-bottom: 1px solid var(--border-color);">
+        <td style="padding: 0.75rem;">${index + 1}</td>
+        <td style="padding: 0.75rem;">${user.name}</td>
+        
+        <td style="padding: 0.75rem; font-weight: bold; color: black;">${user.rawMarks.toFixed(2)}</td>
+        
+        <td style="padding: 0.75rem; color: var(--success-color); font-weight: 500;">${user.correct}</td>
+        
+        <td style="padding: 0.75rem; color: var(--danger-color); font-weight: 500;">${user.incorrect}</td>
+        
+        <td style="padding: 0.75rem; color: blue; font-weight: 500;">${user.skipped}</td>
+        
+        <td style="padding: 0.75rem;">${user.shift.replace('shift', 'Shift ')}</td>
+    </tr>
+`).join('');
+                
+                // END: REQUIRED CHANGES
 
             } catch (error) {
                 console.error("लीडरबोर्ड डेटा लाने में त्रुटि: ", error);
