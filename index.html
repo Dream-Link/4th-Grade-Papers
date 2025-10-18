@@ -655,10 +655,10 @@
                 <a class="shift-btn" data-shift="shift6"><div class="icon"><i class="fas fa-file-alt"></i></div><div class="text">6th Shift 21.09.2025</div></a>
             </div>
             <div class="selector-footer">
-                <p>Last Update: 03.10.2025 22:02</p>
-                <p style="text-align:center; color: red;"> सभी प्रश्नों के उत्तर संभावित उत्तर कुंजी के आधार पर हैं, Official Answer Key जारी होने पर UPDATE कर दी जाएगी।</p>
+                <p>Last Update: 18.10.2025 07:00</p>
+                <p style="text-align:center; color: red;"> सभी प्रश्नों के उत्तर बोर्ड द्वारा जारी प्राथमिक उत्तर कुंजी के आधार पर हैं, अपने वास्तविक पेपर से मिलान कर पुष्टि भी जरूर करे </p>
                 <p>
-                    <a href="https://t.me/Dreamlinkmp" target="_blank" class="creator-link" style="color: blue; text-decoration: underline;">MP Salodiya</a>
+                    <a href="https://t.me/Dreamlinkmp" target="_blank" class="creator-link" style="color: blue; text-decoration: underline;">Join Telegram @ MP Salodiya</a>
                 </p>
             </div>
             <div id="leaderboard-section" style="margin-top: 3rem; width: 100%; text-align: left;">
@@ -681,21 +681,25 @@
 
                 <div id="leaderboard-table-container" style="overflow-x: auto; display: none; background-color: var(--surface-color); border: 1px solid var(--border-color); border-radius: var(--border-radius); box-shadow: var(--shadow-sm);">
                     <table id="leaderboard-table" style="width: 100%; border-collapse: collapse; text-align: left;">
-                        <thead>
-                            <tr>
-                                <th style="padding: 0.75rem; border-bottom: 2px solid var(--border-color);">रैंक</th>
-                                <th style="padding: 0.75rem; border-bottom: 2px solid var(--border-color);">नाम</th>
-                                <th style="padding: 0.75rem; border-bottom: 2px solid var(--border-color);">रॉ मार्क्स</th>
-                                <th style="padding: 0.75rem; border-bottom: 2px solid var(--border-color);">सही</th>
-                                <th style="padding: 0.75rem; border-bottom: 2px solid var(--border-color);">गलत</th>
-                                <th style="padding: 0.75rem; border-bottom: 2px solid var(--border-color);">छोड़े गए (E)</th>
-                                <th style="padding: 0.75rem; border-bottom: 2px solid var(--border-color);">शिफ़्ट</th>
-                            </tr>
-                        </thead>
-                        <tbody id="leaderboard-body">
-                        </tbody>
-                    </table>
-                    <p id="leaderboard-loading" style="text-align: center; padding: 1rem; display: none;">लोड हो रहा है...</p>
+    <thead>
+        <tr>
+            <th style="padding: 0.75rem; border-bottom: 2px solid var(--border-color);">रैंक</th>
+            <th style="padding: 0.75rem; border-bottom: 2px solid var(--border-color);">नाम</th>
+            <th style="padding: 0.75rem; border-bottom: 2px solid var(--border-color);">जेंडर</th>
+            <th style="padding: 0.75rem; border-bottom: 2px solid var(--border-color);">एरिया</th>
+            <th style="padding: 0.75rem; border-bottom: 2px solid var(--border-color);">कैटेगरी</th>
+            <th style="padding: 0.75rem; border-bottom: 2px solid var(--border-color);">विशेष</th>
+            <th style="padding: 0.75rem; border-bottom: 2px solid var(--border-color);">रॉ मार्क्स</th>
+            <th style="padding: 0.75rem; border-bottom: 2px solid var(--border-color);">सही</th>
+            <th style="padding: 0.75rem; border-bottom: 2px solid var(--border-color);">गलत</th>
+            <th style="padding: 0.75rem; border-bottom: 2px solid var(--border-color);">छोड़े गए</th>
+            <th style="padding: 0.75rem; border-bottom: 2px solid var(--border-color);">शिफ़्ट</th>
+        </tr>
+    </thead>
+    <tbody id="leaderboard-body">
+    </tbody>
+</table>
+                    <p id="leaderboard-loading" style="text-align: center; padding: 1rem; display: none;">Loading...</p>
                 </div>
             </div> 
          </div>
@@ -724,7 +728,7 @@
                 <div id="right-que-item" class="summary-item"><div id="right-que-value" class="count">0.00</div><div class="label">Final R.Q.</div></div>
                 <div id="raw-marks-item" class="summary-item"><div id="raw-marks-value" class="count">0.00</div><div class="label">RAW Marks</div></div>
                 <div id="unattempted-warning-item" class="summary-item">
-                    <span>अभी तक <strong id="unattempted-count">0</strong> प्रश्नों में कोई भी ऑप्शन टिक नहीं है।</span>
+                    <span>अभी तक <strong id="unattempted-count">0</strong>वैध प्रश्नों में कोई भी ऑप्शन टिक नहीं है।</span>
                 </div>
                 </div>
         </div>
@@ -759,17 +763,66 @@
     </div>
     
     <div id="user-info-modal-overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.7); z-index: 2001; align-items: center; justify-content: center; padding: 1rem;">
-        <div id="user-info-modal" style="background: var(--surface-color); color: var(--font-color); padding: 2rem; border-radius: var(--border-radius); box-shadow: var(--shadow-md); width: 100%; max-width: 400px;">
-            <h2 style="margin-top: 0;">Welcome!</h2>
-            <p style="margin: 0 0 1.5rem 0; color: var(--font-color-light);">कृपया शुरू करने से पहले अपना नाम और रोल नंबर दर्ज करें। यह नाम लीडरबोर्ड & प्रिन्ट मे दिखाई देगा </p>
-            <label for="initial-student-name" style="margin: 0 0 0.5rem 0; display: block; font-weight: 500;">Name:</label>
-            <input type="text" id="initial-student-name" placeholder="Your Name" style="width: 100%; padding: 0.75rem; border: 1px solid var(--border-color); border-radius: 0.375rem; font-size: 1rem; font-family: inherit; margin-bottom: 1rem; background-color: var(--bg-color); color: var(--font-color);">
-            <label for="initial-student-roll" style="margin: 0 0 0.5rem 0; display: block; font-weight: 500;">Roll No.:</label>
-            <input type="text" id="initial-student-roll" placeholder="Your Roll No." style="width: 100%; padding: 0.75rem; border: 1px solid var(--border-color); border-radius: 0.375rem; font-size: 1rem; font-family: inherit; margin-bottom: 1rem; background-color: var(--bg-color); color: var(--font-color);">
-            <div style="display: flex; justify-content: flex-end; gap: 0.75rem; margin-top: 1.5rem;">
-                <button id="start-test-btn" style="padding: 0.6rem 1.2rem; border-radius: 0.375rem; border: none; cursor: pointer; font-weight: 600; font-size: 0.9rem; background-color: var(--primary-color); color: white;">चेक करना शुरू करे</button>
-            </div>
+        <div id="user-info-modal" style="background: var(--surface-color); color: var(--font-color); padding: 2rem; border-radius: var(--border-radius); box-shadow: var(--shadow-md); width: 100%; max-width: 450px; max-height: 90vh; overflow-y: auto;">
+    <h2 style="margin-top: 0;">Welcome!</h2>
+    <p style="margin: 0 0 1.5rem 0; color: var(--font-color-light);">Roll No. के अलावा सभी जानकारी लीडरबोर्ड मे दिखाई देगी </p>
+    
+    <label for="initial-student-name" style="margin: 0 0 0.5rem 0; display: block; font-weight: 500;">Name:</label>
+    <input type="text" id="initial-student-name" placeholder="Your Name" style="width: 100%; padding: 0.75rem; border: 1px solid var(--border-color); border-radius: 0.375rem; font-size: 1rem; font-family: inherit; margin-bottom: 1rem; background-color: var(--bg-color); color: var(--font-color);">
+    
+    <label for="initial-student-roll" style="margin: 0 0 0.5rem 0; display: block; font-weight: 500;">Roll No.:</label>
+    <input type="text" id="initial-student-roll" placeholder="Your Roll No." style="width: 100%; padding: 0.75rem; border: 1px solid var(--border-color); border-radius: 0.375rem; font-size: 1rem; font-family: inherit; margin-bottom: 1rem; background-color: var(--bg-color); color: var(--font-color);">
+    
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+        <div>
+            <label for="initial-student-gender" style="margin: 0 0 0.5rem 0; display: block; font-weight: 500;">Gender:</label>
+            <select id="initial-student-gender" style="width: 100%; padding: 0.75rem; border: 1px solid var(--border-color); border-radius: 0.375rem; font-size: 1rem; font-family: inherit; background-color: var(--bg-color); color: var(--font-color);">
+                <option value="">-- Select --</option>
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+                <option value="Other">Other</option>
+            </select>
         </div>
+        <div>
+            <label for="initial-student-area" style="margin: 0 0 0.5rem 0; display: block; font-weight: 500;">Area:</label>
+            <select id="initial-student-area" style="width: 100%; padding: 0.75rem; border: 1px solid var(--border-color); border-radius: 0.375rem; font-size: 1rem; font-family: inherit; background-color: var(--bg-color); color: var(--font-color);">
+                <option value="">-- Select --</option>
+                <option value="NTSP">Non-TSP</option>
+                <option value="TSP">TSP</option>
+            </select>
+        </div>
+    </div>
+    
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+        <div>
+            <label for="initial-student-category" style="margin: 0 0 0.5rem 0; display: block; font-weight: 500;">Category:</label>
+            <select id="initial-student-category" style="width: 100%; padding: 0.75rem; border: 1px solid var(--border-color); border-radius: 0.375rem; font-size: 1rem; font-family: inherit; background-color: var(--bg-color); color: var(--font-color);">
+                <option value="">-- Select --</option>
+                <option value="GEN">GEN</option>
+                <option value="EWS">EWS</option>
+                <option value="OBC">OBC</option>
+                <option value="MBC">MBC</option>
+                <option value="SC">SC</option>
+                <option value="ST">ST</option>
+                <option value="SAH">SAH</option>
+            </select>
+        </div>
+        <div>
+            <label for="initial-student-special" style="margin: 0 0 0.5rem 0; display: block; font-weight: 500;">Special Category:</label>
+            <select id="initial-student-special" style="width: 100%; padding: 0.75rem; border: 1px solid var(--border-color); border-radius: 0.375rem; font-size: 1rem; font-family: inherit; background-color: var(--bg-color); color: var(--font-color);">
+                <option value="">-- None --</option>
+                <option value="Widow">Widow</option>
+                <option value="Divorcee">Divorcee</option>
+                <option value="Ex-Serviceman">Ex-Serviceman</option>
+                <option value="Sports Person">Sports Person</option>
+            </select>
+        </div>
+    </div>
+    
+    <div style="display: flex; justify-content: flex-end; gap: 0.75rem; margin-top: 1.5rem;">
+        <button id="start-test-btn" style="padding: 0.6rem 1.2rem; border-radius: 0.375rem; border: none; cursor: pointer; font-weight: 600; font-size: 0.9rem; background-color: var(--primary-color); color: white;">चेक करना शुरू करे</button>
+          </div>
+       </div>
     </div>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
@@ -777,13 +830,13 @@
    <script>
     // START: FIREBASE CONFIG (ADDED)
     const firebaseConfig = {
-      apiKey: "AIzaSyCm3JQ_hvjhwpCZsHFYdgSr3Fudu-K1ezU",
-      authDomain: "myexamanalyzer.firebaseapp.com",
-       projectId: "myexamanalyzer",
-   storageBucket: "myexamanalyzer.firebasestorage.app",
-  messagingSenderId: "1001576173103",
-           appId: "1:1001576173103:web:55b5052cb8169370c400da"
-    };
+  apiKey: "AIzaSyBfL_owhzOEZPvCCAeuT55axrIQxsf1gqQ",
+  authDomain: "th-grade-official.firebaseapp.com",
+  projectId: "th-grade-official",
+  storageBucket: "th-grade-official.firebasestorage.app",
+  messagingSenderId: "327380792213",
+  appId: "1:327380792213:web:7c9f5f383993f885cfbc9c"
+};
 
     // Initialize Firebase
     firebase.initializeApp(firebaseConfig);
@@ -845,7 +898,7 @@
         const leaderboardBody = document.getElementById('leaderboard-body');
         const leaderboardLoading = document.getElementById('leaderboard-loading');
 
-      async function fetchAndDisplayLeaderboard(shiftFilter = 'all') {
+    async function fetchAndDisplayLeaderboard(shiftFilter = 'all') {
             if (!db) return;
 
             leaderboardLoading.style.display = 'block';
@@ -867,11 +920,15 @@
                             const skipped = parseInt(userData.summary.skipped) || 0;
                             const validQuestions = parseInt(userData.summary.validQuestions) || 0;
 
-                            // ======================= START: REQUIRED CHANGE =======================
-                            // यहाँ हमने यह सुनिश्चित किया है कि validQuestions 0 से ज़्यादा हो।
                             if (validQuestions > 0 && (correct + incorrect + skipped) === validQuestions) {
                                 allUsers.push({
-                                    name: userData.name || 'Not Provided',
+                                    // ===== बदलाव 1: यहाँ नई जानकारी जोड़ी गई है =====
+                                    name: userData.name || 'N/A',
+                                    gender: userData.gender || 'N/A',
+                                    area: userData.area || 'N/A',
+                                    category: userData.category || 'N/A',
+                                    specialCategory: userData.specialCategory || '-',
+                                    // ===============================================
                                     rawMarks: parseFloat(userData.summary.rawMarks) || 0,
                                     correct: correct,
                                     incorrect: incorrect,
@@ -879,33 +936,36 @@
                                     shift: shiftId
                                 });
                             }
-                            // ======================== END: REQUIRED CHANGE ========================
                         }
                     });
                 }
                 
-                // उन यूजर्स को फ़िल्टर करें जिनके रॉ मार्क्स 180 या उससे कम हैं।
                 const filteredUsers = allUsers.filter(user => user.rawMarks <= 180);
-
-                // फ़िल्टर किए गए यूजर्स को रॉ मार्क्स के अनुसार Sort करें
                 filteredUsers.sort((a, b) => b.rawMarks - a.rawMarks);
 
-                // फ़िल्टर किए गए यूजर्स का उपयोग करके टेबल बनाएं
+                // ===== बदलाव 2: यहाँ टेबल बनाने वाले HTML में नए कॉलम (<td>) जोड़े गए हैं =====
                 leaderboardBody.innerHTML = filteredUsers.map((user, index) => `
     <tr style="border-bottom: 1px solid var(--border-color);">
         <td style="padding: 0.75rem;">${index + 1}</td>
         <td style="padding: 0.75rem;">${user.name}</td>
+        
+        <td style="padding: 0.75rem;">${user.gender}</td>
+        <td style="padding: 0.75rem;">${user.area}</td>
+        <td style="padding: 0.75rem;">${user.category}</td>
+        <td style="padding: 0.75rem;">${user.specialCategory}</td>
+        
         <td style="padding: 0.75rem; font-weight: bold; color: black;">${user.rawMarks.toFixed(2)}</td>
-        <td style="padding: 0.75rem; color: var(--success-color); font-weight: 500;">${user.correct}</td>
-        <td style="padding: 0.75rem; color: var(--danger-color); font-weight: 500;">${user.incorrect}</td>
-        <td style="padding: 0.75rem; color: blue; font-weight: 500;">${user.skipped}</td>
-        <td style="padding: 0.75rem;">${user.shift.replace('shift', 'Shift ')}</td>
+        <td style="padding: 0.75rem; color: var(--success-color);">${user.correct}</td>
+        <td style="padding: 0.75rem; color: var(--danger-color);">${user.incorrect}</td>
+        <td style="padding: 0.75rem; color: blue;">${user.skipped}</td>
+        <td style="padding: 0.75rem;">${user.shift.replace('shift', 'S')}</td>
     </tr>
 `).join('');
+                // ===========================================================================
 
             } catch (error) {
                 console.error("लीडरबोर्ड डेटा लाने में त्रुटि: ", error);
-                leaderboardBody.innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 1rem; color: var(--danger-color);">डेटा लोड करने में त्रुटि हुई।</td></tr>';
+                leaderboardBody.innerHTML = `<tr><td colspan="11" style="text-align: center; padding: 1rem; color: var(--danger-color);">डेटा लोड करने में त्रुटि हुई।</td></tr>`;
             } finally {
                 leaderboardLoading.style.display = 'none';
             }
@@ -929,7 +989,7 @@
         // --- लीडरबोर्ड कोड का अंत ---
 
         if (typeof allShiftData === 'undefined') {
-            document.body.innerHTML = '<h1 style="text-align:center; padding: 2rem; color: red;">Please Wait... Official उत्तर कुंजी अपडेट का कार्य चल रहा है ...</h1>';
+            document.body.innerHTML = '<h1 style="text-align:center; padding: 2rem; color: red;">Please Wait... अंतिम उत्तर कुंजी अपडेट की जा रही है।</h1>';
             return;
         }
 
@@ -942,23 +1002,33 @@
         const resetBtn = document.getElementById('reset-answers-btn');
         const questionsContainer = document.getElementById('questions-container');
 
-        // --- START: LOGIC FOR NEW USER INFO MODAL ---
+   // --- START: LOGIC FOR NEW USER INFO MODAL ---
         const startTestBtn = document.getElementById('start-test-btn');
         if (startTestBtn) {
             startTestBtn.addEventListener('click', () => {
+                // सभी इनपुट और ड्रॉपडाउन को सेलेक्ट करें
                 const nameInput = document.getElementById('initial-student-name');
                 const rollInput = document.getElementById('initial-student-roll');
+                const genderSelect = document.getElementById('initial-student-gender');
+                const areaSelect = document.getElementById('initial-student-area');
+                const categorySelect = document.getElementById('initial-student-category');
+                const specialSelect = document.getElementById('initial-student-special');
 
-                if (!nameInput.value.trim() || !rollInput.value.trim()) {
-                    alert("नाम और रोल नंबर दोनों आवश्यक हैं।");
-                    return;
+                // जांचें कि ज़रूरी फील्ड्स भरे गए हैं या नहीं (Special Category ज़रूरी नहीं है)
+                if (!nameInput.value.trim() || !rollInput.value.trim() || !genderSelect.value || !areaSelect.value || !categorySelect.value) {
+                    alert("कृपया नाम, रोल नंबर, जेंडर, एरिया और कैटेगरी की जानकारी भरें।");
+                    return; // अगर जानकारी अधूरी है तो आगे न बढ़ें
                 }
 
-                // Save to localStorage
+                // सभी जानकारी को localStorage में सेव करें
                 localStorage.setItem('studentName_mps', nameInput.value.trim());
                 localStorage.setItem('studentRoll_mps', rollInput.value.trim());
+                localStorage.setItem('studentGender_mps', genderSelect.value);
+                localStorage.setItem('studentArea_mps', areaSelect.value);
+                localStorage.setItem('studentCategory_mps', categorySelect.value);
+                localStorage.setItem('studentSpecial_mps', specialSelect.value); // यह खाली भी हो सकता है
 
-                // Now load the paper
+                // अब पेपर लोड करने के लिए आगे बढ़ें
                 proceedToLoadPaper(currentShiftId, true);
             });
         }
@@ -988,23 +1058,32 @@
 
         // ======================= START: MODIFIED loadShift LOGIC =======================
         function loadShift(shiftId, shouldPushState = true) {
-            currentShiftId = shiftId; // Set shiftId immediately
+            currentShiftId = shiftId; 
 
-            // Check if name and roll are already in localStorage
+            // localStorage से सभी ज़रूरी जानकारी की जाँच करें
             const savedName = localStorage.getItem('studentName_mps');
             const savedRoll = localStorage.getItem('studentRoll_mps');
+            const savedGender = localStorage.getItem('studentGender_mps');
+            const savedArea = localStorage.getItem('studentArea_mps');
+            const savedCategory = localStorage.getItem('studentCategory_mps');
 
-            if (!savedName || !savedRoll) {
-                // If not found, show the new info modal
+            // अगर कोई भी ज़रूरी जानकारी मौजूद नहीं है, तो पॉपअप दिखाएं
+            if (!savedName || !savedRoll || !savedGender || !savedArea || !savedCategory) {
+                // पॉपअप के फील्ड्स में पुरानी जानकारी (अगर कोई है) भरें
                 document.getElementById('initial-student-name').value = savedName || '';
                 document.getElementById('initial-student-roll').value = savedRoll || '';
+                document.getElementById('initial-student-gender').value = savedGender || '';
+                document.getElementById('initial-student-area').value = savedArea || '';
+                document.getElementById('initial-student-category').value = savedCategory || '';
+                document.getElementById('initial-student-special').value = localStorage.getItem('studentSpecial_mps') || '';
+
+                // पॉपअप दिखाएं
                 document.getElementById('user-info-modal-overlay').style.display = 'flex';
             } else {
-                // If found, proceed to load the paper directly
+                // अगर सभी जानकारी मौजूद है, तो सीधे पेपर लोड करें
                 proceedToLoadPaper(shiftId, shouldPushState);
             }
         }
-
         function proceedToLoadPaper(shiftId, shouldPushState = true) {
             document.getElementById('user-info-modal-overlay').style.display = 'none';
             shiftSelectorPage.style.display = 'none';
@@ -1050,7 +1129,7 @@
             localStorage.setItem(`currentSeries_${currentShiftId}`, currentSeries);
         }
 
-        // ======================= START: MODIFIED Firebase FUNCTION =======================
+       // ======================= START: MODIFIED Firebase FUNCTION =======================
         function sendAnswerToFirebase(userId) {
             if (!currentShiftId || !db) return;
 
@@ -1064,20 +1143,31 @@
                 validQuestions: document.getElementById('total-count').textContent
             };
             
-            // MODIFIED: Always get name/roll from localStorage for reliability, especially on page exit.
+            // localStorage से सभी जानकारी प्राप्त करें
             const finalName = localStorage.getItem('studentName_mps') || 'Not Provided';
             const finalRollNo = localStorage.getItem('studentRoll_mps') || 'Not Provided';
+            const finalGender = localStorage.getItem('studentGender_mps') || 'Not Provided';
+            const finalArea = localStorage.getItem('studentArea_mps') || 'Not Provided';
+            const finalCategory = localStorage.getItem('studentCategory_mps') || 'Not Provided';
+            const finalSpecial = localStorage.getItem('studentSpecial_mps') || 'None'; // अगर खाली है तो 'None'
 
             db.collection('userResponses')
               .doc(currentShiftId)
               .collection('users')
               .doc(userId)
               .set({
+                  // पुरानी जानकारी
                   summary: summaryData,
                   series: currentSeries,
                   rollNo: finalRollNo,
                   name: finalName,
-                  lastUpdated: new Date()
+                  lastUpdated: new Date(),
+                  
+                  // यहाँ से नई जानकारी जोड़ी गई है
+                  gender: finalGender,
+                  area: finalArea,
+                  category: finalCategory,
+                  specialCategory: finalSpecial
               }, { merge: true })
               .then(() => {
                   console.log(`Data for User: ${userId} successfully saved to Firebase!`);
@@ -1531,7 +1621,7 @@
         function generateAndPrintOfficialKey() {
             const container = document.getElementById('official-key-print-container');
             let html = `<div class="official-key-header">
-                    <h1>चतुर्थ श्रेणी कर्मचारी संभावित उत्तर कुंजी</h1>
+                    <h1>चतुर्थ श्रेणी कर्मचारी प्राथमिक उत्तर कुंजी</h1>
                     <p>${currentShiftData.title} | पेपर कोड: ${currentSeries}</p>
                 </div><div class="official-key-grid">`;
 
@@ -1557,7 +1647,7 @@
             }
 
             html += `</div>`;
-            html += `<div class="official-key-footer"><p>नोट - यह अभी संभावित उत्तर कुंजी है, बोर्ड द्वारा Official उत्तर कुंजी जारी होने पर UPDATE कर दी जाएगी </p></div>`;
+            html += `<div class="official-key-footer"><p>नोट - यह उत्तर कुंजी बोर्ड द्वारा जारी प्राथमिक उत्तर कुंजी के आधार पर Auto Generated है</p></div>`;
 
             container.innerHTML = html;
             openPrintWindow(container.innerHTML);
