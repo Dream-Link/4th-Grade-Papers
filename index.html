@@ -389,113 +389,7 @@
                 text-align: center; font-size: 9pt; color: #555 !important;
             }
         }
-        /* ======================= START: NEW USER RANK BOX STYLES ======================= */
-        #user-rank-grid {
-            display: grid;
-            grid-template-columns: 1.2fr 1fr 1.5fr; /* 3 कॉलम का लेआउट */
-            gap: 1.5rem;
-            align-items: stretch;
-        }
-
-        .rank-info-box, .rank-score-box, .rank-stat-box {
-            display: flex;
-            flex-direction: column;
-            gap: 0.75rem;
-            padding: 1rem;
-            border-radius: var(--border-radius);
-            background-color: var(--bg-color);
-            border: 1px solid var(--border-color);
-        }
         
-        /* Box 1: Info */
-        .rank-info-item {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            font-size: 0.9rem;
-        }
-        .rank-info-item i {
-            font-size: 0.9rem;
-            color: var(--primary-color);
-            width: 30px;
-            height: 30px;
-            display: grid;
-            place-items: center;
-            background-color: var(--primary-light);
-            border-radius: 50%;
-            flex-shrink: 0;
-        }
-        .rank-info-item .label {
-            font-size: 0.7rem;
-            color: var(--font-color-light);
-            text-transform: uppercase;
-            display: block;
-            line-height: 1.2;
-        }
-        .rank-info-item .value {
-            font-weight: 600;
-            color: var(--font-color);
-            line-height: 1.2;
-        }
-
-        /* Box 2: Score */
-        .rank-score-box {
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            background-color: var(--primary-light);
-            border-color: var(--primary-color);
-            gap: 0.5rem;
-        }
-        .rank-score-box .label {
-            font-size: 0.8rem;
-            font-weight: 500;
-            color: var(--primary-dark);
-        }
-        .rank-score-box .score-value {
-            font-size: 2.25rem;
-            font-weight: 700;
-            color: var(--primary-dark);
-            line-height: 1.1;
-        }
-        .rank-score-details {
-            display: flex;
-            gap: 1rem;
-            font-size: 0.9rem;
-            font-weight: 600;
-        }
-        .rank-score-details div { display: flex; align-items: center; gap: 0.25rem; }
-        .rank-score-details .fa-check { color: var(--success-color); }
-        .rank-score-details .fa-times { color: var(--danger-color); }
-        .rank-score-details .fa-minus { color: var(--secondary-color); }
-
-        /* Box 3: Stats */
-        .rank-stat-box {
-            gap: 0.5rem;
-            justify-content: center;
-        }
-        .rank-stat-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: baseline;
-            font-size: 0.9rem;
-            padding: 0.25rem 0;
-        }
-        .rank-stat-item .label {
-            font-weight: 500;
-            color: var(--font-color-light);
-        }
-        .rank-stat-item .label i {
-            font-size: 0.8rem;
-            margin-right: 0.3rem;
-            color: var(--font-color-light);
-        }
-        .rank-stat-item .value {
-            font-weight: 700;
-            font-size: 1rem;
-            color: var(--font-color);
-        }
-        /* ======================== END: NEW USER RANK BOX STYLES ======================== */
         /* ======================= START: THEME SELECTOR CSS ======================= */
         .theme-selector {
             position: absolute;
@@ -629,7 +523,7 @@
             display: block; /* Show with JS */
         }
         /* ======================== END: NEW WARNING BOX CSS (ADDED) ========================= */
-       /* ======================== START: LEADERBOARD MOBILE STYLES ========================= */
+        /* ======================== START: LEADERBOARD MOBILE STYLES ========================= */
 @media (max-width: 768px) {
     /* Step 1: स्क्रीन को फुल-विड्थ बनाने के लिए बाहरी पैडिंग कम करें */
     #shift-selector-page, .selector-container {
@@ -641,55 +535,6 @@
         margin-top: 2rem;
     }
     
-   /* --- यह कोड user rank box को मोबाइल पर बेहतर बनाता है (NEW) --- */
-    #user-rank-highlight {
-        padding: 1rem;
-    }
-    #user-rank-highlight h4 {
-        font-size: 1.1rem;
-        text-align: center;
-    }
-    #user-rank-grid {
-        grid-template-columns: 1fr; /* मोबाइल पर 1 कॉलम में दिखाएं */
-        gap: 1rem;
-    }
-    .rank-info-box {
-        gap: 0.5rem;
-        padding: 0.75rem;
-    }
-    .rank-info-item {
-        gap: 0.5rem;
-        font-size: 0.85rem;
-    }
-    .rank-info-item i {
-        width: 25px;
-        height: 25px;
-        font-size: 0.8rem;
-    }
-    .rank-score-box {
-        padding: 0.75rem;
-    }
-    .rank-score-box .score-value {
-        font-size: 1.75rem;
-    }
-    .rank-score-details {
-        font-size: 0.85rem;
-        gap: 0.75rem;
-    }
-    .rank-stat-box {
-        padding: 0.75rem;
-    }
-    .rank-stat-item {
-        font-size: 0.85rem;
-    }
-    .rank-stat-item .value {
-        font-size: 0.9rem;
-    }
-    #user-rank-note {
-        font-size: 0.7rem;
-    }
-    /* --- User rank box CSS end --- */
-
     /* Step 2: टेबल के टेक्स्ट को छोटा और कॉम्पैक्ट करें */
     #leaderboard-table th,
     #leaderboard-table td {
@@ -810,78 +655,16 @@
                 <a class="shift-btn" data-shift="shift6"><div class="icon"><i class="fas fa-file-alt"></i></div><div class="text">6th Shift 21.09.2025</div></a>
             </div>
             <div class="selector-footer">
-                <p>Last Update: 25.10.2025 07:30</p>
+                <p>Last Update: 18.10.2025 07:00</p>
                 <p style="text-align:center; color: red;"> सभी प्रश्नों के उत्तर बोर्ड द्वारा जारी प्राथमिक उत्तर कुंजी के आधार पर हैं, अपने वास्तविक पेपर से मिलान कर पुष्टि भी जरूर करे </p>
                 <p>
                     <a href="https://t.me/Dreamlinkmp" target="_blank" class="creator-link" style="color: blue; text-decoration: underline;">Join Telegram @ MP Salodiya</a>
                 </p>
             </div>
-          <div id="leaderboard-section" style="margin-top: 3rem; width: 100%; text-align: left;">
+            <div id="leaderboard-section" style="margin-top: 3rem; width: 100%; text-align: left;">
                 
                 <h4 style="font-size: 1.2rem; font-weight: 700; color: var(--primary-dark); margin-top: 0; margin-bottom: 1.5rem; padding-bottom: 0.75rem; border-bottom: 1px solid var(--border-color);">लीडरबोर्ड</h4>
 
-               <div id="user-rank-highlight" style="display: none; background-color: var(--surface-color); border: 1px solid var(--border-color); border-left: 5px solid var(--primary-color); border-radius: var(--border-radius); padding: 1.5rem; margin-bottom: 1.5rem; box-shadow: var(--shadow-md);">
-                    <h4 style="margin-top: 0; margin-bottom: 1.25rem; color: var(--primary-dark); font-size: 1.2rem; font-weight: 600;">आपकी रैंक</h4>
-                    
-                    <div id="user-rank-grid">
-                        <div class="rank-info-box">
-                            <div class="rank-info-item">
-                                <i class="fas fa-user"></i>
-                                <div>
-                                    <span class="label">नाम</span>
-                                    <span class="value" id="user-rank-name">N/A</span>
-                                </div>
-                            </div>
-                            <div class="rank-info-item">
-                                <i class="fas fa-map-marker-alt"></i>
-                                <div>
-                                    <span class="label">एरिया</span>
-                                    <span class="value" id="user-rank-area">N/A</span>
-                                </div>
-                            </div>
-                            <div class="rank-info-item">
-                                <i class="fas fa-tags"></i>
-                                <div>
-                                    <span class="label">कैटेगरी</span>
-                                    <span class="value" id="user-rank-category">N/A</span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="rank-score-box">
-                            <div classs="rank-score-main">
-                                <span class="label">रॉ मार्क्स</span>
-                                <span class="score-value" id="user-rank-marks">0.00</span>
-                            </div>
-                            <div class="rank-score-details">
-                                <div><i class="fas fa-check"></i> <span id="user-rank-correct">0</span></div>
-                                <div><i class="fas fa-times"></i> <span id="user-rank-incorrect">0</span></div>
-                                <div><i class="fas fa-minus"></i> <span id="user-rank-skipped">0</span></div>
-                            </div>
-                        </div>
-
-                        <div class="rank-stat-box">
-                            <div class="rank-stat-item">
-                                <span class="label"><i class="fas fa-trophy"></i> ओवरऑल रैंक</span>
-                                <span class="value"><span id="user-rank-overall">N/A</span> / <span id="user-rank-overall-total">N/A</span></span>
-                            </div>
-                            <div class="rank-stat-item">
-                                <span class="label"><i class="fas fa-medal"></i> ओवरऑल कैटेगरी रैंक</span>
-                                <span class="value"><span id="user-rank-overall-cat">N/A</span> (<span id="user-rank-overall-cat-label">...</span>)</span>
-                            </div>
-                            <div class="rank-stat-item">
-                                <span class="label"><i class="fas fa-trophy"></i> शिफ़्ट रैंक</span>
-                                <span class="value"><span id="user-rank-shift">N/A</span> (<span id="user-rank-shift-label">...</span>)</span>
-                            </div>
-                            <div class="rank-stat-item">
-                                <span class="label"><i class="fas fa-medal"></i> शिफ़्ट कैटेगरी रैंक</span>
-                                <span class="value"><span id="user-rank-shift-cat">N/A</span> (<span id="user-rank-shift-cat-label">...</span>)</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <p id="user-rank-note" style="font-size: 0.75rem; color: var(--font-color-light); margin: 1.25rem 0 0 0; text-align: center;">* यह केवल इस लीडरबोर्ड के DATA के अनुसार है।</p>
-                </div>
                 <div class="leaderboard-controls" style="margin-bottom: 1.5rem; display: flex; gap: 1rem; align-items: center; flex-wrap: wrap;">
                     <label for="leaderboard-shift-filter">शिफ़्ट के अनुसार फ़िल्टर करें:</label>
                     <select id="leaderboard-shift-filter" style="padding: 0.5rem; border-radius: 0.375rem; border: 1px solid var(--border-color);">
@@ -898,27 +681,27 @@
 
                 <div id="leaderboard-table-container" style="overflow-x: auto; display: none; background-color: var(--surface-color); border: 1px solid var(--border-color); border-radius: var(--border-radius); box-shadow: var(--shadow-sm);">
                     <table id="leaderboard-table" style="width: 100%; border-collapse: collapse; text-align: left;">
-                        <thead>
-                            <tr>
-                                <th style="padding: 0.75rem; border-bottom: 2px solid var(--border-color);">रैंक</th>
-                                <th style="padding: 0.75rem; border-bottom: 2px solid var(--border-color);">नाम</th>
-                                <th style="padding: 0.75rem; border-bottom: 2px solid var(--border-color);">जेंडर</th>
-                                <th style="padding: 0.75rem; border-bottom: 2px solid var(--border-color);">एरिया</th>
-                                <th style="padding: 0.75rem; border-bottom: 2px solid var(--border-color);">कैटेगरी</th>
-                                <th style="padding: 0.75rem; border-bottom: 2px solid var(--border-color);">विशेष</th>
-                                <th style="padding: 0.75rem; border-bottom: 2px solid var(--border-color);">रॉ मार्क्स</th>
-                                <th style="padding: 0.75rem; border-bottom: 2px solid var(--border-color);">सही</th>
-                                <th style="padding: 0.75rem; border-bottom: 2px solid var(--border-color);">गलत</th>
-                                <th style="padding: 0.75rem; border-bottom: 2px solid var(--border-color);">छोड़े गए</th>
-                                <th style="padding: 0.75rem; border-bottom: 2px solid var(--border-color);">शिफ़्ट</th>
-                            </tr>
-                        </thead>
-                        <tbody id="leaderboard-body">
-                        </tbody>
-                    </table>
+    <thead>
+        <tr>
+            <th style="padding: 0.75rem; border-bottom: 2px solid var(--border-color);">रैंक</th>
+            <th style="padding: 0.75rem; border-bottom: 2px solid var(--border-color);">नाम</th>
+            <th style="padding: 0.75rem; border-bottom: 2px solid var(--border-color);">जेंडर</th>
+            <th style="padding: 0.75rem; border-bottom: 2px solid var(--border-color);">एरिया</th>
+            <th style="padding: 0.75rem; border-bottom: 2px solid var(--border-color);">कैटेगरी</th>
+            <th style="padding: 0.75rem; border-bottom: 2px solid var(--border-color);">विशेष</th>
+            <th style="padding: 0.75rem; border-bottom: 2px solid var(--border-color);">रॉ मार्क्स</th>
+            <th style="padding: 0.75rem; border-bottom: 2px solid var(--border-color);">सही</th>
+            <th style="padding: 0.75rem; border-bottom: 2px solid var(--border-color);">गलत</th>
+            <th style="padding: 0.75rem; border-bottom: 2px solid var(--border-color);">छोड़े गए</th>
+            <th style="padding: 0.75rem; border-bottom: 2px solid var(--border-color);">शिफ़्ट</th>
+        </tr>
+    </thead>
+    <tbody id="leaderboard-body">
+    </tbody>
+</table>
                     <p id="leaderboard-loading" style="text-align: center; padding: 1rem; display: none;">Loading...</p>
                 </div>
-            </div>
+            </div> 
          </div>
     </div>
 
@@ -1063,36 +846,6 @@
     let currentShiftId = null, allQuestions = [], userAnswers = {}, currentSeries = '', activeFilter = 'all', currentShiftData = {};
 
     document.addEventListener('DOMContentLoaded', () => {
-        // ======================= START: NEW COUNT-UP ANIMATION FUNCTION =======================
-        function animateCountUp(element, endValue, duration = 1500, decimalPlaces = 0) {
-            if (!element) return;
-            
-            const startTime = performance.now();
-            const startValue = 0;
-            const range = endValue - startValue;
-
-            const step = (timestamp) => {
-                const currentTime = timestamp - startTime;
-                let progress = currentTime / duration;
-                if (progress > 1) progress = 1;
-
-                // Ease-out effect (धीमा होकर रुकेगा)
-                const easedProgress = 1 - Math.pow(1 - progress, 3);
-                
-                const currentValue = startValue + (range * easedProgress);
-                
-                element.textContent = currentValue.toFixed(decimalPlaces);
-
-                if (progress < 1) {
-                    requestAnimationFrame(step);
-                } else {
-                    element.textContent = endValue.toFixed(decimalPlaces); // सुनिश्चित करें कि अंत में सही मान हो
-                }
-            };
-
-            requestAnimationFrame(step);
-        }
-        // ======================== END: NEW COUNT-UP ANIMATION FUNCTION ========================
 
         // ======================= START: THEME SELECTOR JAVASCRIPT =======================
         const themeToggleBtn = document.getElementById('theme-toggle-btn');
@@ -1168,16 +921,13 @@
                             const validQuestions = parseInt(userData.summary.validQuestions) || 0;
 
                             if (validQuestions > 0 && (correct + incorrect + skipped) === validQuestions) {
-                               allUsers.push({
+                                allUsers.push({
                                     // ===== बदलाव 1: यहाँ नई जानकारी जोड़ी गई है =====
                                     name: userData.name || 'N/A',
                                     gender: userData.gender || 'N/A',
                                     area: userData.area || 'N/A',
                                     category: userData.category || 'N/A',
                                     specialCategory: userData.specialCategory || '-',
-                                    
-                                    rollNo: userData.rollNo || 'N/A', // <-- यह नई लाइन जोड़ें
-
                                     // ===============================================
                                     rawMarks: parseFloat(userData.summary.rawMarks) || 0,
                                     correct: correct,
@@ -1192,73 +942,7 @@
                 
                 const filteredUsers = allUsers.filter(user => user.rawMarks <= 180);
                 filteredUsers.sort((a, b) => b.rawMarks - a.rawMarks);
-// ======================= START: USER RANK CALCULATION (NEW) =======================
-                
-                const userRankBox = document.getElementById('user-rank-highlight');
-                userRankBox.style.display = 'none'; // पहले इसे छिपा दें
 
-                // यह लॉजिक केवल तभी चलाएं जब 'सभी शिफ़्ट' फ़िल्टर चुना गया हो
-                if (shiftFilter === 'all') {
-                    const currentUserRoll = localStorage.getItem('studentRoll_mps');
-
-                    if (currentUserRoll) {
-                        // 1. यूज़र को ढूँढें (सूची पहले से ही मार्क्स के आधार पर सॉर्ट है)
-                        const userIndex = filteredUsers.findIndex(user => user.rollNo === currentUserRoll);
-
-                        if (userIndex !== -1) {
-                            // 2. यूज़र का डेटा प्राप्त करें (यह उसका उच्चतम स्कोर वाला डेटा है)
-                            const userData = filteredUsers[userIndex];
-                            const userShift = userData.shift;
-                            const userCategory = userData.category;
-
-                            // 3. रैंक की गणना करें
-                            const overallRank = userIndex + 1;
-                            const totalOverall = filteredUsers.length;
-
-                            const categoryUsers = filteredUsers.filter(user => user.category === userCategory);
-                            const categoryIndex = categoryUsers.findIndex(user => user.rollNo === currentUserRoll);
-                            const overallCategoryRank = categoryIndex + 1;
-
-                            const shiftUsers = filteredUsers.filter(user => user.shift === userShift);
-                            const shiftIndex = shiftUsers.findIndex(user => user.rollNo === currentUserRoll);
-                            const shiftRank = shiftIndex + 1;
-                            const totalInShift = shiftUsers.length;
-
-                            const shiftCategoryUsers = shiftUsers.filter(user => user.category === userCategory);
-                            const shiftCategoryIndex = shiftCategoryUsers.findIndex(user => user.rollNo === currentUserRoll);
-                            const shiftCategoryRank = shiftCategoryIndex + 1;
-                            const totalInShiftCategory = shiftCategoryUsers.length;
-                            
-                            const shortShiftName = userShift.replace('shift', 'S');
-
-                            // 4. बॉक्स को दिखाएं (ताकि एनीमेशन दिख सके)
-                            userRankBox.style.display = 'block';
-
-                            // 5. बॉक्स में डेटा भरें (Text)
-                            document.getElementById('user-rank-name').textContent = userData.name;
-                            document.getElementById('user-rank-area').textContent = userData.area;
-                            document.getElementById('user-rank-category').textContent = userData.category;
-                            
-                            document.getElementById('user-rank-overall-total').textContent = totalOverall;
-                            document.getElementById('user-rank-overall-cat-label').textContent = `${userCategory} में`;
-                            document.getElementById('user-rank-shift-label').textContent = `${shortShiftName} (${totalInShift})`;
-                            document.getElementById('user-rank-shift-cat-label').textContent = `${userCategory} / ${shortShiftName} (${totalInShiftCategory})`;
-
-                            // 6. एनीमेशन के साथ नंबर भरें
-                            const animDuration = 1500; // 1.5 सेकंड
-                            animateCountUp(document.getElementById('user-rank-marks'), userData.rawMarks, animDuration, 2);
-                            animateCountUp(document.getElementById('user-rank-correct'), userData.correct, animDuration, 0);
-                            animateCountUp(document.getElementById('user-rank-incorrect'), userData.incorrect, animDuration, 0);
-                            animateCountUp(document.getElementById('user-rank-skipped'), userData.skipped, animDuration, 0);
-                            
-                            animateCountUp(document.getElementById('user-rank-overall'), overallRank, animDuration, 0);
-                            animateCountUp(document.getElementById('user-rank-overall-cat'), overallCategoryRank, animDuration, 0);
-                            animateCountUp(document.getElementById('user-rank-shift'), shiftRank, animDuration, 0);
-                            animateCountUp(document.getElementById('user-rank-shift-cat'), shiftCategoryRank, animDuration, 0);
-                        }
-                    }
-                }
-                // ======================== END: USER RANK CALCULATION (NEW) ========================
                 // ===== बदलाव 2: यहाँ टेबल बनाने वाले HTML में नए कॉलम (<td>) जोड़े गए हैं =====
                 leaderboardBody.innerHTML = filteredUsers.map((user, index) => `
     <tr style="border-bottom: 1px solid var(--border-color);">
