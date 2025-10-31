@@ -573,9 +573,7 @@
 
     /* Step 3: फिल्टर कंट्रोल को बेहतर बनाएं */
     .leaderboard-controls {
-        flex-direction: column; /* कंट्रोल्स को एक के नीचे एक लाएं */
-        align-items: stretch;   /* कंट्रोल्स को पूरी चौड़ाई दें */
-        gap: 0.5rem;
+               gap: 0.5rem;
     }
 }
 /* ======================== END: LEADERBOARD MOBILE STYLES ========================= */
@@ -1079,6 +1077,14 @@
             0% { background-position: 200% center; }
             100% { background-position: 0% center; }
         }
+        /* रिफ्रेश आइकन को घुमाने के लिए एनीमेशन */
+        @keyframes spin-animation {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .icon-spinning {
+            animation: spin-animation 1s linear infinite;
+        }
     </style>
     
 </head>
@@ -1161,18 +1167,64 @@
                 
                 <h4 style="font-size: 1.2rem; font-weight: 700; color: var(--primary-dark); margin-top: 0; margin-bottom: 1.5rem; padding-bottom: 0.75rem; border-bottom: 1px solid var(--border-color);">लीडरबोर्ड</h4>
 
-                <div class="leaderboard-controls" style="margin-bottom: 1.5rem; display: flex; gap: 1rem; align-items: center; flex-wrap: wrap;">
-                    <label for="leaderboard-shift-filter">शिफ़्ट के अनुसार फ़िल्टर करें:</label>
-                    <select id="leaderboard-shift-filter" style="padding: 0.5rem; border-radius: 0.375rem; border: 1px solid var(--border-color);">
-                        <option value="all">सभी शिफ़्ट</option>
-                        <option value="shift1">1st Shift</option>
-                        <option value="shift2">2nd Shift</option>
-                        <option value="shift3">3rd Shift</option>
-                        <option value="shift4">4th Shift</option>
-                        <option value="shift5">5th Shift</option>
-                        <option value="shift6">6th Shift</option>
-                    </select>
-                    <button id="view-leaderboard-btn" style="padding: 0.5rem 1rem; border-radius: 0.375rem; border: none; background-color: var(--primary-color); color: white; cursor: pointer;">लीडरबोर्ड देखें</button>
+         <div class="leaderboard-controls" style="margin-bottom: 1.5rem; display: flex; gap: 0.5rem; align-items: end; flex-wrap: nowrap;">
+                    
+                    <div style="flex-grow: 1; flex-basis: 0; min-width: 0;">
+                        <label for="leaderboard-shift-filter" style="font-weight: 500; font-size: 0.875rem; display: block; margin-bottom: 0.25rem;">शिफ़्ट:</label>
+                        <select id="leaderboard-shift-filter" style="width: 100%; padding: 0.5rem; border-radius: 0.375rem; border: 1px solid var(--border-color);">
+                            <option value="all">सभी शिफ़्ट</option>
+                            <option value="shift1">1st Shift</option>
+                            <option value="shift2">2nd Shift</option>
+                            <option value="shift3">3rd Shift</option>
+                            <option value="shift4">4th Shift</option>
+                            <option value="shift5">5th Shift</option>
+                            <option value="shift6">6th Shift</option>
+                        </select>
+                    </div>
+
+                    <div style="flex-grow: 1; flex-basis: 0; min-width: 0;">
+                        <label for="leaderboard-category-filter" style="font-weight: 500; font-size: 0.875rem; display: block; margin-bottom: 0.25rem;">कैटेगरी:</label>
+                        <select id="leaderboard-category-filter" style="width: 100%; padding: 0.5rem; border-radius: 0.375rem; border: 1px solid var(--border-color);">
+                            <option value="all">All</option>
+                            <option value="GEN">GEN</option>
+                            <option value="EWS">EWS</option>
+                            <option value="OBC">OBC</option>
+                            <option value="MBC">MBC</option>
+                            <option value="SC">SC</option>
+                            <option value="ST">ST</option>
+                            <option value="SAH">SAH</option>
+                        </select>
+                    </div>
+
+                    <div style="flex-grow: 1; flex-basis: 0; min-width: 0;">
+                        <label for="leaderboard-area-filter" style="font-weight: 500; font-size: 0.875rem; display: block; margin-bottom: 0.25rem;">एरिया:</label>
+                        <select id="leaderboard-area-filter" style="width: 100%; padding: 0.5rem; border-radius: 0.375rem; border: 1px solid var(--border-color);">
+                            <option value="all">All</option>
+                            <option value="NTSP">Non-TSP</option>
+                            <option value="TSP">TSP</option>
+                        </select>
+                    </div>
+
+                    <div style="display: flex; gap: 0.5rem; align-items: end; flex-shrink: 0;">
+                        <button id="view-leaderboard-btn" style="padding: 0.5rem 1rem; border-radius: 0.375rem; border: none; background-color: var(--primary-color); color: white; cursor: pointer; height: 38px;">लीडरबोर्ड देखें</button>
+                        
+                        <button id="refresh-leaderboard-btn" title="Refresh Data from Server" style="
+                            border-radius: 0.375rem; 
+                            border: 1px solid var(--border-color); 
+                            background-color: var(--surface-color); 
+                            color: var(--success-color); 
+                            cursor: pointer; 
+                            height: 38px; 
+                            width: 38px; 
+                            padding: 0; 
+                            font-size: 0.9rem;
+                            display: grid;
+                            place-items: center;
+                            transition: all 0.2s;
+                        ">
+                            <i class="fas fa-sync-alt"></i>
+                        </button>
+                    </div>
                 </div>
 
                 <div id="leaderboard-table-container" style="overflow-x: auto; display: none; background-color: var(--surface-color); border: 1px solid var(--border-color); border-radius: var(--border-radius); box-shadow: var(--shadow-sm);">
@@ -1374,6 +1426,7 @@
 
     let currentShiftId = null, allQuestions = [], userAnswers = {}, currentSeries = '', activeFilter = 'all', currentShiftData = {};
        let currentCardIndex = 0, totalCards = 0;
+       let allLeaderboardUsers = []; 
 
     document.addEventListener('DOMContentLoaded', () => {
 // --- START: CARD MODE MOUSE DRAG ---
@@ -1599,97 +1652,189 @@
     // ======================== END: NEW VIEW MODE DROPDOWN LOGIC =========================
         
         // --- लीडरबोर्ड के लिए नया कोड (UPDATED) ---
+     // --- लीडरबोर्ड के लिए नया कोड (UPDATED) ---
+      // --- लीडरबोर्ड के लिए नया कोड (UPDATED) ---
         const leaderboardShiftFilter = document.getElementById('leaderboard-shift-filter');
+        const leaderboardCategoryFilter = document.getElementById('leaderboard-category-filter'); 
+        const leaderboardAreaFilter = document.getElementById('leaderboard-area-filter'); 
         const viewLeaderboardBtn = document.getElementById('view-leaderboard-btn');
+        const refreshLeaderboardBtn = document.getElementById('refresh-leaderboard-btn'); // <-- यह नई लाइन जोड़ें
         const leaderboardTableContainer = document.getElementById('leaderboard-table-container');
         const leaderboardBody = document.getElementById('leaderboard-body');
         const leaderboardLoading = document.getElementById('leaderboard-loading');
+        
+   // नया फ़ंक्शन 1: सर्वर से डेटा लाकर सेव करने के लिए
+    async function fetchAndSaveLeaderboard() {
+        if (!db) return;
 
-    async function fetchAndDisplayLeaderboard(shiftFilter = 'all') {
-            if (!db) return;
+        leaderboardLoading.style.display = 'block';
+        leaderboardBody.innerHTML = '';
+        allLeaderboardUsers = []; // डेटा रीसेट करें
+        let allUsers = [];
 
-            leaderboardLoading.style.display = 'block';
-            leaderboardBody.innerHTML = '';
-            let allUsers = [];
+        try {
+            const shiftsToFetch = ['shift1', 'shift2', 'shift3', 'shift4', 'shift5', 'shift6'];
 
-            try {
-                const shiftsToFetch = shiftFilter === 'all' ?
-                    ['shift1', 'shift2', 'shift3', 'shift4', 'shift5', 'shift6'] :
-                    [shiftFilter];
+            for (const shiftId of shiftsToFetch) {
+               const usersSnapshot = await db.collection('userResponses').doc(shiftId).collection('users').get({ source: 'server' });
+                usersSnapshot.forEach(doc => {
+                    const userData = doc.data();
+                    if (userData.summary && userData.summary.rawMarks) {
+                        const correct = parseInt(userData.summary.correct) || 0;
+                        const incorrect = parseInt(userData.summary.incorrect) || 0;
+                        const skipped = parseInt(userData.summary.skipped) || 0;
+                        const validQuestions = parseInt(userData.summary.validQuestions) || 0;
 
-                for (const shiftId of shiftsToFetch) {
-                   const usersSnapshot = await db.collection('userResponses').doc(shiftId).collection('users').get({ source: 'server' });
-                    usersSnapshot.forEach(doc => {
-                        const userData = doc.data();
-                        if (userData.summary && userData.summary.rawMarks) {
-                            const correct = parseInt(userData.summary.correct) || 0;
-                            const incorrect = parseInt(userData.summary.incorrect) || 0;
-                            const skipped = parseInt(userData.summary.skipped) || 0;
-                            const validQuestions = parseInt(userData.summary.validQuestions) || 0;
-
-                            if (validQuestions > 0 && (correct + incorrect + skipped) === validQuestions) {
-                                allUsers.push({
-                                    // ===== बदलाव 1: यहाँ नई जानकारी जोड़ी गई है =====
-                                    name: userData.name || 'N/A',
-                                    gender: userData.gender || 'N/A',
-                                    area: userData.area || 'N/A',
-                                    category: userData.category || 'N/A',
-                                    specialCategory: userData.specialCategory || '-',
-                                    // ===============================================
-                                    rawMarks: parseFloat(userData.summary.rawMarks) || 0,
-                                    correct: correct,
-                                    incorrect: incorrect,
-                                    skipped: skipped,
-                                    shift: shiftId
-                                });
-                            }
+                        if (validQuestions > 0 && (correct + incorrect + skipped) === validQuestions) {
+                            allUsers.push({
+                                name: userData.name || 'N/A',
+                                gender: userData.gender || 'N/A',
+                                area: userData.area || 'N/A',
+                                category: userData.category || 'N/A',
+                                specialCategory: userData.specialCategory || '-',
+                                rawMarks: parseFloat(userData.summary.rawMarks) || 0,
+                                correct: correct,
+                                incorrect: incorrect,
+                                skipped: skipped,
+                                shift: shiftId
+                            });
                         }
-                    });
-                }
-                
-                const filteredUsers = allUsers.filter(user => user.rawMarks <= 180);
-                filteredUsers.sort((a, b) => b.rawMarks - a.rawMarks);
+                    }
+                });
+            }
+            
+            // ग्लोबल वेरिएबल और लोकल स्टोरेज में सेव करें
+            allLeaderboardUsers = allUsers.filter(user => user.rawMarks <= 180);
+            localStorage.setItem('leaderboardData_mps', JSON.stringify(allLeaderboardUsers));
+            
+            // अब फ़िल्टर किया हुआ डेटा दिखाएं
+            displayFilteredLeaderboard();
 
-                // ===== बदलाव 2: यहाँ टेबल बनाने वाले HTML में नए कॉलम (<td>) जोड़े गए हैं =====
-                leaderboardBody.innerHTML = filteredUsers.map((user, index) => `
-    <tr style="border-bottom: 1px solid var(--border-color);">
-        <td style="padding: 0.75rem;">${index + 1}</td>
-        <td style="padding: 0.75rem;">${user.name}</td>
-        
-        <td style="padding: 0.75rem;">${user.gender}</td>
-        <td style="padding: 0.75rem;">${user.area}</td>
-        <td style="padding: 0.75rem;">${user.category}</td>
-        <td style="padding: 0.75rem;">${user.specialCategory}</td>
-        
-        <td style="padding: 0.75rem; font-weight: bold; color: black;">${user.rawMarks.toFixed(2)}</td>
-        <td style="padding: 0.75rem; color: var(--success-color);">${user.correct}</td>
-        <td style="padding: 0.75rem; color: var(--danger-color);">${user.incorrect}</td>
-        <td style="padding: 0.75rem; color: blue;">${user.skipped}</td>
-        <td style="padding: 0.75rem;">${user.shift.replace('shift', 'S')}</td>
-    </tr>
-`).join('');
-                // ===========================================================================
+        } catch (error) {
+            console.error("लीडरबोर्ड डेटा लाने में त्रुटि: ", error);
+            leaderboardBody.innerHTML = `<tr><td colspan="11" style="text-align: center; padding: 1rem; color: var(--danger-color);">डेटा लोड करने में त्रुटि हुई।</td></tr>`;
+        } finally {
+            leaderboardLoading.style.display = 'none';
+        }
+    }
 
-            } catch (error) {
-                console.error("लीडरबोर्ड डेटा लाने में त्रुटि: ", error);
-                leaderboardBody.innerHTML = `<tr><td colspan="11" style="text-align: center; padding: 1rem; color: var(--danger-color);">डेटा लोड करने में त्रुटि हुई।</td></tr>`;
-            } finally {
-                leaderboardLoading.style.display = 'none';
+    // नया फ़ंक्शन 2: लोकल डेटा को फ़िल्टर करके दिखाने के लिए
+    function displayFilteredLeaderboard() {
+        if (allLeaderboardUsers.length === 0) return; // अगर डेटा नहीं है तो कुछ न करें
+
+        const shiftFilter = leaderboardShiftFilter.value;
+        const categoryFilter = leaderboardCategoryFilter.value;
+        const areaFilter = leaderboardAreaFilter.value;
+
+        // 1. फ़िल्टर करें
+        let filteredUsers = [...allLeaderboardUsers];
+
+        if (shiftFilter !== 'all') {
+            filteredUsers = filteredUsers.filter(user => user.shift === shiftFilter);
+        }
+        if (categoryFilter !== 'all') {
+            filteredUsers = filteredUsers.filter(user => user.category === categoryFilter);
+        }
+        if (areaFilter !== 'all') {
+            filteredUsers = filteredUsers.filter(user => user.area === areaFilter);
+        }
+
+        // 2. सॉर्ट करें
+        filteredUsers.sort((a, b) => b.rawMarks - a.rawMarks);
+
+        // 3. HTML में दिखाएं
+        leaderboardBody.innerHTML = filteredUsers.map((user, index) => `
+            <tr style="border-bottom: 1px solid var(--border-color);">
+                <td style="padding: 0.75rem;">${index + 1}</td>
+                <td style="padding: 0.75rem;">${user.name}</td>
+                <td style="padding: 0.75rem;">${user.gender}</td>
+                <td style="padding: 0.75rem;">${user.area}</td>
+                <td style="padding: 0.75rem;">${user.category}</td>
+                <td style="padding: 0.75rem;">${user.specialCategory}</td>
+                <td style="padding: 0.75rem; font-weight: bold; color: black;">${user.rawMarks.toFixed(2)}</td>
+                <td style="padding: 0.75rem; color: var(--success-color);">${user.correct}</td>
+                <td style="padding: 0.75rem; color: var(--danger-color);">${user.incorrect}</td>
+                <td style="padding: 0.75rem; color: blue;">${user.skipped}</td>
+                <td style="padding: 0.75rem;">${user.shift.replace('shift', 'S')}</td>
+            </tr>
+        `).join('');
+
+        if (filteredUsers.length === 0) {
+            leaderboardBody.innerHTML = `<tr><td colspan="11" style="text-align: center; padding: 1rem;">इस फ़िल्टर के लिए कोई परिणाम नहीं मिला।</td></tr>`;
+        }
+    }
+        
+      
+       // --- पेज लोड होने पर लोकल स्टोरेज से डेटा लोड करें ---
+        const savedLeaderboardData = localStorage.getItem('leaderboardData_mps');
+        if (savedLeaderboardData) {
+            try {
+                allLeaderboardUsers = JSON.parse(savedLeaderboardData);
+            } catch (e) {
+                console.error("Local storage leaderboard data corrupt:", e);
+                allLeaderboardUsers = []; // यदि डेटा खराब है तो रीसेट करें
             }
         }
-        
+        // नोट: अब हम पेज लोड पर टेबल नहीं दिखाते हैं, यह 'view' बटन से होगा।
+
+        // --- "लीडरबोर्ड देखें" बटन का लिस्नर ---
         if (viewLeaderboardBtn) {
             viewLeaderboardBtn.addEventListener('click', () => {
-                leaderboardTableContainer.style.display = 'block';
-                fetchAndDisplayLeaderboard(leaderboardShiftFilter.value);
-                viewLeaderboardBtn.style.display = 'none';
+                // यह बटन अब सिर्फ टेबल को दिखाएगा/छिपाएगा
+                if (leaderboardTableContainer.style.display === 'block') {
+                    leaderboardTableContainer.style.display = 'none';
+                    viewLeaderboardBtn.textContent = 'लीडरबोर्ड देखें';
+                } else {
+                    leaderboardTableContainer.style.display = 'block';
+                    viewLeaderboardBtn.textContent = 'लीडरबोर्ड छिपाएं';
+                    // और लोकल स्टोरेज से डेटा दिखाएगा
+                    displayFilteredLeaderboard(); 
+                }
             });
         }
 
+       // --- "Refresh" बटन का लिस्नर (नया) ---
+        if (refreshLeaderboardBtn) {
+            refreshLeaderboardBtn.addEventListener('click', () => {
+                // 1. आइकन को घुमाएं और बटन को डिसेबल करें
+                const icon = refreshLeaderboardBtn.querySelector('i');
+                if (icon) icon.classList.add('icon-spinning');
+                refreshLeaderboardBtn.disabled = true;
+
+                // 2. सुनिश्चित करें कि टेबल दिख रही है
+                leaderboardTableContainer.style.display = 'block'; 
+                viewLeaderboardBtn.textContent = 'लीडरबोर्ड छिपाएं';
+
+                // 3. सर्वर से नया डेटा लाएं (fetchAndSaveLeaderboard एक async फ़ंक्शन है)
+                //    .finally() यह सुनिश्चित करता है कि लोडिंग खत्म होने पर आइकन घूमना बंद कर दे
+                fetchAndSaveLeaderboard().finally(() => {
+                    // 4. जब काम पूरा हो जाए (सफलतापूर्वक या त्रुटि के साथ),
+                    //    तो आइकन को घुमाना बंद करें और बटन को इनेबल करें
+                    if (icon) icon.classList.remove('icon-spinning');
+                    refreshLeaderboardBtn.disabled = false;
+                });
+            });
+        }
+        // --- तीनों फ़िल्टर पर 'change' इवेंट लिस्नर लगाएं ---
         if (leaderboardShiftFilter) {
             leaderboardShiftFilter.addEventListener('change', () => {
+                // टेबल दिखने पर ही फ़िल्टर करें
                 if (leaderboardTableContainer.style.display !== 'none') {
-                    fetchAndDisplayLeaderboard(leaderboardShiftFilter.value);
+                    displayFilteredLeaderboard(); // सिर्फ़ लोकल डेटा को फ़िल्टर करें
+                }
+            });
+        }
+        if (leaderboardCategoryFilter) {
+            leaderboardCategoryFilter.addEventListener('change', () => {
+                if (leaderboardTableContainer.style.display !== 'none') {
+                    displayFilteredLeaderboard(); // सिर्फ़ लोकल डेटा को फ़िल्टर करें
+                }
+            });
+        }
+        if (leaderboardAreaFilter) {
+            leaderboardAreaFilter.addEventListener('change', () => {
+                if (leaderboardTableContainer.style.display !== 'none') {
+                    displayFilteredLeaderboard(); // सिर्फ़ लोकल डेटा को फ़िल्टर करें
                 }
             });
         }
