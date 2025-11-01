@@ -106,9 +106,8 @@
     text-decoration: none; cursor: pointer;
     text-align: left; box-shadow: var(--shadow-sm);
     transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s;
-    position: relative; /* <-- यह लाइन जोड़ें */
-    overflow: hidden;   /* <-- और यह लाइन जोड़ें */
-}
+    position: relative; 
+    overflow: hidden;  
         }
         .shift-btn:hover { transform: translateY(-5px); box-shadow: var(--shadow-md); }
         .shift-btn .icon {
@@ -306,6 +305,21 @@
         #get-official-key-btn { background-color: #6f42c1; color: white; }
 
         .print-only-container { display: none; }
+        #home-paste-btn {
+            transition: all 0.3s ease;
+            box-shadow: var(--shadow-md);
+        }
+        #home-paste-btn:hover {
+            background-color: var(--primary-dark);
+            box-shadow: 0 8px 15px rgba(0,0,0,0.1);
+            transform: translateY(-4px);
+        }
+        #home-paste-btn .icon {
+            transition: transform 0.3s ease;
+        }
+        #home-paste-btn:hover .icon {
+            transform: scale(1.1);
+        }
 
         @media (max-width: 768px) {
             .selector-container { max-width: 100%; } /* <-- MODIFIED: Allow full width on mobile */
@@ -1061,13 +1075,13 @@
         /* 5. सभी आइकन्स और बटन्स को छोटा करें */
 
         /* पंक्ति 1 के आइकन */
-        #view-mode-btn, #jump-to-q-btn, #reset-answers-btn {
+     #view-mode-btn, #jump-to-q-btn, #copy-string-btn, #paste-string-btn, #reset-answers-btn {
             font-size: 0.8rem; /* छोटा फ़ॉन्ट */
             padding: 0.2rem 0.4rem; /* छोटी पैडिंग */
             margin: 0; /* फालतू मार्जिन हटाया */
         }
         /* आइकन का साइज़ */
-        #view-mode-btn i, #jump-to-q-btn i, #reset-answers-btn i {
+#view-mode-btn i, #jump-to-q-btn i, #copy-string-btn i, #paste-string-btn i, #reset-answers-btn i {
              font-size: 1.0rem;
         }
         /* व्यू मोड बटन से टेक्स्ट "With Option" छिपा दें */
@@ -1091,7 +1105,7 @@
             #shift-title {
                 font-size: 0.9rem; /* मोबाइल पर और छोटा टाइटल */
             }
-            .header-controls select, .header-controls button {
+           .header-controls select, .header-controls button {
                 font-size: 0.7rem; /* मोबाइल पर और छोटा फ़ॉन्ट */
             }
         }
@@ -1167,10 +1181,16 @@
         <div id="official-key-print-container"></div>
     </div>
 
-    <div id="shift-selector-page">
+   <div id="shift-selector-page">
         <div class="selector-container">
             <h2>चतुर्थ श्रेणी कर्मचारी</h2>
                <p style="text-align:center; color: red;"> Official Answer Key Updated</p>
+            
+           <button id="home-paste-btn" class="shift-btn" style="background-color: var(--primary-color); border: none; color: white; display: inline-flex; justify-content: center; text-align: center; margin-bottom: 1rem; padding: 1rem 1.25rem;">
+                <div class="icon" style="background-color: rgba(255,255,255,0.2); color: white;"><i class="fas fa-paste"></i></div>
+                <div class="text" style="color: white; font-size: 1.2rem;">Paste Answer String</div>
+            </button>
+            <p style="margin: -0.5rem 0 1.5rem 0; font-weight: 600; color: var(--font-color-light);">- OR -</p>
             <p class="subtitle">कृपया अपनी शिफ़्ट चुनें।</p>
             <div class="shift-selector">
                 <a class="shift-btn" data-shift="shift1"><div class="icon"><i class="fas fa-file-alt"></i></div><div class="text">1st Shift 19.09.2025</div></a>
@@ -1309,8 +1329,12 @@
                         </div>
                         <button id="jump-to-q-btn" title="Jump to Question"><i class="fas fa-th-large"></i></button>
                     </div>
-                    <button id="reset-answers-btn" title="Reset Answers"><i class="fas fa-sync-alt"></i></button>
-                </div>
+
+                    <div class="header-icon-bar-right" style="display: flex; align-items: center;">
+                     <button id="copy-string-btn" title="Copy Answer String"><i class="fas fa-copy"></i> <span class="header-btn-text">Copy String</span></button>
+                        <button id="reset-answers-btn" title="Reset Answers"><i class="fas fa-sync-alt"></i></button>
+                    </div>
+                    </div>
 
                 <h1 id="shift-title">Shift Title</h1> 
                 
@@ -1439,13 +1463,25 @@
             <h3 id="jump-modal-title">Jump to Question</h3>
             <div id="jump-grid-container">
                 </div>
-            <button id="close-jump-modal-btn">Close</button>
+           <button id="close-jump-modal-btn">Close</button>
+        </div>
+    </div> <div id="paste-modal-overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.6); z-index: 3000; align-items: center; justify-content: center; padding: 1rem; opacity: 1; transition: opacity 0.2s ease;">
+        <div id="paste-modal" style="background-color: var(--surface-color); color: var(--font-color); border-radius: var(--border-radius); box-shadow: var(--shadow-md); width: 100%; max-width: 500px; padding: 1.5rem;">
+            <h3 style="margin: 0 0 0.5rem 0; text-align: center; font-size: 1.2rem;">Paste Answer String</h3>
+            <p style="font-size: 0.9rem; color: var(--font-color-light); text-align: center; margin: 0 0 1rem 0;">पूरी स्ट्रिंग (जैसे Fourth:shift01...) यहाँ पेस्ट करें।</p>
+            <textarea id="paste-string-input" rows="5" placeholder="Fourth:shift01:set01: 1. A 2. C 3. NC..." style="width: 100%; padding: 0.75rem; border: 1px solid var(--border-color); border-radius: 0.375rem; font-size: 0.9rem; font-family: inherit; margin-bottom: 1rem; background-color: var(--bg-color); color: var(--font-color); resize: vertical;"></textarea>
+            <div class="modal-buttons" style="margin-top: 1rem;">
+                <button id="cancel-paste" style="background-color: #e9ecef; color: var(--font-color);">Cancel</button>
+                <button id="confirm-paste" style="background-color: var(--primary-color); color: white;">Done</button>
+            </div>
         </div>
     </div>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
     <script src="questions-data.js"></script>
    <script>
+
+       
     // START: FIREBASE CONFIG (ADDED)
     const firebaseConfig = {
   apiKey: "AIzaSyBfL_owhzOEZPvCCAeuT55axrIQxsf1gqQ",
@@ -1903,10 +1939,18 @@ if (viewLeaderboardBtn) {
         const printBtn = document.getElementById('header-print-btn');
         const pMO = document.getElementById('print-modal-overlay');
         const toggleInfoBtn = document.getElementById('toggle-info-bar-btn');
+      
         const resetBtn = document.getElementById('reset-answers-btn');
+        const copyStringBtn = document.getElementById('copy-string-btn'); 
         const questionsContainer = document.getElementById('questions-container');
-
-   // --- START: LOGIC FOR NEW USER INFO MODAL ---
+   // ======================= START: PASTE MODAL VARIABLES (FIX) =======================
+        const pasteModalOverlay = document.getElementById('paste-modal-overlay');
+        const cancelPasteBtn = document.getElementById('cancel-paste');
+        const confirmPasteBtn = document.getElementById('confirm-paste');
+        const pasteStringInput = document.getElementById('paste-string-input');
+        // ======================== END: PASTE MODAL VARIABLES (FIX) ========================
+       
+  // --- START: LOGIC FOR NEW USER INFO MODAL ---
         const startTestBtn = document.getElementById('start-test-btn');
         if (startTestBtn) {
             startTestBtn.addEventListener('click', () => {
@@ -1932,8 +1976,22 @@ if (viewLeaderboardBtn) {
                 localStorage.setItem('studentCategory_mps', categorySelect.value);
                 localStorage.setItem('studentSpecial_mps', specialSelect.value); // यह खाली भी हो सकता है
 
-                // अब पेपर लोड करने के लिए आगे बढ़ें
-                proceedToLoadPaper(currentShiftId, true);
+                // (बदलाव यहाँ है)
+                // 1. पॉपअप छिपाएं
+                document.getElementById('user-info-modal-overlay').style.display = 'none';
+                // 2. शिफ़्ट चुनने वाला पेज दिखाएं
+                document.getElementById('shift-selector-page').style.display = 'flex';
+                
+                // 3. URL को हैंडल करें (यह हिस्सा सही है)
+                const shiftIdFromUrl = window.location.hash.substring(1);
+                if (shiftIdFromUrl && allShiftData[shiftIdFromUrl]) {
+                    // अगर URL में शिफ़्ट है (जैसे रीलोड करने पर), तो उसे लोड करें
+                    loadShift(shiftIdFromUrl);
+                } else {
+                    // वरना, होम पेज का URL सेट करें
+                    history.pushState({page: 'home'}, 'Home', window.location.pathname);
+                    window.location.hash = '';
+                }
             });
         }
         // --- END: LOGIC FOR NEW USER INFO MODAL ---
@@ -1961,34 +2019,11 @@ if (viewLeaderboardBtn) {
         }));
 
         // ======================= START: MODIFIED loadShift LOGIC =======================
-        function loadShift(shiftId, shouldPushState = true) {
+     function loadShift(shiftId, shouldPushState = true, stringToParse = null) {
             currentShiftId = shiftId; 
-
-            // localStorage से सभी ज़रूरी जानकारी की जाँच करें
-            const savedName = localStorage.getItem('studentName_mps');
-            const savedRoll = localStorage.getItem('studentRoll_mps');
-            const savedGender = localStorage.getItem('studentGender_mps');
-            const savedArea = localStorage.getItem('studentArea_mps');
-            const savedCategory = localStorage.getItem('studentCategory_mps');
-
-            // अगर कोई भी ज़रूरी जानकारी मौजूद नहीं है, तो पॉपअप दिखाएं
-            if (!savedName || !savedRoll || !savedGender || !savedArea || !savedCategory) {
-                // पॉपअप के फील्ड्स में पुरानी जानकारी (अगर कोई है) भरें
-                document.getElementById('initial-student-name').value = savedName || '';
-                document.getElementById('initial-student-roll').value = savedRoll || '';
-                document.getElementById('initial-student-gender').value = savedGender || '';
-                document.getElementById('initial-student-area').value = savedArea || '';
-                document.getElementById('initial-student-category').value = savedCategory || '';
-                document.getElementById('initial-student-special').value = localStorage.getItem('studentSpecial_mps') || '';
-
-                // पॉपअप दिखाएं
-                document.getElementById('user-info-modal-overlay').style.display = 'flex';
-            } else {
-                // अगर सभी जानकारी मौजूद है, तो सीधे पेपर लोड करें
-                proceedToLoadPaper(shiftId, shouldPushState);
-            }
-        }
-        function proceedToLoadPaper(shiftId, shouldPushState = true) {
+            proceedToLoadPaper(shiftId, shouldPushState, stringToParse);
+           }
+     function proceedToLoadPaper(shiftId, shouldPushState = true, stringToParse = null) {
             document.getElementById('user-info-modal-overlay').style.display = 'none';
             shiftSelectorPage.style.display = 'none';
             questionPaperPage.style.display = 'flex';
@@ -2028,7 +2063,15 @@ if (viewLeaderboardBtn) {
         questionPaperPage.dataset.viewMode = savedViewMode;
         updateViewModeButton(savedViewMode);
         // --- END: NEW VIEW MODE LOGIC ---
-            displayQuestions(currentSeries, activeFilter);
+          displayQuestions(currentSeries, activeFilter);
+
+            // --- START: PASTE LOGIC TRIGGER ---
+            // अगर loadShift से कोई स्ट्रिंग आई है, तो अब उसे पार्स करें
+            // 'true' फ्लैग यह सुनिश्चित करता है कि हम शिफ्ट-चेक को दोबारा न चलाएं
+            if (stringToParse) {
+                parseAndApplyString(stringToParse, true);
+            }
+            // --- END: PASTE LOGIC TRIGGER ---
         }
         // ======================= END: MODIFIED loadShift LOGIC =======================
 
@@ -2037,6 +2080,35 @@ if (viewLeaderboardBtn) {
             localStorage.setItem(`userAnswers_${currentShiftId}`, JSON.stringify(userAnswers));
             localStorage.setItem(`currentSeries_${currentShiftId}`, currentSeries);
         }
+        // ======================= START: NEW HELPER FUNCTION =======================
+        /**
+         * Helper function to get the correctly ordered option texts for a specific question and series.
+         * @param {object} qData - The question data object.
+         * @param {string} series - The selected series key (e.g., "A22Z Set 1").
+         * @returns {string[]} - An array of raw option texts in the correct order.
+         */
+        function getShuffledOptions(qData, series) {
+            const optionTexts = qData.options.map(opt => opt.substring(3));
+            
+            // सुनिश्चित करें कि currentShiftData और seriesOptionOrder मौजूद हैं
+            if (!currentShiftData || !currentShiftData.seriesOptionOrder) {
+                return optionTexts; // कोई शफलिंग परिभाषित नहीं है
+            }
+
+            const seriesOptionConfig = currentShiftData.seriesOptionOrder[series];
+
+            if (Array.isArray(seriesOptionConfig)) {
+                return seriesOptionConfig.map(index => optionTexts[index]);
+            } else if (typeof seriesOptionConfig === 'object' && seriesOptionConfig !== null) {
+                const specificOrder = seriesOptionConfig[qData.id];
+                const defaultOrder = seriesOptionConfig['default'];
+                const orderToUse = specificOrder || defaultOrder;
+                return orderToUse ? orderToUse.map(index => optionTexts[index]) : [...optionTexts];
+            } else {
+                return [...optionTexts]; // डिफ़ॉल्ट क्रम
+            }
+        }
+        // ======================== END: NEW HELPER FUNCTION =========================
 function scrollToCard(index) {
             const cardWidth = questionsContainer.offsetWidth;
             if (cardWidth > 0) {
@@ -2530,12 +2602,308 @@ function scrollToCard(index) {
                 displayQuestions(currentSeries, 'all');
             }
         });
+        
+// ======================= START: COPY STRING BUTTON LOGIC =======================
+        // ======================= START: PASTE STRING BUTTON LOGIC =======================
+       
+        if (cancelPasteBtn) {
+            cancelPasteBtn.addEventListener('click', () => {
+                pasteModalOverlay.style.display = 'none'; // पॉपअप छिपाएं
+            });
+        }
+        
+        if (pasteModalOverlay) {
+            pasteModalOverlay.addEventListener('click', (e) => {
+                if (e.target === pasteModalOverlay) { // सिर्फ बाहरी काली जगह पर क्लिक करने पर
+                    pasteModalOverlay.style.display = 'none'; // पॉपअप छिपाएं
+                }
+            });
+        }
 
-        document.querySelectorAll('.filter-buttons button').forEach(b => b.addEventListener('click', () => {
+        if (confirmPasteBtn) {
+            confirmPasteBtn.addEventListener('click', () => {
+                const pastedString = pasteStringInput.value.trim();
+                if (!pastedString) {
+                    alert("कृपया पहले स्ट्रिंग पेस्ट करें।");
+                    return;
+                }
+                try {
+                    parseAndApplyString(pastedString);
+                    pasteModalOverlay.style.display = 'none'; // सफल होने पर छिपाएं
+                } catch (error) {
+                    console.error("Paste String Error:", error);
+                    alert("स्ट्रिंग को पार्स करने में त्रुटि हुई। सुनिश्चित करें कि फॉर्मेट सही है।");
+                }
+            });
+        }
+        
+       function parseAndApplyString(str, skipShiftCheck = false) {
+            // स्ट्रिंग को पार्स करें (जैसे Fourth:shift01:set01: 1. A 2. C...)
+            
+            // --- START: REGEX FIX ---
+            // यह Regex अब ज्यादा लचीला है और फालतू स्पेस/नई लाइन को अनदेखा करेगा
+            const match = str.match(/^Fourth:(shift\d{2}):(.+?):\s*([\s\S]*)/i);
+            // --- END: REGEX FIX ---
+
+            if (!match) {
+                alert("अमान्य स्ट्रिंग फॉर्मेट।");
+                return;
+            }
+
+           let parsedShiftId = match[1].toLowerCase(); // यह "shift02" होगा
+            const parsedSeriesFormat = match[2]; // जैसे "set01" या "MASTER"
+
+            // --- START: FIX ---
+            // स्ट्रिंग के "shift02" को डेटा के "shift2" में बदलें
+            const shiftNumMatch = parsedShiftId.match(/shift(\d{2})/);
+            if (shiftNumMatch) {
+                const shiftNum = parseInt(shiftNumMatch[1], 10); // "02" से नंबर 2 बनेगा
+                parsedShiftId = `shift${shiftNum}`; // 2 से "shift2" बन जाएगा
+            }
+            // --- END: FIX ---
+            const answersString = match[3];
+// 1. शिफ्ट जांचें और लोड करें
+            if (!skipShiftCheck) { // इस नई 'if' कंडीशन को जोड़ें
+                if (parsedShiftId !== currentShiftId) {
+                    if (allShiftData[parsedShiftId]) {
+                        alert(`शिफ्ट ${parsedShiftId} लोड की जा रही है...`);
+                        
+                        // --- START: LOGIC FIX ---
+                        // loadShift को स्ट्रिंग पास करें ताकि वह लोड होने के बाद इसे पार्स करे
+                        loadShift(parsedShiftId, true, str); 
+                        // --- END: LOGIC FIX ---
+                        return; // इस फंक्शन को रोक दें
+                    } else {
+                    alert("स्ट्रिंग में अमान्य शिफ्ट आईडी।");
+                    return;
+                }
+              }
+            }
+            
+            // 2. सीरीज (सेट) ढूंढें और चुनें
+            const seriesOptions = Array.from(seriesSelect.options);
+            let foundOption = null;
+
+            if (parsedSeriesFormat.toLowerCase() === 'master') {
+                foundOption = seriesOptions.find(opt => opt.value.toLowerCase().includes('master'));
+            } else if (/^set\d{2}$/.test(parsedSeriesFormat)) {
+                const setNum = parseInt(parsedSeriesFormat.replace('set', ''), 10);
+                // वह विकल्प ढूंढें जिसके *अंत* में सही सेट नंबर हो
+                foundOption = seriesOptions.find(opt => {
+                    const numbersInOption = opt.value.match(/\d+/g);
+                    if (!numbersInOption) return false;
+                    const lastNum = numbersInOption[numbersInOption.length - 1];
+                    return parseInt(lastNum, 10) === setNum;
+                });
+            } else {
+                foundOption = seriesOptions.find(opt => opt.value === parsedSeriesFormat);
+            }
+
+            if (!foundOption) {
+                alert(`इस शिफ्ट में "${parsedSeriesFormat}" से मेल खाने वाली कोई सीरीज नहीं मिली।`);
+                return;
+            }
+
+            const targetSeriesValue = foundOption.value;
+            // अगर सीरीज बदली है तो उसे चुनें
+            if (currentSeries !== targetSeriesValue) {
+                seriesSelect.value = targetSeriesValue;
+                currentSeries = targetSeriesValue; // currentSeries को अपडेट करें
+            }
+
+            // 3. उत्तरों को पार्स और लागू करें
+            userAnswers = {}; // मौजूदा उत्तरों को रीसेट करें
+            const seriesOrder = currentShiftData.seriesOrder[currentSeries] || Array.from({length: allQuestions.length}, (_, i) => i + 1);
+            const optionLabels = ['A', 'B', 'C', 'D', 'E'];
+            
+            // सभी "1. A", "2. C", "3. NC" पैटर्न को निकालें
+            const answerPairs = answersString.match(/(\d+)\. ([A-E]|NC)/g);
+            if (!answerPairs) {
+                alert("स्ट्रिंग में उत्तर नहीं मिले।");
+                return;
+            }
+
+            answerPairs.forEach(pair => {
+                const pairMatch = pair.match(/(\d+)\. ([A-E]|NC)/);
+                if (!pairMatch) return;
+
+                const qNum = parseInt(pairMatch[1], 10); // प्रश्न संख्या (1-आधारित)
+                const qLabel = pairMatch[2]; // "A", "C", या "NC"
+
+                if (qLabel === 'NC') return; // "NC" (Not Clicked) को छोड़ दें
+
+                const qIndex = seriesOrder[qNum - 1]; // असली प्रश्न इंडेक्स (1-आधारित)
+                if (!qIndex) return;
+                
+                const qData = allQuestions[qIndex - 1]; // प्रश्न डेटा (0-आधारित)
+                if (!qData) return;
+
+                const labelIndex = optionLabels.indexOf(qLabel); // 0, 1, 2...
+                if (labelIndex === -1) return;
+
+                // इस सीरीज के लिए सही क्रम में विकल्प टेक्स्ट प्राप्त करें
+                const shuffledOptionTexts = getShuffledOptions(qData, currentSeries);
+                
+                // उस लेबल के लिए सही रॉ टेक्स्ट ढूंढें
+                const rawAnswerText = shuffledOptionTexts[labelIndex];
+
+                if (rawAnswerText) {
+                    userAnswers[qData.id] = rawAnswerText; // उत्तर को सेव करें
+                }
+            });
+
+            // 4. सब कुछ अपडेट करें
+            saveData(); // localStorage में सेव करें
+            displayQuestions(currentSeries, 'all'); // 'all' फ़िल्टर के साथ प्रश्नों को फिर से दिखाएं
+            updateSummary(); // स्कोर की गणना करें
+
+            // रिजल्ट बार को ऑटोमैटिक दिखाएं
+            document.querySelector('.summary-bar').classList.remove('hidden');
+            document.getElementById('toggle-summary-btn').textContent = 'Hide Result';
+            
+            // उपयोगिता के लिए, पहले प्रश्न पर स्क्रॉल करें
+            const firstQuestion = document.querySelector('.question-block');
+            if (firstQuestion) {
+                firstQuestion.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+            // --- START: सर्वर पर सेव करने के लिए नया कोड ---
+            // 1. एक User ID प्राप्त करें (या बनाएं)
+            let userId = localStorage.getItem(`userId_${currentShiftId}`);
+            if (!userId) {
+                userId = 'user_' + Date.now() + Math.random().toString(36).substr(2, 9);
+                localStorage.setItem(`userId_${currentShiftId}`, userId);
+            }
+            // 2. Firebase पर डेटा भेजें
+            sendAnswerToFirebase(userId);
+            // --- END: नया कोड ---
+            alert("सभी उत्तर सफलतापूर्वक लागू हो गए हैं!");
+        }
+        // ======================== END: PASTE STRING BUTTON LOGIC ========================
+if (copyStringBtn) {
+    copyStringBtn.addEventListener('click', () => {
+        // 1. जांचें कि शिफ्ट लोड है या नहीं
+        if (!currentShiftId || !currentShiftData) {
+            alert("कृपया पहले एक शिफ्ट लोड करें।");
+            return;
+        }
+        
+        try {
+            // 2. उत्तरों की स्ट्रिंग बनाएं
+            const answerStrings = [];
+            const seriesOrder = currentShiftData.seriesOrder[currentSeries] || Array.from({length: allQuestions.length}, (_, i) => i + 1);
+            const optionLabels = ['A', 'B', 'C', 'D', 'E'];
+
+            seriesOrder.forEach((qIndex, i) => {
+                const displayNum = i + 1;
+                const qData = allQuestions[qIndex - 1];
+                if (!qData) return;
+
+                const qId = qData.id;
+                const selectedAnswerText = userAnswers[qId]; // उपयोगकर्ता का चुना गया उत्तर (raw text)
+
+                if (!selectedAnswerText) {
+                    // यदि कोई उत्तर नहीं चुना गया है
+                    answerStrings.push(`${displayNum}. NC`);
+                } else {
+                    // यदि उत्तर चुना गया है, तो उसका लेबल (A, B, C...) ढूंढें
+                    const optionTexts = qData.options.map(opt => opt.substring(3));
+                    let shuffledOptionTexts;
+                    const seriesOptionConfig = currentShiftData.seriesOptionOrder?.[currentSeries];
+
+                    // विकल्पों को शफल (shuffle) करने का वही लॉजिक जो प्रश्न दिखाते समय इस्तेमाल होता है
+                    if (Array.isArray(seriesOptionConfig)) {
+                        shuffledOptionTexts = seriesOptionConfig.map(index => optionTexts[index]);
+                    } else if (typeof seriesOptionConfig === 'object' && seriesOptionConfig !== null) {
+                        const specificOrder = seriesOptionConfig[qData.id];
+                        const defaultOrder = seriesOptionConfig['default'];
+                        const orderToUse = specificOrder || defaultOrder;
+                        shuffledOptionTexts = orderToUse ? orderToUse.map(index => optionTexts[index]) : [...optionTexts];
+                    } else {
+                        shuffledOptionTexts = [...optionTexts];
+                    }
+
+                    // चुने गए उत्तर का इंडेक्स (0-4) ढूंढें
+                    const selectedIndex = shuffledOptionTexts.findIndex(text => text.trim() === selectedAnswerText.trim());
+
+                    if (selectedIndex !== -1) {
+                        // अगर इंडेक्स मिल गया (A, B, C, D, या E)
+                        const selectedLabel = optionLabels[selectedIndex];
+                        answerStrings.push(`${displayNum}. ${selectedLabel}`);
+                    } else {
+                        // यदि कोई गड़बड़ है (हालांकि 'E' को भी मिल जाना चाहिए)
+                        answerStrings.push(`${displayNum}. NC`);
+                    }
+                }
+            });
+
+            const answersPart = answerStrings.join(' ');
+
+            // 3. फाइनल स्ट्रिंग बनाएं
+            const prefix = 'Fourth';
+            const shiftNum = currentShiftId.replace('shift', '');
+            const formattedShift = `shift${shiftNum.padStart(2, '0')}`;
+            
+            // --- YAHAN BADLAV KIYA GAYA HAI (REQUEST KE ANUSAAR) ---
+            
+            const seriesVal = currentSeries; // यह ड्रॉपडाउन से चुनी गई वैल्यू है (जैसे "A22Z Set 1")
+            let formattedSeries;
+
+            if (seriesVal === 'MASTER') {
+                formattedSeries = 'MASTER';
+            } else {
+                // स्ट्रिंग में मौजूद *सभी* नंबरों को ढूंढें (जैसे "A22Z Set 1" में से ["22", "1"])
+                const allNumbers = seriesVal.match(/\d+/g); 
+
+                if (allNumbers && allNumbers.length > 0) {
+                    // *आखिरी* नंबर को सेट नंबर मानें (जैसे ["22", "1"] में से "1")
+                    const setNum = allNumbers[allNumbers.length - 1]; 
+                    formattedSeries = `set${setNum.padStart(2, '0')}`; // "set01" बन जाएगा
+                } else {
+                    // अगर कोई नंबर नहीं मिला (जैसे "Series A")
+                    formattedSeries = seriesVal; // तो जैसा है वैसा ही इस्तेमाल करें
+                }
+            }
+            
+            // Final string (बिना ब्रैकेट्स के)
+            const finalString = `${prefix}:${formattedShift}:${formattedSeries}: ${answersPart}`;
+            
+            // --- BADLAV KHATM ---
+
+            // 4. क्लिपबोर्ड पर कॉपी करें
+            if (navigator.clipboard) {
+                navigator.clipboard.writeText(finalString).then(() => {
+                    // कॉपी होने पर फीडबैक दें
+                    const icon = copyStringBtn.querySelector('i');
+                    if(icon) icon.className = 'fas fa-check'; // आइकन को 'चेक' में बदलें
+                    setTimeout(() => {
+                        if(icon) icon.className = 'fas fa-copy'; // 2 सेकंड बाद वापस 'कॉपी' आइकन
+                    }, 2000);
+                }).catch(err => {
+                    console.error('Failed to copy: ', err);
+                    alert("स्ट्रिंग कॉपी करने में विफल।");
+                });
+            } else {
+                // पुराने ब्राउज़र के लिए फॉलबैक
+                const textArea = document.createElement('textarea');
+                textArea.value = finalString;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                alert("स्ट्रिंग क्लिपबोर्ड पर कॉपी की गई।");
+            }
+
+        } catch (error) {
+            console.error("कॉपी स्ट्रिंग बनाने में त्रुटि:", error);
+            alert("स्ट्रिंग बनाते समय एक त्रुटि हुई।");
+        }
+    });
+}
+// ======================== END: COPY STRING BUTTON LOGIC ========================
+       document.querySelectorAll('.filter-buttons button').forEach(b => b.addEventListener('click', () => {
             activeFilter = b.dataset.filter;
             displayQuestions(currentSeries, activeFilter);
         }));
-
         document.getElementById('toggle-summary-btn').addEventListener('click', (e) => {
             const sB = document.querySelector('.summary-bar');
             sB.classList.toggle('hidden');
@@ -2827,6 +3195,7 @@ function scrollToCard(index) {
             pMO.style.display = 'none';
             generateAndPrintOMR(name, rollNo);
         });
+        
         document.getElementById('get-official-key-btn').addEventListener('click', () => {
             const name = document.getElementById('student-name').value.trim();
             const rollNo = document.getElementById('student-roll').value.trim();
@@ -2836,13 +3205,59 @@ function scrollToCard(index) {
              generateAndPrintOfficialKey();
         });
 
-        const shiftIdFromUrl = window.location.hash.substring(1);
-        if (shiftIdFromUrl && allShiftData[shiftIdFromUrl]) {
-            loadShift(shiftIdFromUrl);
-        } else {
-            showHomePage();
+        // ======================= START: NEW PASTE BUTTON LOGIC =======================
+        const homePasteBtn = document.getElementById('home-paste-btn');
+        if (homePasteBtn) {
+            homePasteBtn.addEventListener('click', () => {
+                // यह वही पुराना लॉजिक है जो पहले pasteStringBtn पर था
+                pasteStringInput.value = ''; // इनपुट खाली करें
+                pasteModalOverlay.style.display = 'flex'; // पॉपअप दिखाएं
+                pasteStringInput.focus();
+            });
         }
-    }); 
+        // ======================== END: NEW PASTE BUTTON LOGIC ========================
+
+
+        // ======================= START: PAGE LOAD LOGIC (NEW) =======================
+        // यह कोड अब पेज लोड होते ही सबसे पहले चलेगा
+        const savedName = localStorage.getItem('studentName_mps');
+        const savedRoll = localStorage.getItem('studentRoll_mps');
+        const savedGender = localStorage.getItem('studentGender_mps');
+        const savedArea = localStorage.getItem('studentArea_mps');
+        const savedCategory = localStorage.getItem('studentCategory_mps');
+        const userInfoModal = document.getElementById('user-info-modal-overlay');
+      
+
+        if (!savedName || !savedRoll || !savedGender || !savedArea || !savedCategory) {
+            // जानकारी नहीं मिली: पॉपअप दिखाएं, शिफ्ट पेज छिपाएं
+            shiftSelectorPage.style.display = 'none'; 
+            
+            // पॉपअप में पुरानी (अगर कोई है) जानकारी भरें
+            document.getElementById('initial-student-name').value = savedName || '';
+            document.getElementById('initial-student-roll').value = savedRoll || '';
+            document.getElementById('initial-student-gender').value = savedGender || '';
+            document.getElementById('initial-student-area').value = savedArea || '';
+            document.getElementById('initial-student-category').value = savedCategory || '';
+            document.getElementById('initial-student-special').value = localStorage.getItem('studentSpecial_mps') || '';
+            
+            userInfoModal.style.display = 'flex';
+        } else {
+            // जानकारी मिल गई: पॉपअप छिपाएं, शिफ्ट पेज दिखाएं
+            userInfoModal.style.display = 'none';
+            shiftSelectorPage.style.display = 'flex';
+
+            // और URL को हैंडल करें (जैसे पेज रीलोड करने पर)
+            const shiftIdFromUrl = window.location.hash.substring(1);
+            if (shiftIdFromUrl && allShiftData[shiftIdFromUrl]) {
+                loadShift(shiftIdFromUrl);
+            } else {
+                history.pushState({page: 'home'}, 'Home', window.location.pathname);
+                window.location.hash = '';
+            }
+        }
+        // ======================== END: PAGE LOAD LOGIC (NEW) =======================
+
+    }); // <-- यह 'DOMContentLoaded' का सही क्लोजिंग ब्रैकेट है
 
     if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
