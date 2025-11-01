@@ -577,6 +577,30 @@
     }
 }
 /* ======================== END: LEADERBOARD MOBILE STYLES ========================= */
+        /* ======================== START: LEADERBOARD USER HIGHLIGHT ========================= */
+        @keyframes pulse-animation {
+            0% {
+                /* मुख्य रंग की हल्की छाया */
+                box-shadow: 0 0 0 0px var(--primary-light);
+            }
+            100% {
+                /* छाया को फैलाकर गायब करें */
+                box-shadow: 0 0 0 10px transparent;
+            }
+        }
+
+        .user-highlight {
+            background-color: var(--primary-light) !important; /* हल्का बैकग्राउंड रंग */
+            font-weight: 700; /* टेक्स्ट को बोल्ड करें */
+            
+            /* एनीमेशन लागू करें */
+            animation: pulse-animation 1.5s infinite;
+            
+            /* एनीमेशन को अच्छा दिखाने के लिए */
+            border-radius: 4px; 
+            border: 1px solid var(--primary-color);
+        }
+        /* ======================== END: LEADERBOARD USER HIGHLIGHT ========================= */
         /* ======================== START: SHIFT BUTTON BORDER ANIMATION ========================= */
 .shift-btn::before {
     content: '';
@@ -1699,7 +1723,8 @@
                         const validQuestions = parseInt(userData.summary.validQuestions) || 0;
 
                         if (validQuestions > 0 && (correct + incorrect + skipped) === validQuestions) {
-                            allUsers.push({
+                          allUsers.push({
+                                rollNo: userData.rollNo || 'N/A', // <-- यह लाइन जोड़ें
                                 name: userData.name || 'N/A',
                                 gender: userData.gender || 'N/A',
                                 area: userData.area || 'N/A',
@@ -1756,8 +1781,18 @@
         filteredUsers.sort((a, b) => b.rawMarks - a.rawMarks);
 
         // 3. HTML में दिखाएं
-        leaderboardBody.innerHTML = filteredUsers.map((user, index) => `
-            <tr style="border-bottom: 1px solid var(--border-color);">
+       // लोकल स्टोरेज से यूज़र का रोल नंबर प्राप्त करें
+        const localUserRoll = localStorage.getItem('studentRoll_mps');
+
+        leaderboardBody.innerHTML = filteredUsers.map((user, index) => {
+            // जांचें कि क्या यह पंक्ति वर्तमान यूज़र की है (रोल नंबर के आधार पर)
+            const isLocalUser = (localUserRoll && user.rollNo === localUserRoll && user.rollNo !== 'N/A');
+            // अगर हां, तो 'user-highlight' क्लास जोड़ें
+            const highlightClass = isLocalUser ? 'user-highlight' : '';
+
+            // `class="${highlightClass}"` को <tr> में जोड़ें
+            return `
+            <tr style="border-bottom: 1px solid var(--border-color);" class="${highlightClass}">
                 <td style="padding: 0.75rem;">${index + 1}</td>
                 <td style="padding: 0.75rem;">${user.name}</td>
                 <td style="padding: 0.75rem;">${user.gender}</td>
@@ -1770,7 +1805,7 @@
                 <td style="padding: 0.75rem; color: blue;">${user.skipped}</td>
                 <td style="padding: 0.75rem;">${user.shift.replace('shift', 'S')}</td>
             </tr>
-        `).join('');
+        `}).join('');
 
         if (filteredUsers.length === 0) {
             leaderboardBody.innerHTML = `<tr><td colspan="11" style="text-align: center; padding: 1rem;">इस फ़िल्टर के लिए कोई परिणाम नहीं मिला।</td></tr>`;
