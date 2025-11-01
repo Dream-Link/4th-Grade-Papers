@@ -1172,7 +1172,7 @@
                     <div style="flex-grow: 1; flex-basis: 0; min-width: 0;">
                         <label for="leaderboard-shift-filter" style="font-weight: 500; font-size: 0.875rem; display: block; margin-bottom: 0.25rem;">शिफ़्ट:</label>
                         <select id="leaderboard-shift-filter" style="width: 100%; padding: 0.5rem; border-radius: 0.375rem; border: 1px solid var(--border-color);">
-                            <option value="all">सभी शिफ़्ट</option>
+                            <option value="all">All</option>
                             <option value="shift1">1st Shift</option>
                             <option value="shift2">2nd Shift</option>
                             <option value="shift3">3rd Shift</option>
@@ -1206,8 +1206,21 @@
                     </div>
 
                     <div style="display: flex; gap: 0.5rem; align-items: end; flex-shrink: 0;">
-                        <button id="view-leaderboard-btn" style="padding: 0.5rem 1rem; border-radius: 0.375rem; border: none; background-color: var(--primary-color); color: white; cursor: pointer; height: 38px;">लीडरबोर्ड देखें</button>
-                        
+                    <button id="view-leaderboard-btn" title="लीडरबोर्ड देखें" style="
+    padding: 0; 
+    border-radius: 0.375rem; 
+    border: none; 
+    background-color: var(--primary-color); 
+    color: white; 
+    cursor: pointer; 
+    height: 38px; 
+    width: 38px; 
+    font-size: 0.9rem;
+    display: grid;
+    place-items: center;
+">
+    <i class="fas fa-eye"></i>
+</button>
                         <button id="refresh-leaderboard-btn" title="Refresh Data from Server" style="
                             border-radius: 0.375rem; 
                             border: 1px solid var(--border-color); 
@@ -1778,15 +1791,19 @@
         // नोट: अब हम पेज लोड पर टेबल नहीं दिखाते हैं, यह 'view' बटन से होगा।
 
         // --- "लीडरबोर्ड देखें" बटन का लिस्नर ---
-        if (viewLeaderboardBtn) {
+if (viewLeaderboardBtn) {
             viewLeaderboardBtn.addEventListener('click', () => {
                 // यह बटन अब सिर्फ टेबल को दिखाएगा/छिपाएगा
                 if (leaderboardTableContainer.style.display === 'block') {
                     leaderboardTableContainer.style.display = 'none';
-                    viewLeaderboardBtn.textContent = 'लीडरबोर्ड देखें';
+                    // टेबल छिप गई है, तो बटन पर 'देखें' आइकन और title दिखाएं
+                    viewLeaderboardBtn.innerHTML = '<i class="fas fa-eye"></i>';
+                    viewLeaderboardBtn.title = 'लीडरबोर्ड देखें';
                 } else {
                     leaderboardTableContainer.style.display = 'block';
-                    viewLeaderboardBtn.textContent = 'लीडरबोर्ड छिपाएं';
+                    // टेबल दिख रही है, तो बटन पर 'छिपाएं' आइकन और title दिखाएं
+                    viewLeaderboardBtn.innerHTML = '<i class="fas fa-eye-slash"></i>';
+                    viewLeaderboardBtn.title = 'लीडरबोर्ड छिपाएं';
                     // और लोकल स्टोरेज से डेटा दिखाएगा
                     displayFilteredLeaderboard(); 
                 }
