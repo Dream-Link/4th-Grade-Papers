@@ -615,31 +615,7 @@
             border: 1px solid var(--primary-color);
         }
         /* ======================== END: LEADERBOARD USER HIGHLIGHT ========================= */
-        /* ======================== START: SHIFT BUTTON BORDER ANIMATION ========================= */
-.shift-btn::before {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 150%; /* बॉक्स से बड़ा ताकि घूम सके */
-    height: 300%; /* बॉक्स से बड़ा ताकि घूम सके */
-    z-index: -1; /* बटन के टेक्स्ट के पीछे रखने के लिए */
-    background: conic-gradient(
-        var(--primary-color) 20deg, 
-        transparent 120deg
-    );
-    animation: rotate-border 4s linear infinite;
-}
-
-@keyframes rotate-border {
-    0% {
-        transform: translate(-50%, -50%) rotate(0deg);
-    }
-    100% {
-        transform: translate(-50%, -50%) rotate(360deg);
-    }
-}
-/* ======================== END: SHIFT BUTTON BORDER ANIMATION ========================= */
+        
         /* ======================= START: NEW VIEW MODE CSS ======================= */
 
     /* 1. Wrapper for the new dropdown */
