@@ -1,11 +1,10 @@
 <!DOCTYPE html>
 <html lang="hi">
 <head> 
-    <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#1e1e2e">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>4th Grade Paper Analysis by MP SALODIYA</title>
+
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#0d6efd">
     <link rel="apple-touch-icon" href="icons/icon-192x192.png">
@@ -3235,10 +3234,14 @@ if (copyStringBtn) {
         // ======================== END: PAGE LOAD LOGIC (NEW) =======================
 
     }); // <-- यह 'DOMContentLoaded' का सही क्लोजिंग ब्रैकेट है
+
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('./sw.js')
+                .then(registration => { console.log('ServiceWorker registration successful'); })
+                .catch(error => { console.log('ServiceWorker registration failed: ', error); });
+        });
     }
-</script>
-    <script>
-  if ('serviceWorker' in navigator) navigator.serviceWorker.register('service-worker.js');
 </script>
 </body>
 </html>
