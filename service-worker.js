@@ -1,4 +1,4 @@
-const CACHE_NAME = "4thGrade-v1";
+const CACHE_NAME = "4thgrade-v1";
 const ASSETS = ["/", "/index.html", "/style.css", "/script.js"];
 
 self.addEventListener("install", (e) => {
