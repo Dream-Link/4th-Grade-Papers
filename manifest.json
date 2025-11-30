@@ -1,22 +1,15 @@
 {
-    "name": "4th Grade Paper",
-    "short_name": "Paper Analysis",
-    "description": "An application to analyze 4th-grade exam papers and calculate marks.",
-    "start_url": "./index.html",
-    "display": "standalone",
-    "background_color": "#f8f9fa",
-    "theme_color": "#0d6efd",
-    "icons": [
-        {
-            "src": "icons/icon-192x192.png",
-            "sizes": "192x192",
-            "type": "image/png"
-        },
-        {
-            "src": "icons/icon-512x512.png",
-            "sizes": "512x512",
-            "type": "image/png"
-        }
-    ]
+  "name": "My Project",
+  "short_name": "ProEdit",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#1e1e2e",
+  "theme_color": "#1e1e2e",
+  "icons": [
+    {
+      "src": "https://cdn-icons-png.flaticon.com/512/1005/1005141.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    }
+  ]
 }
-
