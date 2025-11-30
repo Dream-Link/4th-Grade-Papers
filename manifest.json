@@ -1,6 +1,6 @@
 {
-  "name": "My Project",
-  "short_name": "ProEdit",
+  "name": "4thGrade",
+  "short_name": "4thGrade",
   "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#1e1e2e",
